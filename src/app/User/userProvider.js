@@ -5,6 +5,25 @@ const userDao = require("./userDao");
 
 //Provider : Read의 비즈니스 로직 처리
 
+exports.retrieveUserByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserByPhoneNumber(connection, phoneNumber);
+
+    connection.release();
+
+    return result[0].CNT;
+};
+
+exports.retrieveUserByEmail = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserByEmail(connection, email);
+
+    connection.release();
+
+    return result[0].CNT;
+};
+
+
 exports.retrieveUserList = async function (email) {
     if (!email) {
         const connection = await pool.getConnection(async (conn) => conn);

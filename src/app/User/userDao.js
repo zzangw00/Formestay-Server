@@ -10,6 +10,28 @@ async function selectUser(connection) {
     return userRows;
 }
 
+// 유저 핸드폰 번호 존재 체크
+async function isExistUserByPhoneNumber(connection, phoneNumber) {
+    const isExistUserByPhoneNumberQuery = `
+        SELECT COUNT(*) as CNT
+        FROM UserInfo
+        WHERE phoneNumber = ? and status = "ACTIVE";
+    `;
+    const [isExistUserByPhoneNumberRows] = await connection.query(isExistUserByPhoneNumberQuery, phoneNumber);
+    return isExistUserByPhoneNumberRows;
+}
+
+// 유저 이메일 존재 체크
+async function isExistUserByEmail(connection, email) {
+    const isExistUserByEmailQuery = `
+        SELECT COUNT(*) as CNT
+        FROM UserInfo
+        WHERE email = ? and status = "ACTIVE";
+    `;
+    const [isExistUserByEmailRows] = await connection.query(isExistUserByEmailQuery, email);
+    return isExistUserByEmailRows;
+}
+
 // 이메일로 회원 조회
 async function selectUserEmail(connection, email) {
     const selectUserEmailQuery = `
@@ -46,8 +68,8 @@ async function selectUserNickname(connection, nickname) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-        INSERT INTO UserInfo(email, password, nickname)
-        VALUES (?, ?, ?);
+        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertUserInfoRow = await connection.query(
         insertUserInfoQuery,
@@ -159,6 +181,8 @@ async function selectUserHashedPasswordAndSalt(connection, userIdx) {
 
 module.exports = {
     selectUser,
+    isExistUserByPhoneNumber,
+    isExistUserByEmail,
     selectUserEmail,
     selectUserId,
     selectUserNickname,

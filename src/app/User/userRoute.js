@@ -8,6 +8,9 @@ module.exports = function (app) {
     // 회원 조회 API
     app.get('/app/users/:userIdx', jwtMiddleware, user.getUserById);
 
+    // 회원가입 검증 API
+    app.route('/app/users-check').post(user.postUsersCheck);
+
     // 회원가입 API
     app.route('/app/users').post(user.postUsers);
 

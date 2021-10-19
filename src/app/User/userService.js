@@ -12,27 +12,24 @@ const security = require("../../../utils/security");
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createUser = async function (email, password, nickname) {
+exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm) {
     try {
-        // 이메일 중복 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length > 0) return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
 
-        // 닉네임 중복 확인
-        const nicknameRows = await userProvider.nicknameCheck(nickname);
-        console.log(nicknameRows)
-        if (nicknameRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+        if (isExistPhoneNumber === 1) {
+            return errResponse(baseResponse.SIGNUP_EXIST_PHONE_NUMBER);
+        }
+        const isExistEmail = await userProvider.retrieveUserByEmail(email);
+        if (isExistEmail === 1) {
+            return errResponse(baseResponse.SIGNUP_EXIST_EMAIL);
+        }
 
         // 비밀번호 암호화
-        // TODO: 비밀번호 Hashing 로직 추가
         const securityData = security.saltHashPassword(password);
-
         const userHashedPassword = securityData.hashedPassword;
         const userSalt = securityData.salt;
 
-        // TODO: hashedPassword, salt 모두 집어넣기
-        const insertUserInfoParams = [email, userHashedPassword, nickname];
+        const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm];
 
         // Transaction 예제
         // 회원가입 동시에 Level 테이블에도 컬럼 추가
@@ -40,23 +37,32 @@ exports.createUser = async function (email, password, nickname) {
         try {
             await connection.beginTransaction(); // START TRANSACTION
 
-            // 1) UserInfo 테이블에 데이터 추가
+            // UserInfo 테이블에 데이터 추가
             const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
             const userIdx = userIdResult[0].insertId;
 
-            console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
-
-            // 2) UserSalt 테이블에 데이터 추가
-            const insertUserSaltParams = [userIdx, userSalt];
-            await userDao.insertUserSalt(connection, insertUserSaltParams);
-
-            // 3) Level 테이블 추가
-            // await userDao.insertUserLevel(connection, userIdResult[0].insertId);
-
-
             await connection.commit(); // COMMIT
             connection.release();
-            return response(baseResponse.SUCCESS);
+
+            //토큰 생성 Service
+            let token = await jwt.sign(
+                {
+                    userInfo: userIdx,
+                }, // 토큰의 내용(payload)
+                secret_config.jwtsecret, // 비밀 키
+                {
+                    expiresIn: "30d",
+                    subject: "userInfo",
+                } // 유효 시간은 30일
+            );
+
+            const data = {
+                jwt: token,
+                name: name,
+                nickname: nickname,
+                phoneNumber: phoneNumber
+            }
+            return response(baseResponse.SUCCESS, data);
 
         } catch (err) {
             connection.rollback(); //ROLLBACK
