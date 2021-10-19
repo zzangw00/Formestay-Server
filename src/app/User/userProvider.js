@@ -23,6 +23,15 @@ exports.retrieveUserByEmail = async function (email) {
     return result[0].CNT;
 };
 
+exports.selectUserInfoByEmail = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserInfoByEmail(connection, email);
+
+    connection.release();
+
+    return result[0];
+};
+
 
 exports.retrieveUserList = async function (email) {
     if (!email) {

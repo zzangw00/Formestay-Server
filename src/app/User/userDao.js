@@ -137,9 +137,9 @@ async function selectUserAccount(connection, email) {
 
 async function selectUserInfoByEmail(connection, email) {
     const selectUserQuery = `
-        SELECT userIdx, email, nickname
+        SELECT userId, name, nickname, phoneNumber, password, salt
         FROM UserInfo
-        WHERE email = ?;`;
+        WHERE email = ? and status = "ACTIVE";`;
     const selectUserRow = await connection.query(selectUserQuery, email);
     return selectUserRow[0];
 }

@@ -85,11 +85,11 @@ exports.postUsersCheck = async function (req, res) {
 
     const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
     if (isExistPhoneNumber === 1) {
-        return res.send(response(baseResponse.SIGNUP_EXIST_PHONE_NUMBER));
+        return res.send(response(baseResponse.EXIST_PHONE_NUMBER));
     }
     const isExistEmail = await userProvider.retrieveUserByEmail(email);
     if (isExistEmail === 1) {
-        return res.send(response(baseResponse.SIGNUP_EXIST_EMAIL));
+        return res.send(response(baseResponse.EXIST_EMAIL));
     }
 
     return res.send(response(baseResponse.SUCCESS));
@@ -163,13 +163,14 @@ exports.patchUsers = async function (req, res) {
 exports.login = async function (req, res) {
     const {email, password} = req.body;
 
-    // if (!email) return res.send(errResponse(baseResponse.SIGNIN_EMAIL_EMPTY));
-    // if (email.length > 30)
-    //     return res.send(errResponse(baseResponse.SIGNIN_EMAIL_LENGTH));
-    // if (!regexEmail.test(email))
-    //     return res.send(errResponse(baseResponse.SIGNIN_EMAIL_ERROR_TYPE));
-    // if (!password)
-    //     return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    if (!email)
+        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_EMPTY));
+    if (!regex.emailRegex.test(email))
+        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_ERROR_TYPE));
+    if (!password)
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(password))
+        return res.send(response(baseResponse.SIGNIN_PASSWORD_ERROR_TYPE));
 
     const signInResponse = await userService.postSignIn(email, password);
 

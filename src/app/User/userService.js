@@ -17,11 +17,11 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
 
         const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
         if (isExistPhoneNumber === 1) {
-            return errResponse(baseResponse.SIGNUP_EXIST_PHONE_NUMBER);
+            return errResponse(baseResponse.EXIST_PHONE_NUMBER);
         }
         const isExistEmail = await userProvider.retrieveUserByEmail(email);
         if (isExistEmail === 1) {
-            return errResponse(baseResponse.SIGNUP_EXIST_EMAIL);
+            return errResponse(baseResponse.EXIST_EMAIL);
         }
 
         // 비밀번호 암호화
@@ -39,7 +39,7 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
 
             // UserInfo 테이블에 데이터 추가
             const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-            const userIdx = userIdResult[0].insertId;
+            const userId = userIdResult[0].insertId;
 
             await connection.commit(); // COMMIT
             connection.release();
@@ -47,7 +47,7 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
             //토큰 생성 Service
             let token = await jwt.sign(
                 {
-                    userInfo: userIdx,
+                    userInfo: userId,
                 }, // 토큰의 내용(payload)
                 secret_config.jwtsecret, // 비밀 키
                 {
@@ -79,45 +79,35 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
 exports.postSignIn = async function (email, password) {
     try {
         // 이메일 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length < 1) return errResponse(baseResponse.SIGNIN_USERINFO_WRONG)
-
-        // TODO: userIdx 가져오기
-        const userIdx = emailRows[0].userIdx
-
-        // 계정 상태 확인
-        const userInfoRows = await userProvider.accountCheck(email);
-
-        if (userInfoRows[0].status === "INACTIVE") {
-            return errResponse(baseResponse.SIGNIN_INACTIVE_ACCOUNT);
-        } else if (userInfoRows[0].status === "DELETED") {
-            return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT);
+        const userInfo = await userProvider.selectUserInfoByEmail(email);
+        if (userInfo === undefined) {
+            return errResponse(baseResponse.SIGNIN_NO_EXIST_EMAIL);
         }
 
-        const userSecurityData = await userProvider.retrieveUserHashedPasswordAndSalt(userIdx);
-
-        const salt = userSecurityData.salt;
-        const hashedPassword = userSecurityData.hashedPassword;
-
-        const isValidate = security.validatePassword(password, salt, hashedPassword);
+        const isValidate = security.validatePassword(password, userInfo.salt, userInfo.password);
         if (isValidate === false) {
             return errResponse(baseResponse.SIGNIN_USERINFO_WRONG);
         }
 
-        console.log(userInfoRows[0].userIdx)
         //토큰 생성 Service
         let token = await jwt.sign(
             {
-                userInfo: userInfoRows[0].userIdx,
+                userInfo: userInfo.userId,
             }, // 토큰의 내용(payload)
             secret_config.jwtsecret, // 비밀 키
             {
-                expiresIn: "365d",
+                expiresIn: "30d",
                 subject: "userInfo",
-            } // 유효 시간은 365일
+            } // 유효 시간은 30일
         );
 
-        return response(baseResponse.SUCCESS, token);
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber
+        }
+        return response(baseResponse.SUCCESS, data);
 
     } catch (err) {
         logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
