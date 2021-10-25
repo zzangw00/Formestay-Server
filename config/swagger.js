@@ -4,11 +4,11 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const options = {
     swaggerDefinition: {
         info: {
-            title: "Test API 3000",
+            title: "포미스테이 스웨거",
             version: "1.0.0",
-            description: "Test API with express",
+            description: "즐거운 포미스테이",
         },
-        host: 'localhost:3000',
+        host: '15.165.152.201',
         basePath: "/"
     },
     apis: ['./swag/*.js', './swagger/*']
