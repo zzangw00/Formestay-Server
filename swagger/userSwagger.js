@@ -1,7 +1,7 @@
 /**
  * @swagger
  *
- * /app/user-check:
+ * /app/users-check:
  *  post:
  *      tags:
  *      - users
