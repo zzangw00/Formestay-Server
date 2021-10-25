@@ -50,7 +50,7 @@
  *                      required: true
  *                      description: 비밀번호
  *                      example: cookie7869
- *                  confrimPassword:
+ *                  confirmPassword:
  *                      type: string
  *                      required: true
  *                      description: 확인 비밀번호
