@@ -118,25 +118,19 @@ exports.postSignIn = async function (email, password) {
 
 exports.postSocialLogin = async function (token) {
     try {
-        let accessToken = "dUCnXT5sepNwioo6eNEwmelouBIxu_hiK6RpTQopcJ4AAAF8uo9-tw";
         let kakao_profile = await axios.request({
             method: 'GET',
             url: 'https://kapi.kakao.com/v2/user/me',
-            headers: {'Authorization': 'Bearer ' + accessToken},
+            headers: {'Authorization': 'Bearer ' + token},
 
         });
 
         let kakaoId = kakao_profile.data.id;
 
-        // 이메일 확인
+        // SNS ID로 정보 가져오기
         const userInfo = await userProvider.selectUserInfoBySocialId(kakaoId);
         if (userInfo === undefined) {
-            return errResponse(baseResponse.SIGNIN_NO_EXIST_EMAIL);
-        }
-
-        const isValidate = security.validatePassword(password, userInfo.salt, userInfo.password);
-        if (isValidate === false) {
-            return errResponse(baseResponse.SIGNIN_USERINFO_WRONG);
+            return errResponse(baseResponse.SIGNIN_NO_EXIST_SOCIAL);
         }
 
         //토큰 생성 Service
@@ -160,7 +154,7 @@ exports.postSocialLogin = async function (token) {
         return response(baseResponse.SUCCESS, data);
 
     } catch (err) {
-        logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        logger.error(`App - postSocialLogin Service error\n: ${err.message} \n${JSON.stringify(err)}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

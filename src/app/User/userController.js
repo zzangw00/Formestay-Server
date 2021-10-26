@@ -6,8 +6,6 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {emit} = require("nodemon");
 const regex = require("../../../config/regularExpress")
-const passport = require('passport')
-const KakaoStrategy = require('passport-kakao').Strategy
 const axios = require('axios')
 
 /** 회원 전체 조회 API
@@ -187,25 +185,8 @@ exports.login = async function (req, res) {
 exports.socialLogin = async function (req, res) {
     const {token} = req.body;
 
-    const socialLogin = await userService.postSocialLogin(token);
-
-    try {
-        let accessToken = "dUCnXT5sepNwioo6eNEwmelouBIxu_hiK6RpTQopcJ4AAAF8uo9-tw";
-        let kakao_profile = await axios.request({
-            method: 'GET',
-            url: 'https://kapi.kakao.com/v2/user/me',
-            headers: {'Authorization': 'Bearer ' + accessToken},
-
-        });
-
-        let kakaoId = kakao_profile.data.id;
-        console.log(kakaoId);
-
-        return res.send('signInResponse');
-    } catch (err) {
-        console.log(err.stack);
-    }
-
+    const socialLoginResponse = await userService.postSocialLogin(token);
+    return res.send(socialLoginResponse);
 };
 
 /** 회원 상태 수정 API

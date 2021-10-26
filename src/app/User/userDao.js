@@ -144,6 +144,15 @@ async function selectUserInfoByEmail(connection, email) {
     return selectUserRow[0];
 }
 
+async function selectUserInfoBySocialId(connection, kakaoId) {
+    const selectUserInfoBySocialIdQuery = `
+        SELECT userId, name, nickname, phoneNumber
+        FROM UserInfo
+        WHERE snsId = ? and status = "ACTIVE";`;
+    const selectUserInfoBySocialIdRows = await connection.query(selectUserInfoBySocialIdQuery, kakaoId);
+    return selectUserInfoBySocialIdRows[0];
+}
+
 async function updateUserInfo(connection, userIdx, nickname) {
     const updateUserQuery = `
         UPDATE UserInfo
@@ -184,6 +193,7 @@ module.exports = {
     isExistUserByPhoneNumber,
     isExistUserByEmail,
     selectUserEmail,
+    selectUserInfoBySocialId,
     selectUserId,
     selectUserNickname,
     insertUserInfo,

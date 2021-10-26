@@ -32,6 +32,17 @@ exports.selectUserInfoByEmail = async function (email) {
     return result[0];
 };
 
+exports.selectUserInfoBySocialId = async function (kakaoId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserInfoBySocialId(connection, kakaoId);
+
+    connection.release();
+
+    return result[0];
+};
+
+
+
 
 exports.retrieveUserList = async function (email) {
     if (!email) {
