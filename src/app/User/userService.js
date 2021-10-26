@@ -9,6 +9,7 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {connect} = require("http2");
 const security = require("../../../utils/security");
+const axios = require('axios')
 
 // Service Create, Update, Delete 의 로직 처리
 
@@ -80,6 +81,55 @@ exports.postSignIn = async function (email, password) {
     try {
         // 이메일 확인
         const userInfo = await userProvider.selectUserInfoByEmail(email);
+        if (userInfo === undefined) {
+            return errResponse(baseResponse.SIGNIN_NO_EXIST_EMAIL);
+        }
+
+        const isValidate = security.validatePassword(password, userInfo.salt, userInfo.password);
+        if (isValidate === false) {
+            return errResponse(baseResponse.SIGNIN_USERINFO_WRONG);
+        }
+
+        //토큰 생성 Service
+        let token = await jwt.sign(
+            {
+                userInfo: userInfo.userId,
+            }, // 토큰의 내용(payload)
+            secret_config.jwtsecret, // 비밀 키
+            {
+                expiresIn: "30d",
+                subject: "userInfo",
+            } // 유효 시간은 30일
+        );
+
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber
+        }
+        return response(baseResponse.SUCCESS, data);
+
+    } catch (err) {
+        logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.postSocialLogin = async function (token) {
+    try {
+        let accessToken = "dUCnXT5sepNwioo6eNEwmelouBIxu_hiK6RpTQopcJ4AAAF8uo9-tw";
+        let kakao_profile = await axios.request({
+            method: 'GET',
+            url: 'https://kapi.kakao.com/v2/user/me',
+            headers: {'Authorization': 'Bearer ' + accessToken},
+
+        });
+
+        let kakaoId = kakao_profile.data.id;
+
+        // 이메일 확인
+        const userInfo = await userProvider.selectUserInfoBySocialId(kakaoId);
         if (userInfo === undefined) {
             return errResponse(baseResponse.SIGNIN_NO_EXIST_EMAIL);
         }

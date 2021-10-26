@@ -34,7 +34,8 @@ module.exports = {
     SIGNIN_PASSWORD_ERROR_TYPE : { "isSuccess": false, "code": 2022, "message":"비밀번호 형식을 정확하게 입력해주세요." },
     SIGNIN_NO_EXIST_EMAIL : { "isSuccess": false, "code": 2023, "message":"존재하지 않는 이메일입니다." },
     SIGNIN_USERINFO_WRONG : { "isSuccess": false, "code": 2024, "message":"비밀번호가 일치하지 않습니다." },
-
+    SIGNIN_SOCIAL_ERROR_TYPE : { "isSuccess": false, "code": 2025, "message":"카카오 액세스 토큰이 올바르지 않습니다." },
+    SIGNIN_NO_EXIST_SOCIAL : { "isSuccess": false, "code": 2026, "message":"존재하지 않는 회원입니다." },
 
  
 

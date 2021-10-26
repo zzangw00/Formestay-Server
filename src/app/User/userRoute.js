@@ -14,11 +14,14 @@ module.exports = function (app) {
     // 회원가입 API
     app.route('/app/users').post(user.postUsers);
 
-    //회원 정보 수정 API
-    app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
-
     // 로그인 하기 API
     app.route('/app/login').post(user.login);
+
+    // 소셜 로그인 하기 API
+    app.route('/app/social-login').post(user.socialLogin);
+
+    //회원 정보 수정 API
+    app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 
     //회원 정보 수정 API
     app.route('/app/users/:userIdx/status').patch(jwtMiddleware, user.patchUserStatus);
