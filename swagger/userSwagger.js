@@ -166,6 +166,16 @@
  *                      required: true
  *                      description: 알람 수신 동의 여부(1:수신,2:수신안함)
  *                      example: 1
+ *                  snsId:
+ *                      type: integer
+ *                      required: false
+ *                      description: 소셜아이디
+ *                      example: 19203042
+ *                  profileImgURL:
+ *                      type: string
+ *                      required: false
+ *                      description: 프로필 이미지 URL
+ *                      example: https://www.naver.com
  *
  *      responses:
  *        1000:
