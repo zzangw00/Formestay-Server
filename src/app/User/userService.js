@@ -118,19 +118,48 @@ exports.postSignIn = async function (email, password) {
 
 exports.postSocialLogin = async function (token) {
     try {
-        let kakao_profile = await axios.request({
+        let accessToken = "Z5h4KnGSKXjUqtHfJeNCGeeR8qnNdpK9jTLthwopb1UAAAF8v4BlXA"
+        let kakaoProfile = await axios.request({
             method: 'GET',
             url: 'https://kapi.kakao.com/v2/user/me',
-            headers: {'Authorization': 'Bearer ' + token},
+            headers: {'Authorization': 'Bearer ' + accessToken},
 
         });
 
-        let kakaoId = kakao_profile.data.id;
+        console.log(kakaoProfile);
+        let kakaoId = kakaoProfile.data.id;
+        let kakaoProfileImgURL = "";
+        let kakaoNickname = "";
+        let kakaoEmail = "";
+        if (kakaoProfile.data.properties != undefined) {
+            if (kakaoProfile.data.properties.profile_image != undefined) {
+                kakaoProfileImgURL = kakaoProfile.data.properties.profile_image
+            }
+            if (kakaoProfile.data.properties.nickname != undefined) {
+                kakaoNickname = kakaoProfile.data.properties.nickname
+            }
+        }
+
+        if (kakaoProfile.data.kakao_account != undefined) {
+            if (kakaoProfile.data.kakao_account.email != undefined) {
+                kakaoEmail = kakaoProfile.data.kakao_account.email
+            }
+        }
 
         // SNS ID로 정보 가져오기
         const userInfo = await userProvider.selectUserInfoBySocialId(kakaoId);
         if (userInfo === undefined) {
-            return errResponse(baseResponse.SIGNIN_NO_EXIST_SOCIAL);
+            const kakaoData = {
+                jwt: "",
+                name: "",
+                nickname: "",
+                phoneNumber: "",
+                snsId: kakaoId,
+                snsProfileImgURL: kakaoProfileImgURL,
+                snsNickname: kakaoNickname,
+                snsEmail: kakaoEmail
+            }
+            return response(baseResponse.SIGNIN_NO_EXIST_SOCIAL, kakaoData);
         }
 
         //토큰 생성 Service
@@ -149,7 +178,11 @@ exports.postSocialLogin = async function (token) {
             jwt: token,
             name: userInfo.name,
             nickname: userInfo.nickname,
-            phoneNumber: userInfo.phoneNumber
+            phoneNumber: userInfo.phoneNumber,
+            snsId: kakaoId,
+            snsProfileImgURL: kakaoProfileImgURL,
+            snsNickname: kakaoNickname,
+            snsEmail: kakaoEmail
         }
         return response(baseResponse.SUCCESS, data);
 
