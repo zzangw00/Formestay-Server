@@ -128,8 +128,8 @@ exports.postSignIn = async function (email, password) {
 };
 
 exports.postSocialLogin = async function (token) {
+    let accessToken = token
     try {
-        let accessToken = "Z5h4KnGSKXjUqtHfJeNCGeeR8qnNdpK9jTLthwopb1UAAAF8v4BlXA"
         let kakaoProfile = await axios.request({
             method: 'GET',
             url: 'https://kapi.kakao.com/v2/user/me',
@@ -137,7 +137,6 @@ exports.postSocialLogin = async function (token) {
 
         });
 
-        console.log(kakaoProfile);
         let kakaoId = kakaoProfile.data.id;
         let kakaoProfileImgURL = "";
         let kakaoNickname = "";

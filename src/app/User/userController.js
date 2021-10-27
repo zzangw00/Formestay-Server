@@ -183,7 +183,10 @@ exports.login = async function (req, res) {
  * body : email, passsword
  */
 exports.socialLogin = async function (req, res) {
-    const {token} = req.body;
+    const token = req.body.token;
+
+    if (!token)
+        return res.send(errResponse(baseResponse.SIGNIN_ACCESS_TOKEN_EMPTY));
 
     const socialLoginResponse = await userService.postSocialLogin(token);
     return res.send(socialLoginResponse);

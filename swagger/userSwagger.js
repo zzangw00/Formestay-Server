@@ -275,4 +275,35 @@
  *
  *        2024:
  *          description: 비밀번호가 일치하지 않습니다.
+ *
+ * /app/social-login:
+ *  post:
+ *      tags:
+ *      - users
+ *      description: 소셜 로그인 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: body
+ *          name: body
+ *          required: true
+ *          schema:
+ *              type: object
+ *              properties:
+ *                  token:
+ *                      type: string
+ *                      required: true
+ *                      description: 카카오 엑세스 토큰
+ *                      example: Z5h4KnGSKXjUqtHfJeNCGeeR8qnNdpK9jTLthwopb1UAAAF8v4BlXA
+ *
+ *      responses:
+ *        1000:
+ *          description: 성공
+ *
+ *        2026:
+ *          description: 존재하지 않는 회원입니다.
+ *
+ *        2027:
+ *          description: 엑세스 토큰이 없습니다.
+ *
  */
