@@ -101,7 +101,7 @@ exports.postUsersCheck = async function (req, res) {
  * body : name, nickname, gender, birthday, phoneNumber, email, passsword, confirmPassword, isPermitAlarm
  */
 exports.postUsers = async function (req, res) {
-    const {name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm} = req.body;
+    const {name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
 
     if (!name)
         return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
@@ -132,7 +132,7 @@ exports.postUsers = async function (req, res) {
     if (isPermitAlarm != 0 && isPermitAlarm != 1)
         return res.send(response(baseResponse.SIGNUP_ALARM_ERROR_TYPE));
 
-    const signUpResult = await userService.createUser(name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm)
+    const signUpResult = await userService.createUser(name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL)
 
     return res.send(signUpResult);
 };

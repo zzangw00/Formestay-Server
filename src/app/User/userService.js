@@ -13,7 +13,7 @@ const axios = require('axios')
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm) {
+exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
     try {
 
         const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
@@ -30,7 +30,7 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
         const userHashedPassword = securityData.hashedPassword;
         const userSalt = securityData.salt;
 
-        const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm];
+
 
         // Transaction 예제
         // 회원가입 동시에 Level 테이블에도 컬럼 추가
@@ -38,8 +38,19 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
         try {
             await connection.beginTransaction(); // START TRANSACTION
 
+            let userIdResult
             // UserInfo 테이블에 데이터 추가
-            const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+            if (snsId == undefined) {
+                const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm];
+                userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+            } else {
+                if (profileImgURL == undefined) {
+                    profileImgURL = ""
+                }
+                const insertSNSUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
+                userIdResult = await userDao.insertSNSUserInfo(connection, insertSNSUserInfoParams);
+            }
+
             const userId = userIdResult[0].insertId;
 
             await connection.commit(); // COMMIT

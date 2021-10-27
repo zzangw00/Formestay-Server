@@ -79,6 +79,20 @@ async function insertUserInfo(connection, insertUserInfoParams) {
     return insertUserInfoRow;
 }
 
+// SNS 유저 생성
+async function insertSNSUserInfo(connection, insertSNSUserInfoParams) {
+    const insertSNSUserInfoQuery = `
+        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm, snsId, profileImgURL)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+    const insertSNSUserInfoRow = await connection.query(
+        insertSNSUserInfoQuery,
+        insertSNSUserInfoParams
+    );
+
+    return insertSNSUserInfoRow;
+}
+
 // UserSalt 테이블 컬럼 추가
 async function insertUserSalt(connection, insertUserSaltParams) {
     const insertUserSaltQuery = `
@@ -197,6 +211,7 @@ module.exports = {
     selectUserId,
     selectUserNickname,
     insertUserInfo,
+    insertSNSUserInfo,
     insertUserSalt,
     insertUserLevel,
     selectUserPassword,
