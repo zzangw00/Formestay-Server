@@ -192,6 +192,22 @@ exports.socialLogin = async function (req, res) {
     return res.send(socialLoginResponse);
 };
 
+/** 이메일 찾기 API
+ * [POST] /app/users/email-find
+ * body : email, passsword
+ */
+exports.findUserEmail = async function (req, res) {
+    const phoneNumber = req.body.phoneNumber;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+
+    const findEmailResponse = await userService.postFindEmail(phoneNumber);
+    return res.send(findEmailResponse);
+};
+
 /** 회원 상태 수정 API
  * [PATCH] /app/users/:userId/status
  * body : status

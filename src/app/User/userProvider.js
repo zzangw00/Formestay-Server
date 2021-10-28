@@ -41,8 +41,13 @@ exports.selectUserInfoBySocialId = async function (kakaoId) {
     return result[0];
 };
 
+exports.selectUsersEmailByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUsersEmailByPhoneNumber(connection, phoneNumber);
 
-
+    connection.release();
+    return result;
+};
 
 exports.retrieveUserList = async function (email) {
     if (!email) {

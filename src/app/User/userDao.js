@@ -93,6 +93,18 @@ async function insertSNSUserInfo(connection, insertSNSUserInfoParams) {
     return insertSNSUserInfoRow;
 }
 
+// SNS 유저 생성
+async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
+    const selectUsersEmailByPhoneNumberQuery = `
+        SELECT email
+        FROM UserInfo
+        WHERE phoneNumber = ? and status = "ACTIVE";
+    `;
+
+    const [selectUsersEmailByPhoneNumberRows] = await connection.query(selectUsersEmailByPhoneNumberQuery, phoneNumber);
+    return selectUsersEmailByPhoneNumberRows;
+}
+
 // UserSalt 테이블 컬럼 추가
 async function insertUserSalt(connection, insertUserSaltParams) {
     const insertUserSaltQuery = `
@@ -214,6 +226,7 @@ module.exports = {
     insertSNSUserInfo,
     insertUserSalt,
     insertUserLevel,
+    selectUsersEmailByPhoneNumber,
     selectUserPassword,
     selectUserAccount,
     selectUserInfoByEmail,

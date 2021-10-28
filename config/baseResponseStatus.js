@@ -37,6 +37,7 @@ module.exports = {
     SIGNIN_USERINFO_WRONG : { "isSuccess": false, "code": 2024, "message":"비밀번호가 일치하지 않습니다." },
     SIGNIN_SOCIAL_ERROR_TYPE : { "isSuccess": false, "code": 2025, "message":"카카오 액세스 토큰이 올바르지 않습니다." },
     SIGNIN_NO_EXIST_SOCIAL : { "isSuccess": false, "code": 2026, "message":"존재하지 않는 회원입니다." },
+    FIND_NO_EXIST_EMAIL : { "isSuccess": false, "code": 2028, "message":"이메일이 존재하지 않습니다." },
 
 
  

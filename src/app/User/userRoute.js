@@ -20,6 +20,9 @@ module.exports = function (app) {
     // 소셜 로그인 하기 API
     app.route('/app/social-login').post(user.socialLogin);
 
+    // 아이디 찾기 API
+    app.route('/app/users/email-find').post(user.findUserEmail);
+
     //회원 정보 수정 API
     app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 

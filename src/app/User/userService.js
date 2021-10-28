@@ -202,6 +202,31 @@ exports.postSocialLogin = async function (token) {
     }
 };
 
+
+exports.postFindEmail = async function (phoneNumber) {
+
+    try {
+        const userEmails = await userProvider.selectUsersEmailByPhoneNumber(phoneNumber);
+
+        if (userEmails.length == 0) {
+            return errResponse(baseResponse.FIND_NO_EXIST_EMAIL);
+        } else {
+            let emailList = []
+            for (let value of userEmails ) {
+                emailList.push(value.email)
+            }
+            const data = {
+                emails: emailList
+            }
+            return response(baseResponse.SUCCESS, data);
+        }
+
+    } catch (err) {
+        logger.error(`App - postFindEmail Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
 exports.editUser = async function (userIdx, nickname) {
     try {
         console.log(userIdx)
