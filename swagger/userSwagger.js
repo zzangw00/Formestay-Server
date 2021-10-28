@@ -300,4 +300,37 @@
  *        2027:
  *          description: 엑세스 토큰이 없습니다.
  *
+ * /app/users/email-find:
+ *  post:
+ *      tags:
+ *      - users
+ *      description: 이메일 찾기 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: body
+ *          name: body
+ *          required: true
+ *          schema:
+ *              type: object
+ *              properties:
+ *                  phoneNumber:
+ *                      type: string
+ *                      required: true
+ *                      description: 핸드폰 번호
+ *                      example: 01022237869
+ *
+ *      responses:
+ *        1000:
+ *          description: 성공
+ *
+ *        2006:
+ *          description: 핸드폰 번호를 선택해주세요.
+ *
+ *        2007:
+ *          description: 핸드폰 번호을 정확하게 입력해주세요.
+ *
+ *        2028:
+ *          description: 이메일이 존재하지 않습니다.
+ *
  */
