@@ -96,7 +96,7 @@ async function insertSNSUserInfo(connection, insertSNSUserInfoParams) {
 // SNS 유저 생성
 async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
     const selectUsersEmailByPhoneNumberQuery = `
-        SELECT email
+        SELECT email, snsId, date_format(createdAt, "%Y-%m-%d") as createdAt
         FROM UserInfo
         WHERE phoneNumber = ? and status = "ACTIVE";
     `;

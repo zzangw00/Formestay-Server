@@ -15,11 +15,6 @@ const axios = require('axios')
 
 exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
     try {
-
-        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
-        if (isExistPhoneNumber === 1) {
-            return errResponse(baseResponse.EXIST_PHONE_NUMBER);
-        }
         const isExistEmail = await userProvider.retrieveUserByEmail(email);
         if (isExistEmail === 1) {
             return errResponse(baseResponse.EXIST_EMAIL);
@@ -206,17 +201,13 @@ exports.postSocialLogin = async function (token) {
 exports.postFindEmail = async function (phoneNumber) {
 
     try {
-        const userEmails = await userProvider.selectUsersEmailByPhoneNumber(phoneNumber);
+        const userEmailInfos = await userProvider.selectUsersEmailByPhoneNumber(phoneNumber);
 
-        if (userEmails.length == 0) {
+        if (userEmailInfos.length == 0) {
             return errResponse(baseResponse.FIND_NO_EXIST_EMAIL);
         } else {
-            let emailList = []
-            for (let value of userEmails ) {
-                emailList.push(value.email)
-            }
             const data = {
-                emails: emailList
+                userInfo: userEmailInfos
             }
             return response(baseResponse.SUCCESS, data);
         }

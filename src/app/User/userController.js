@@ -84,10 +84,6 @@ exports.postUsersCheck = async function (req, res) {
     if (password !== confirmPassword)
         return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
 
-    const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
-    if (isExistPhoneNumber === 1) {
-        return res.send(response(baseResponse.EXIST_PHONE_NUMBER));
-    }
     const isExistEmail = await userProvider.retrieveUserByEmail(email);
     if (isExistEmail === 1) {
         return res.send(response(baseResponse.EXIST_EMAIL));
