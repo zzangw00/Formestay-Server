@@ -39,7 +39,6 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
             userSalt = "NONE";
         }
 
-
         // Transaction 예제
         // 회원가입 동시에 Level 테이블에도 컬럼 추가
         const connection = await pool.getConnection(async (conn) => conn);

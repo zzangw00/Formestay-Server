@@ -166,7 +166,7 @@
  *                      example: cookie-god@softsquared.com
  *                  password:
  *                      type: string
- *                      required: true
+ *                      required: false
  *                      description: 비밀번호
  *                      example: cookie7869
  *                  isPermitAlarm:
@@ -227,6 +227,9 @@
  *
  *        2013:
  *          description: 비밀번호 형식을 정확하게 입력해주세요.
+ *
+ *        2016:
+ *          description: 이미 존재하는 핸드폰 번호입니다.
  *
  *        2017:
  *          description: 이미 존재하는 이메일입니다.
