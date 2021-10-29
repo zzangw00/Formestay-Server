@@ -15,16 +15,21 @@ const axios = require('axios')
 
 exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
     try {
+        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+        if (isExistPhoneNumber === 1) {
+            return errResponse(baseResponse.EXIST_PHONE_NUMBER);
+        }
+
         const isExistEmail = await userProvider.retrieveUserByEmail(email);
         if (isExistEmail === 1) {
             return errResponse(baseResponse.EXIST_EMAIL);
         }
 
         // 비밀번호 암호화
-
         let securityData
         let userHashedPassword
         let userSalt
+
         if (snsId == 0) {
             securityData = security.saltHashPassword(password);
             userHashedPassword = securityData.hashedPassword;
