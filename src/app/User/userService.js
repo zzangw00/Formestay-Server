@@ -21,10 +21,18 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
         }
 
         // 비밀번호 암호화
-        const securityData = security.saltHashPassword(password);
-        const userHashedPassword = securityData.hashedPassword;
-        const userSalt = securityData.salt;
 
+        let securityData
+        let userHashedPassword
+        let userSalt
+        if (snsId == 0) {
+            securityData = security.saltHashPassword(password);
+            userHashedPassword = securityData.hashedPassword;
+            userSalt = securityData.salt;
+        } else {
+            userHashedPassword = "NONE";
+            userSalt = "NONE";
+        }
 
 
         // Transaction 예제
@@ -33,18 +41,9 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
         try {
             await connection.beginTransaction(); // START TRANSACTION
 
-            let userIdResult
             // UserInfo 테이블에 데이터 추가
-            if (snsId == undefined) {
-                const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm];
-                userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-            } else {
-                if (profileImgURL == undefined) {
-                    profileImgURL = ""
-                }
-                const insertSNSUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
-                userIdResult = await userDao.insertSNSUserInfo(connection, insertSNSUserInfoParams);
-            }
+            const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
+            const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
 
             const userId = userIdResult[0].insertId;
 

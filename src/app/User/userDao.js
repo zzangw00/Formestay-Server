@@ -79,8 +79,8 @@ async function selectUserNickname(connection, nickname) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm, snsId, profileImgURL)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertUserInfoRow = await connection.query(
         insertUserInfoQuery,
@@ -88,20 +88,6 @@ async function insertUserInfo(connection, insertUserInfoParams) {
     );
 
     return insertUserInfoRow;
-}
-
-// SNS 유저 생성
-async function insertSNSUserInfo(connection, insertSNSUserInfoParams) {
-    const insertSNSUserInfoQuery = `
-        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm, snsId, profileImgURL)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    `;
-    const insertSNSUserInfoRow = await connection.query(
-        insertSNSUserInfoQuery,
-        insertSNSUserInfoParams
-    );
-
-    return insertSNSUserInfoRow;
 }
 
 // SNS 유저 생성
@@ -235,7 +221,6 @@ module.exports = {
     selectUserId,
     selectUserNickname,
     insertUserInfo,
-    insertSNSUserInfo,
     insertUserSalt,
     insertUserLevel,
     selectUsersEmailByPhoneNumber,

@@ -111,7 +111,7 @@ exports.postUsersCheck = async function (req, res) {
  * body : name, nickname, gender, birthday, phoneNumber, email, passsword, confirmPassword, isPermitAlarm
  */
 exports.postUsers = async function (req, res) {
-    const {name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
+    let {name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
 
     if (!name)
         return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
@@ -135,14 +135,28 @@ exports.postUsers = async function (req, res) {
         return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
     if (!regex.emailRegex.test(email))
         return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-    if (!password)
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
-    if (!regex.passwordRegex.test(password))
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
-    if (isPermitAlarm != 0 && isPermitAlarm != 1)
+    if (snsId == undefined) {
+        if (!password)
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(password))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        snsId = 0;
+        profileImgURL = null;
+    } else {
+        if (profileImgURL != undefined) {
+            if (profileImgURL.length == 0) {
+                profileImgURL = null;
+            }
+        } else {
+            profileImgURL = null;
+        }
+    }
+
+    if (isPermitAlarm != 1 && isPermitAlarm != 2)
         return res.send(response(baseResponse.SIGNUP_ALARM_ERROR_TYPE));
 
     const signUpResult = await userService.createUser(name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL)
+
 
     return res.send(signUpResult);
 };
