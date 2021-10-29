@@ -27,6 +27,7 @@ module.exports = {
     EXIST_EMAIL : { "isSuccess": false, "code": 2017, "message":"이미 존재하는 이메일입니다." },
     SIGNUP_ALARM_ERROR_TYPE : { "isSuccess": false, "code": 2018, "message":"푸시알람 입력 형식을 정확하게 입력해주세요." },
     SIGNIN_ACCESS_TOKEN_EMPTY : { "isSuccess": false, "code": 2027, "message":"엑세스 토큰이 없습니다." },
+    EXIST_SNS_ID : { "isSuccess": false, "code": 2029, "message":"이미 소셜 아이디가 존재합니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

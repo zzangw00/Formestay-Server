@@ -49,7 +49,7 @@ exports.getUserById = async function (req, res) {
  * body : name, nickname, gender, birthday, phoneNumber, email, passsword, confirmPassword
  */
 exports.postUsersCheck = async function (req, res) {
-    const {name, nickname, gender, birthday, phoneNumber, email, password, confirmPassword} = req.body;
+    const {name, nickname, gender, birthday, phoneNumber, email, password, confirmPassword, snsId} = req.body;
 
     if (!name)
         return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
@@ -73,16 +73,30 @@ exports.postUsersCheck = async function (req, res) {
         return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
     if (!regex.emailRegex.test(email))
         return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-    if (!password)
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
-    if (!regex.passwordRegex.test(password))
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
-    if (!confirmPassword)
-        return res.send(response(baseResponse.SIGNUP_CONFIRM_PASSWORD_EMPTY));
-    if (!regex.passwordRegex.test(confirmPassword))
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
-    if (password !== confirmPassword)
-        return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
+    if (password != undefined && confirmPassword != undefined) {
+        if (!password)
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(password))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        if (!confirmPassword)
+            return res.send(response(baseResponse.SIGNUP_CONFIRM_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(confirmPassword))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        if (password !== confirmPassword)
+            return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
+    }
+
+    if (snsId != undefined) {
+        const isExistSNSId = await userProvider.retrieveUserBySNSId(snsId);
+        if (isExistSNSId === 1) {
+            return res.send(response(baseResponse.EXIST_SNS_ID));
+        }
+    }
+
+    const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+    if (isExistPhoneNumber === 1) {
+        return res.send(response(baseResponse.EXIST_PHONE_NUMBER));
+    }
 
     const isExistEmail = await userProvider.retrieveUserByEmail(email);
     if (isExistEmail === 1) {

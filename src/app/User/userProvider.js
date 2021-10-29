@@ -14,6 +14,16 @@ exports.retrieveUserByPhoneNumber = async function (phoneNumber) {
     return result[0].CNT;
 };
 
+
+exports.retrieveUserBySNSId = async function (snsId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserBySNSId(connection, snsId);
+
+    connection.release();
+
+    return result[0].CNT;
+};
+
 exports.retrieveUserByEmail = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await userDao.isExistUserByEmail(connection, email);

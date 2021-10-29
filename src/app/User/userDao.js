@@ -10,6 +10,17 @@ async function selectUser(connection) {
     return userRows;
 }
 
+// 유저 snsId 체크
+async function isExistUserBySNSId(connection, snsId) {
+    const isExistUserBySNSIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM UserInfo
+        WHERE snsId = ? and status = "ACTIVE";
+    `;
+    const [isExistUserBySNSIdRows] = await connection.query(isExistUserBySNSIdQuery, snsId);
+    return isExistUserBySNSIdRows;
+}
+
 // 유저 핸드폰 번호 존재 체크
 async function isExistUserByPhoneNumber(connection, phoneNumber) {
     const isExistUserByPhoneNumberQuery = `
@@ -219,6 +230,7 @@ module.exports = {
     isExistUserByPhoneNumber,
     isExistUserByEmail,
     selectUserEmail,
+    isExistUserBySNSId,
     selectUserInfoBySocialId,
     selectUserId,
     selectUserNickname,
