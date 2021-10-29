@@ -210,7 +210,7 @@ exports.postFindEmail = async function (phoneNumber) {
             return errResponse(baseResponse.FIND_NO_EXIST_EMAIL);
         } else {
             const data = {
-                userInfo: userEmailInfos
+                userInfo: userEmailInfos[0]
             }
             return response(baseResponse.SUCCESS, data);
         }

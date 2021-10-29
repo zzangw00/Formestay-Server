@@ -23,9 +23,6 @@ module.exports = function (app) {
     // 아이디 찾기 API
     app.route('/app/users/email-find').post(user.findUserEmail);
 
-    // 아이디 찾기 API
-    app.route('/app/users/email-find').post(user.findUserEmail);
-
     //회원 정보 수정 API
     app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 
