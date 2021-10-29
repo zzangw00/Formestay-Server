@@ -1,15 +1,5 @@
 const {pool} = require("../../../config/database");
 
-// 모든 유저 조회
-async function selectUser(connection) {
-    const selectUserListQuery = `
-        SELECT email, nickname
-        FROM UserInfo;
-    `;
-    const [userRows] = await connection.query(selectUserListQuery);
-    return userRows;
-}
-
 // 유저 snsId 체크
 async function isExistUserBySNSId(connection, snsId) {
     const isExistUserBySNSIdQuery = `
@@ -41,17 +31,6 @@ async function isExistUserByEmail(connection, email) {
     `;
     const [isExistUserByEmailRows] = await connection.query(isExistUserByEmailQuery, email);
     return isExistUserByEmailRows;
-}
-
-// 이메일로 회원 조회
-async function selectUserEmail(connection, email) {
-    const selectUserEmailQuery = `
-        SELECT userIdx, email, nickname
-        FROM UserInfo
-        WHERE email = ?;
-    `;
-    const [emailRows] = await connection.query(selectUserEmailQuery, email);
-    return emailRows;
 }
 
 // userId 회원 조회
@@ -93,9 +72,9 @@ async function insertUserInfo(connection, insertUserInfoParams) {
 // SNS 유저 생성
 async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
     const selectUsersEmailByPhoneNumberQuery = `
-        SELECT email, snsId, date_format(createdAt, "%Y-%m-%d") as createdAt
+        SELECT email, date_format(createdAt, "%Y-%m-%d") as createdAt
         FROM UserInfo
-        WHERE phoneNumber = ? and status = "ACTIVE";
+        WHERE phoneNumber = ? and snsId = 0 and status = "ACTIVE";
     `;
 
     const [selectUsersEmailByPhoneNumberRows] = await connection.query(selectUsersEmailByPhoneNumberQuery, phoneNumber);
@@ -176,6 +155,15 @@ async function selectUserInfoBySocialId(connection, kakaoId) {
     return selectUserInfoBySocialIdRows[0];
 }
 
+async function SelectUserByUserId(connection, userId) {
+    const SelectUserByUserIdQuery = `
+        SELECT userId, name, nickname, phoneNumber
+        FROM UserInfo
+        WHERE userId = ? and status = "ACTIVE";`;
+    const [SelectUserByUserIdRows] = await connection.query(SelectUserByUserIdQuery, userId);
+    return SelectUserByUserIdRows;
+}
+
 async function updateUserInfo(connection, userIdx, nickname) {
     const updateUserQuery = `
         UPDATE UserInfo
@@ -212,14 +200,13 @@ async function selectUserHashedPasswordAndSalt(connection, userIdx) {
 
 
 module.exports = {
-    selectUser,
     isExistUserByPhoneNumber,
     isExistUserByEmail,
-    selectUserEmail,
     isExistUserBySNSId,
     selectUserInfoBySocialId,
     selectUserId,
     selectUserNickname,
+    SelectUserByUserId,
     insertUserInfo,
     insertUserSalt,
     insertUserLevel,

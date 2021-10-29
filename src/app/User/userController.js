@@ -6,43 +6,6 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {emit} = require("nodemon");
 const regex = require("../../../config/regularExpress")
-const axios = require('axios')
-
-/** 회원 전체 조회 API
- * [GET] /app/users
- *
- * 회원 이메일 검색 조회 API
- * [GET] /app/users?word=
- * queryString : word
- */
-exports.getUsers = async function (req, res) {
-    const email = req.query.word;
-    if (!email) {
-        const userListResult = await userProvider.retrieveUserList();
-        return res.send(res.send(response(baseResponse.SUCCESS, userListResult)));
-    } else {
-        const userListByEmail = await userProvider.retrieveUserList(email);
-        return res.send(res.send(response(baseResponse.SUCCESS, userListByEmail)));
-    }
-};
-
-/** 회원 조회 API
- * [GET] /app/users/:userIdx
- * pathVariable : userIdx
- */
-exports.getUserById = async function (req, res) {
-
-    const userIdToToken = req.verifiedToken.userInfo
-    const userIdx = req.params.userIdx;
-
-    if (userIdToToken != userIdx) {
-        // res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
-    } else {
-        if (!userIdx) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
-        const userByUserIdx = await userProvider.retrieveUser(userIdx);
-        return res.send(res.send(response(baseResponse.SUCCESS, userByUserIdx)));
-    }
-};
 
 /** 회원가입전 유효성 검증 API
  * [POST] /app/users
@@ -159,6 +122,23 @@ exports.postUsers = async function (req, res) {
 
 
     return res.send(signUpResult);
+};
+
+/** 자동 로그인 API
+ * [GET] /app/users/auto-login
+ */
+exports.autoLogin = async function (req, res) {
+    const userIdToToken = req.verifiedToken.userInfo
+
+    const userInfo = await userProvider.retrieveUserInfoByUserId(userIdToToken);
+
+    if (userInfo == undefined) {
+        return res.send(errResponse(baseResponse.FIND_NO_EXIST_USER));
+    }
+
+    const loginData = await userService.makeJWT(userInfo);
+
+    return res.send(response(baseResponse.SUCCESS, loginData));
 };
 
 /** 회원 정보 수정 API

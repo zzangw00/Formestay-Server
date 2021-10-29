@@ -347,4 +347,29 @@
  *        2028:
  *          description: 이메일이 존재하지 않습니다.
  *
+ * /app/auto-login:
+ *  get:
+ *      tags:
+ *      - users
+ *      description: 이메일 찾기 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: header
+ *          name: x-access-token
+ *          required: true
+ *
+ *      responses:
+ *        1000:
+ *          description: 성공
+ *
+ *        2000:
+ *          description: JWT 토큰이 입력되지 않았습니다.
+ *
+ *        2030:
+ *          description: 존재하지 않는 회원입니다.
+ *
+ *        3000:
+ *          description: JWT 토큰 검증 실패했습니다.
+ *
  */

@@ -200,6 +200,34 @@ exports.postSocialLogin = async function (token) {
     }
 };
 
+exports.makeJWT = async function (userInfo) {
+    try {
+        //토큰 생성 Service
+        let token = await jwt.sign(
+            {
+                userInfo: userInfo.userId,
+            }, // 토큰의 내용(payload)
+            secret_config.jwtsecret, // 비밀 키
+            {
+                expiresIn: "30d",
+                subject: "userInfo",
+            } // 유효 시간은 30일
+        );
+
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber,
+        }
+
+        return data;
+
+    } catch (err) {
+        logger.error(`App - postSocialLogin Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
 
 exports.postFindEmail = async function (phoneNumber) {
 

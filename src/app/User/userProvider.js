@@ -14,7 +14,6 @@ exports.retrieveUserByPhoneNumber = async function (phoneNumber) {
     return result[0].CNT;
 };
 
-
 exports.retrieveUserBySNSId = async function (snsId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await userDao.isExistUserBySNSId(connection, snsId);
@@ -51,29 +50,21 @@ exports.selectUserInfoBySocialId = async function (kakaoId) {
     return result[0];
 };
 
+exports.retrieveUserInfoByUserId = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.SelectUserByUserId(connection, userId);
+
+    connection.release();
+
+    return result[0];
+};
+
 exports.selectUsersEmailByPhoneNumber = async function (phoneNumber) {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await userDao.selectUsersEmailByPhoneNumber(connection, phoneNumber);
 
     connection.release();
     return result;
-};
-
-exports.retrieveUserList = async function (email) {
-    if (!email) {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await userDao.selectUser(connection);
-        connection.release();
-
-        return userListResult;
-
-    } else {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await userDao.selectUserEmail(connection, email);
-        connection.release();
-
-        return userListResult;
-    }
 };
 
 exports.retrieveUser = async function (userIdx) {

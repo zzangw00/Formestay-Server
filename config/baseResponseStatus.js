@@ -4,8 +4,8 @@ module.exports = {
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰이 입력되지 않았습니다." },
-    TOKEN_VERIFICATION_FAILURE : { "isSuccess": false, "code": 3000, "message":"JWT 토큰 검증 실패" },
-    TOKEN_VERIFICATION_SUCCESS : { "isSuccess": true, "code": 1001, "message":"JWT 토큰 검증 성공" },
+    TOKEN_VERIFICATION_FAILURE : { "isSuccess": false, "code": 3000, "message":"JWT 토큰 검증 실패했습니다." },
+    TOKEN_VERIFICATION_SUCCESS : { "isSuccess": true, "code": 1001, "message":"JWT 토큰 검증 성공했습니다." },
 
     //Request error
     SIGNUP_NAME_EMPTY : { "isSuccess": false, "code": 2001, "message":"이름을 입력해주세요." },
@@ -39,6 +39,7 @@ module.exports = {
     SIGNIN_SOCIAL_ERROR_TYPE : { "isSuccess": false, "code": 2025, "message":"카카오 액세스 토큰이 올바르지 않습니다." },
     SIGNIN_NO_EXIST_SOCIAL : { "isSuccess": false, "code": 2026, "message":"존재하지 않는 회원입니다." },
     FIND_NO_EXIST_EMAIL : { "isSuccess": false, "code": 2028, "message":"이메일이 존재하지 않습니다." },
+    FIND_NO_EXIST_USER : { "isSuccess": false, "code": 2030, "message":"존재하지 않는 회원입니다." },
 
 
  
