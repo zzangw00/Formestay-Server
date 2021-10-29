@@ -47,14 +47,19 @@
  *                      example: cookie-god@softsquared.com
  *                  password:
  *                      type: string
- *                      required: true
+ *                      required: false
  *                      description: 비밀번호
  *                      example: cookie7869
  *                  confirmPassword:
  *                      type: string
- *                      required: true
+ *                      required: false
  *                      description: 확인 비밀번호
  *                      example: cookie7869
+ *                  snsId:
+ *                      type: integer
+ *                      required: false
+ *                      description: 소셜아이디
+ *                      example: 1948493973
  *
  *      responses:
  *        1000:
@@ -105,8 +110,14 @@
  *        2015:
  *          description: 비밀번호와 확인 비밀번호가 일치하지 않습니다.
  *
+ *        2016:
+ *          description: 이미 존재하는 핸드폰 번호입니다.
+ *
  *        2017:
  *          description: 이미 존재하는 이메일입니다.
+ *
+ *        20029:
+ *          description: 이미 소셜 아이디가 존재합니다.
  *
  *
  * /app/users:
