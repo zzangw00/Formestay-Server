@@ -9,7 +9,7 @@ const options = {
             description: "즐거운 포미스테이",
         },
         host: '15.165.152.201',
-        basePath: "/"
+        basePath: "/",
     },
     apis: ['./swag/*.js', './swagger/*']
 };

@@ -20,6 +20,9 @@ module.exports = function (app) {
     // 자동 로그인 API
     app.get('/app/auto-login', jwtMiddleware, user.autoLogin);
 
+    // 비밀번호 변경 API
+    app.route('/app/users-password').patch(user.patchUsersPassword);
+
     //회원 정보 수정 API
     app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 

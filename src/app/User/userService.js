@@ -224,7 +224,7 @@ exports.makeJWT = async function (userInfo) {
         return data;
 
     } catch (err) {
-        logger.error(`App - postSocialLogin Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        logger.error(`App - makeJWT Service error\n: ${err.message} \n${JSON.stringify(err)}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };
@@ -232,19 +232,42 @@ exports.makeJWT = async function (userInfo) {
 exports.postFindEmail = async function (phoneNumber) {
 
     try {
-        const userEmailInfos = await userProvider.selectUsersEmailByPhoneNumber(phoneNumber);
+        const userEmailInfos = await userProvider.retrieveUsersEmailByPhoneNumber(phoneNumber);
 
         if (userEmailInfos.length == 0) {
             return errResponse(baseResponse.FIND_NO_EXIST_EMAIL);
         } else {
             const data = {
-                userInfo: userEmailInfos[0]
+                userInfo: userEmailInfos
             }
             return response(baseResponse.SUCCESS, data);
         }
 
     } catch (err) {
         logger.error(`App - postFindEmail Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.editUserPassword = async function (phoneNumber, password) {
+
+    try {
+        const userInfo = await userProvider.retrieveUserIdByPhoneNumber(phoneNumber);
+        if (userInfo == undefined) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        }
+
+        const securityData = security.saltHashPassword(password);
+        const userHashedPassword = securityData.hashedPassword;
+        const userSalt = securityData.salt;
+
+        const connection = await pool.getConnection(async (conn) => conn);
+        await userDao.updateUsersPassword(connection, userInfo.userId, userHashedPassword, userSalt);
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - editUserPassword Service error\n: ${err.message} \n${JSON.stringify(err)}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

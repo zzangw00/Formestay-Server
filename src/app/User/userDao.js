@@ -69,7 +69,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
     return insertUserInfoRow;
 }
 
-// SNS 유저 생성
+// 이메일 찾기
 async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
     const selectUsersEmailByPhoneNumberQuery = `
         SELECT email, date_format(createdAt, "%Y-%m-%d") as createdAt
@@ -79,6 +79,18 @@ async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
 
     const [selectUsersEmailByPhoneNumberRows] = await connection.query(selectUsersEmailByPhoneNumberQuery, phoneNumber);
     return selectUsersEmailByPhoneNumberRows;
+}
+
+// 유저 아이디 찾기 찾기
+async function selectUserIdByPhoneNumber(connection, phoneNumber) {
+    const selectUserIdByPhoneNumberQuery = `
+        SELECT userId
+        FROM UserInfo
+        WHERE phoneNumber = ? and snsId = 0 and status = "ACTIVE";
+    `;
+
+    const [selectUserIdByPhoneNumberRows] = await connection.query(selectUserIdByPhoneNumberQuery, phoneNumber);
+    return selectUserIdByPhoneNumberRows;
 }
 
 // UserSalt 테이블 컬럼 추가
@@ -164,6 +176,16 @@ async function SelectUserByUserId(connection, userId) {
     return SelectUserByUserIdRows;
 }
 
+async function updateUsersPassword(connection, userId, password, salt) {
+    const updateUsersPasswordQuery = `
+        UPDATE UserInfo
+        SET password = ?, salt = ?
+        WHERE userId = ? and status = "ACTIVE";`;
+
+    await connection.query(updateUsersPasswordQuery, [password, salt, userId]);
+}
+
+
 async function updateUserInfo(connection, userIdx, nickname) {
     const updateUserQuery = `
         UPDATE UserInfo
@@ -211,9 +233,11 @@ module.exports = {
     insertUserSalt,
     insertUserLevel,
     selectUsersEmailByPhoneNumber,
+    selectUserIdByPhoneNumber,
     selectUserPassword,
     selectUserAccount,
     selectUserInfoByEmail,
+    updateUsersPassword,
     updateUserInfo,
     updateUserStatus,
     selectUserHashedPasswordAndSalt,

@@ -141,6 +141,34 @@ exports.autoLogin = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, loginData));
 };
 
+/** 비밀번호 수정 API
+ * [PATCH] /app/users-password
+ * body : phoneNumber
+ */
+exports.patchUsersPassword = async function (req, res) {
+
+    const {phoneNumber, password, confirmPassword} = req.body;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+    if (!password)
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(password))
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+    if (!confirmPassword)
+        return res.send(response(baseResponse.SIGNUP_CONFIRM_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(confirmPassword))
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+    if (password !== confirmPassword)
+        return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
+
+    const editUsersPassword = await userService.editUserPassword(phoneNumber, password);
+
+    return res.send(editUsersPassword);
+};
+
 /** 회원 정보 수정 API
  * [PATCH] /app/users/:userIdx
  * pathVariable : userIdx

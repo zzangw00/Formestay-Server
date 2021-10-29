@@ -59,12 +59,20 @@ exports.retrieveUserInfoByUserId = async function (userId) {
     return result[0];
 };
 
-exports.selectUsersEmailByPhoneNumber = async function (phoneNumber) {
+exports.retrieveUserIdByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserIdByPhoneNumber(connection, phoneNumber);
+
+    connection.release();
+    return result[0];
+};
+
+exports.retrieveUsersEmailByPhoneNumber = async function (phoneNumber) {
     const connection = await pool.getConnection(async (conn) => conn);
     const result = await userDao.selectUsersEmailByPhoneNumber(connection, phoneNumber);
 
     connection.release();
-    return result;
+    return result[0];
 };
 
 exports.retrieveUser = async function (userIdx) {
