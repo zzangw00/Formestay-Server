@@ -23,6 +23,9 @@ module.exports = function (app) {
     // 비밀번호 변경 API
     app.route('/app/users-password').patch(user.patchUsersPassword);
 
+    // 비밀번호 변경전 유저 검증 API
+    app.route('/app/users-password').post(user.findUserPhoneNumber);
+
     //회원 정보 수정 API
     app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 

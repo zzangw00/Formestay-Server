@@ -249,6 +249,22 @@ exports.postFindEmail = async function (phoneNumber) {
     }
 };
 
+exports.postFindPhoneNumber = async function (phoneNumber) {
+
+    try {
+        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+        if (isExistPhoneNumber === 0) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        } else {
+            return response(baseResponse.SUCCESS);
+        }
+
+    } catch (err) {
+        logger.error(`App - postFindPhoneNumber Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
 exports.editUserPassword = async function (phoneNumber, password) {
 
     try {

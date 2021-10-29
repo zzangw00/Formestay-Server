@@ -226,7 +226,7 @@ exports.socialLogin = async function (req, res) {
 
 /** 이메일 찾기 API
  * [POST] /app/users/email-find
- * body : email, passsword
+ * body : phoneNumber
  */
 exports.findUserEmail = async function (req, res) {
     const phoneNumber = req.body.phoneNumber;
@@ -238,6 +238,22 @@ exports.findUserEmail = async function (req, res) {
 
     const findEmailResponse = await userService.postFindEmail(phoneNumber);
     return res.send(findEmailResponse);
+};
+
+/** 비밀번호 변경전 유저 검증 API
+ * [POST] /app/users-password
+ * body : phoneNumber
+ */
+exports.findUserPhoneNumber = async function (req, res) {
+    const phoneNumber = req.body.phoneNumber;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+
+    const findPhoneNumberResponse = await userService.postFindPhoneNumber(phoneNumber);
+    return res.send(findPhoneNumberResponse);
 };
 
 /** 회원 상태 수정 API
