@@ -372,4 +372,60 @@
  *        3000:
  *          description: JWT 토큰 검증 실패했습니다.
  *
+ * /app/users-password:
+ *  patch:
+ *      tags:
+ *      - users
+ *      description: 비밀번호 변경 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: body
+ *          name: body
+ *          required: true
+ *          schema:
+ *              type: object
+ *              properties:
+ *                  phoneNumber:
+ *                      type: string
+ *                      required: true
+ *                      description: 핸드폰 번호
+ *                      example: 01012341234
+ *                  password:
+ *                      type: string
+ *                      required: true
+ *                      description: 비밀번호
+ *                      example: cookie7869
+ *
+ *                  confirmPassword:
+ *                      type: string
+ *                      required: true
+ *                      description: 확인 비밀번호
+ *                      example: cookie7869
+ *
+ *      responses:
+ *        1000:
+ *          description: 성공
+ *
+ *        2006:
+ *          description: 핸드폰 번호를 선택해주세요.
+ *
+ *        2007:
+ *          description: 핸드폰 번호을 정확하게 입력해주세요.
+ *
+ *        2012:
+ *          description: 비밀번호를 입력 해주세요.
+ *
+ *        2013:
+ *          description: 비밀번호 형식을 정확하게 입력해주세요.
+ *
+ *        2014:
+ *          description: 확인 비밀번호를 입력 해주세요.
+ *
+ *        2015:
+ *          description: 비밀번호와 확인 비밀번호가 일치하지 않습니다.
+ *
+ *        2030:
+ *          description: 존재하지 않는 회원입니다.
+ *
  */
