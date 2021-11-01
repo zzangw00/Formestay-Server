@@ -9,30 +9,35 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {connect} = require("http2");
 const security = require("../../../utils/security");
+const axios = require('axios')
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createUser = async function (email, password, nickname) {
+exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
     try {
-        // 이메일 중복 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length > 0) return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
+        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+        if (isExistPhoneNumber === 1) {
+            return errResponse(baseResponse.EXIST_PHONE_NUMBER);
+        }
 
-        // 닉네임 중복 확인
-        const nicknameRows = await userProvider.nicknameCheck(nickname);
-        console.log(nicknameRows)
-        if (nicknameRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+        const isExistEmail = await userProvider.retrieveUserByEmail(email);
+        if (isExistEmail === 1) {
+            return errResponse(baseResponse.EXIST_EMAIL);
+        }
 
         // 비밀번호 암호화
-        // TODO: 비밀번호 Hashing 로직 추가
-        const securityData = security.saltHashPassword(password);
+        let securityData
+        let userHashedPassword
+        let userSalt
 
-        const userHashedPassword = securityData.hashedPassword;
-        const userSalt = securityData.salt;
-
-        // TODO: hashedPassword, salt 모두 집어넣기
-        const insertUserInfoParams = [email, userHashedPassword, nickname];
+        if (snsId == 0) {
+            securityData = security.saltHashPassword(password);
+            userHashedPassword = securityData.hashedPassword;
+            userSalt = securityData.salt;
+        } else {
+            userHashedPassword = "NONE";
+            userSalt = "NONE";
+        }
 
         // Transaction 예제
         // 회원가입 동시에 Level 테이블에도 컬럼 추가
@@ -40,23 +45,34 @@ exports.createUser = async function (email, password, nickname) {
         try {
             await connection.beginTransaction(); // START TRANSACTION
 
-            // 1) UserInfo 테이블에 데이터 추가
+            // UserInfo 테이블에 데이터 추가
+            const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
             const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-            const userIdx = userIdResult[0].insertId;
 
-            console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
-
-            // 2) UserSalt 테이블에 데이터 추가
-            const insertUserSaltParams = [userIdx, userSalt];
-            await userDao.insertUserSalt(connection, insertUserSaltParams);
-
-            // 3) Level 테이블 추가
-            // await userDao.insertUserLevel(connection, userIdResult[0].insertId);
-
+            const userId = userIdResult[0].insertId;
 
             await connection.commit(); // COMMIT
             connection.release();
-            return response(baseResponse.SUCCESS);
+
+            //토큰 생성 Service
+            let token = await jwt.sign(
+                {
+                    userInfo: userId,
+                }, // 토큰의 내용(payload)
+                secret_config.jwtsecret, // 비밀 키
+                {
+                    expiresIn: "30d",
+                    subject: "userInfo",
+                } // 유효 시간은 30일
+            );
+
+            const data = {
+                jwt: token,
+                name: name,
+                nickname: nickname,
+                phoneNumber: phoneNumber
+            }
+            return response(baseResponse.SUCCESS, data);
 
         } catch (err) {
             connection.rollback(); //ROLLBACK
@@ -73,48 +89,201 @@ exports.createUser = async function (email, password, nickname) {
 exports.postSignIn = async function (email, password) {
     try {
         // 이메일 확인
-        const emailRows = await userProvider.emailCheck(email);
-        if (emailRows.length < 1) return errResponse(baseResponse.SIGNIN_USERINFO_WRONG)
-
-        // TODO: userIdx 가져오기
-        const userIdx = emailRows[0].userIdx
-
-        // 계정 상태 확인
-        const userInfoRows = await userProvider.accountCheck(email);
-
-        if (userInfoRows[0].status === "INACTIVE") {
-            return errResponse(baseResponse.SIGNIN_INACTIVE_ACCOUNT);
-        } else if (userInfoRows[0].status === "DELETED") {
-            return errResponse(baseResponse.SIGNIN_WITHDRAWAL_ACCOUNT);
+        const userInfo = await userProvider.selectUserInfoByEmail(email);
+        if (userInfo === undefined) {
+            return errResponse(baseResponse.SIGNIN_NO_EXIST_EMAIL);
         }
 
-        const userSecurityData = await userProvider.retrieveUserHashedPasswordAndSalt(userIdx);
-
-        const salt = userSecurityData.salt;
-        const hashedPassword = userSecurityData.hashedPassword;
-
-        const isValidate = security.validatePassword(password, salt, hashedPassword);
+        const isValidate = security.validatePassword(password, userInfo.salt, userInfo.password);
         if (isValidate === false) {
             return errResponse(baseResponse.SIGNIN_USERINFO_WRONG);
         }
 
-        console.log(userInfoRows[0].userIdx)
         //토큰 생성 Service
         let token = await jwt.sign(
             {
-                userInfo: userInfoRows[0].userIdx,
+                userInfo: userInfo.userId,
             }, // 토큰의 내용(payload)
             secret_config.jwtsecret, // 비밀 키
             {
-                expiresIn: "365d",
+                expiresIn: "30d",
                 subject: "userInfo",
-            } // 유효 시간은 365일
+            } // 유효 시간은 30일
         );
 
-        return response(baseResponse.SUCCESS, token);
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber
+        }
+        return response(baseResponse.SUCCESS, data);
 
     } catch (err) {
         logger.error(`App - postSignIn Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.postSocialLogin = async function (token) {
+    let accessToken = token
+    try {
+        let kakaoProfile = await axios.request({
+            method: 'GET',
+            url: 'https://kapi.kakao.com/v2/user/me',
+            headers: {'Authorization': 'Bearer ' + accessToken},
+
+        });
+
+        let kakaoId = kakaoProfile.data.id;
+        let kakaoProfileImgURL = "";
+        let kakaoNickname = "";
+        let kakaoEmail = "";
+        if (kakaoProfile.data.properties != undefined) {
+            if (kakaoProfile.data.properties.profile_image != undefined) {
+                kakaoProfileImgURL = kakaoProfile.data.properties.profile_image
+            }
+            if (kakaoProfile.data.properties.nickname != undefined) {
+                kakaoNickname = kakaoProfile.data.properties.nickname
+            }
+        }
+
+        if (kakaoProfile.data.kakao_account != undefined) {
+            if (kakaoProfile.data.kakao_account.email != undefined) {
+                kakaoEmail = kakaoProfile.data.kakao_account.email
+            }
+        }
+
+        // SNS ID로 정보 가져오기
+        const userInfo = await userProvider.selectUserInfoBySocialId(kakaoId);
+        if (userInfo === undefined) {
+            const kakaoData = {
+                jwt: "",
+                name: "",
+                nickname: "",
+                phoneNumber: "",
+                snsId: kakaoId,
+                snsProfileImgURL: kakaoProfileImgURL,
+                snsNickname: kakaoNickname,
+                snsEmail: kakaoEmail
+            }
+            return response(baseResponse.SIGNIN_NO_EXIST_SOCIAL, kakaoData);
+        }
+
+        //토큰 생성 Service
+        let token = await jwt.sign(
+            {
+                userInfo: userInfo.userId,
+            }, // 토큰의 내용(payload)
+            secret_config.jwtsecret, // 비밀 키
+            {
+                expiresIn: "30d",
+                subject: "userInfo",
+            } // 유효 시간은 30일
+        );
+
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber,
+            snsId: kakaoId,
+            snsProfileImgURL: kakaoProfileImgURL,
+            snsNickname: kakaoNickname,
+            snsEmail: kakaoEmail
+        }
+        return response(baseResponse.SUCCESS, data);
+
+    } catch (err) {
+        logger.error(`App - postSocialLogin Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.makeJWT = async function (userInfo) {
+    try {
+        //토큰 생성 Service
+        let token = await jwt.sign(
+            {
+                userInfo: userInfo.userId,
+            }, // 토큰의 내용(payload)
+            secret_config.jwtsecret, // 비밀 키
+            {
+                expiresIn: "30d",
+                subject: "userInfo",
+            } // 유효 시간은 30일
+        );
+
+        const data = {
+            jwt: token,
+            name: userInfo.name,
+            nickname: userInfo.nickname,
+            phoneNumber: userInfo.phoneNumber,
+        }
+
+        return data;
+
+    } catch (err) {
+        logger.error(`App - makeJWT Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.postFindEmail = async function (phoneNumber) {
+
+    try {
+        const userEmailInfos = await userProvider.retrieveUsersEmailByPhoneNumber(phoneNumber);
+
+        if (userEmailInfos.length == 0) {
+            return errResponse(baseResponse.FIND_NO_EXIST_EMAIL);
+        } else {
+            const data = {
+                userInfo: userEmailInfos
+            }
+            return response(baseResponse.SUCCESS, data);
+        }
+
+    } catch (err) {
+        logger.error(`App - postFindEmail Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.postFindPhoneNumber = async function (phoneNumber) {
+
+    try {
+        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+        if (isExistPhoneNumber === 0) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        } else {
+            return response(baseResponse.SUCCESS);
+        }
+
+    } catch (err) {
+        logger.error(`App - postFindPhoneNumber Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
+exports.editUserPassword = async function (phoneNumber, password) {
+
+    try {
+        const userInfo = await userProvider.retrieveUserIdByPhoneNumber(phoneNumber);
+        if (userInfo == undefined) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        }
+
+        const securityData = security.saltHashPassword(password);
+        const userHashedPassword = securityData.hashedPassword;
+        const userSalt = securityData.salt;
+
+        const connection = await pool.getConnection(async (conn) => conn);
+        await userDao.updateUsersPassword(connection, userInfo.userId, userHashedPassword, userSalt);
+        connection.release();
+
+        return response(baseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - editUserPassword Service error\n: ${err.message} \n${JSON.stringify(err)}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

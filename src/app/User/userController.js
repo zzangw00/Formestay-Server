@@ -1,74 +1,172 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
-const regexEmail = require("regex-email");
 const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
 const baseResponse = require("../../../config/AdminBaseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {emit} = require("nodemon");
+const regex = require("../../../config/regularExpress")
 
-/** 회원 전체 조회 API
- * [GET] /app/users
- *
- * 회원 이메일 검색 조회 API
- * [GET] /app/users?word=
- * queryString : word
+/** 회원가입전 유효성 검증 API
+ * [POST] /app/users
+ * body : name, nickname, gender, birthday, phoneNumber, email, passsword, confirmPassword
  */
-exports.getUsers = async function (req, res) {
-    const email = req.query.word;
-    if (!email) {
-        const userListResult = await userProvider.retrieveUserList();
-        return res.send(res.send(response(baseResponse.SUCCESS, userListResult)));
-    } else {
-        const userListByEmail = await userProvider.retrieveUserList(email);
-        return res.send(res.send(response(baseResponse.SUCCESS, userListByEmail)));
+exports.postUsersCheck = async function (req, res) {
+    const {name, nickname, gender, birthday, phoneNumber, email, password, confirmPassword, snsId} = req.body;
+
+    if (!name)
+        return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
+    if (!nickname)
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
+    if (nickname.length > 20 || nickname.length < 2)
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
+    if (!gender)
+        return res.send(response(baseResponse.SIGNUP_GENDER_EMPTY));
+    if (gender != 1 && gender != 2)
+        return res.send(response(baseResponse.SIGNUP_GENDER_ERROR_TYPE));
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+    if (!birthday)
+        return res.send(response(baseResponse.SIGNUP_BIRTHDAY_EMPTY));
+    if (!regex.birthdayRegex.test(birthday))
+        return res.send(response(baseResponse.SIGNUP_BIRTHDAY_ERROR_TYPE));
+    if (!email)
+        return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
+    if (!regex.emailRegex.test(email))
+        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
+    if (password != undefined && confirmPassword != undefined) {
+        if (!password)
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(password))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        if (!confirmPassword)
+            return res.send(response(baseResponse.SIGNUP_CONFIRM_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(confirmPassword))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        if (password !== confirmPassword)
+            return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
     }
-};
 
-/** 회원 조회 API
- * [GET] /app/users/:userIdx
- * pathVariable : userIdx
- */
-exports.getUserById = async function (req, res) {
-
-    const userIdToToken = req.verifiedToken.userInfo
-    const userIdx = req.params.userIdx;
-
-    if (userIdToToken != userIdx) {
-        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
-    } else {
-        if (!userIdx) return res.send(errResponse(baseResponse.USER_USERID_EMPTY));
-        const userByUserIdx = await userProvider.retrieveUser(userIdx);
-        return res.send(res.send(response(baseResponse.SUCCESS, userByUserIdx)));
+    if (snsId != undefined) {
+        const isExistSNSId = await userProvider.retrieveUserBySNSId(snsId);
+        if (isExistSNSId === 1) {
+            return res.send(response(baseResponse.EXIST_SNS_ID));
+        }
     }
+
+    const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+    if (isExistPhoneNumber === 1) {
+        return res.send(response(baseResponse.EXIST_PHONE_NUMBER));
+    }
+
+    const isExistEmail = await userProvider.retrieveUserByEmail(email);
+    if (isExistEmail === 1) {
+        return res.send(response(baseResponse.EXIST_EMAIL));
+    }
+
+    return res.send(response(baseResponse.SUCCESS));
 };
 
 /** 회원가입 API
  * [POST] /app/users
- * body : email, passsword, nickname
+ * body : name, nickname, gender, birthday, phoneNumber, email, passsword, confirmPassword, isPermitAlarm
  */
 exports.postUsers = async function (req, res) {
-    const {email, password, nickname} = req.body;
+    let {name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
 
-    if (!email) return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
-    if (email.length > 30)
-        return res.send(response(baseResponse.SIGNUP_EMAIL_LENGTH));
-    if (!regexEmail.test(email))
-        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-    if (!password) return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
-    if (password.length < 6 || password.length > 20)
-        return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
-    if (!nickname) return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
-    if (nickname.length > 20)
+    if (!name)
+        return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
+    if (!nickname)
+        return res.send(response(baseResponse.SIGNUP_NICKNAME_EMPTY));
+    if (nickname.length > 20 || nickname.length < 2)
         return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
+    if (!gender)
+        return res.send(response(baseResponse.SIGNUP_GENDER_EMPTY));
+    if (gender != 1 && gender != 2)
+        return res.send(response(baseResponse.SIGNUP_GENDER_ERROR_TYPE));
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+    if (!birthday)
+        return res.send(response(baseResponse.SIGNUP_BIRTHDAY_EMPTY));
+    if (!regex.birthdayRegex.test(birthday))
+        return res.send(response(baseResponse.SIGNUP_BIRTHDAY_ERROR_TYPE));
+    if (!email)
+        return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
+    if (!regex.emailRegex.test(email))
+        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
+    if (snsId == undefined) {
+        if (!password)
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+        if (!regex.passwordRegex.test(password))
+            return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+        snsId = 0;
+        profileImgURL = null;
+    } else {
+        if (profileImgURL != undefined) {
+            if (profileImgURL.length == 0) {
+                profileImgURL = null;
+            }
+        } else {
+            profileImgURL = null;
+        }
+    }
 
-    const signUpResponse = await userService.createUser(
-        email,
-        password,
-        nickname
-    );
+    if (isPermitAlarm != 1 && isPermitAlarm != 2)
+        return res.send(response(baseResponse.SIGNUP_ALARM_ERROR_TYPE));
 
-    return res.send(signUpResponse);
+    const signUpResult = await userService.createUser(name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL)
+
+
+    return res.send(signUpResult);
+};
+
+/** 자동 로그인 API
+ * [GET] /app/users/auto-login
+ */
+exports.autoLogin = async function (req, res) {
+    const userIdToToken = req.verifiedToken.userInfo
+
+    const userInfo = await userProvider.retrieveUserInfoByUserId(userIdToToken);
+
+    if (userInfo == undefined) {
+        return res.send(errResponse(baseResponse.FIND_NO_EXIST_USER));
+    }
+
+    const loginData = await userService.makeJWT(userInfo);
+
+    return res.send(response(baseResponse.SUCCESS, loginData));
+};
+
+/** 비밀번호 수정 API
+ * [PATCH] /app/users-password
+ * body : phoneNumber
+ */
+exports.patchUsersPassword = async function (req, res) {
+
+    const {phoneNumber, password, confirmPassword} = req.body;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+    if (!password)
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(password))
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+    if (!confirmPassword)
+        return res.send(response(baseResponse.SIGNUP_CONFIRM_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(confirmPassword))
+        return res.send(response(baseResponse.SIGNUP_PASSWORD_ERROR_TYPE));
+    if (password !== confirmPassword)
+        return res.send(response(baseResponse.SIGNUP_NOT_MATCH_PASSWORD));
+
+    const editUsersPassword = await userService.editUserPassword(phoneNumber, password);
+
+    return res.send(editUsersPassword);
 };
 
 /** 회원 정보 수정 API
@@ -83,7 +181,7 @@ exports.patchUsers = async function (req, res) {
     const nickname = req.body.nickname;
 
     if (userIdToToken != userIdx) {
-        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+        // res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
     } else {
         if (!nickname) res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
         const editUserInfo = await userService.editUser(userIdx, nickname)
@@ -98,17 +196,64 @@ exports.patchUsers = async function (req, res) {
 exports.login = async function (req, res) {
     const {email, password} = req.body;
 
-    if (!email) return res.send(errResponse(baseResponse.SIGNIN_EMAIL_EMPTY));
-    if (email.length > 30)
-        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_LENGTH));
-    if (!regexEmail.test(email))
+    if (!email)
+        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_EMPTY));
+    if (!regex.emailRegex.test(email))
         return res.send(errResponse(baseResponse.SIGNIN_EMAIL_ERROR_TYPE));
     if (!password)
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    if (!regex.passwordRegex.test(password))
+        return res.send(response(baseResponse.SIGNIN_PASSWORD_ERROR_TYPE));
 
     const signInResponse = await userService.postSignIn(email, password);
 
     return res.send(signInResponse);
+};
+
+/** 소셜 로그인 하기 API
+ * [POST] /app/login
+ * body : email, passsword
+ */
+exports.socialLogin = async function (req, res) {
+    const token = req.body.token;
+
+    if (!token)
+        return res.send(errResponse(baseResponse.SIGNIN_ACCESS_TOKEN_EMPTY));
+
+    const socialLoginResponse = await userService.postSocialLogin(token);
+    return res.send(socialLoginResponse);
+};
+
+/** 이메일 찾기 API
+ * [POST] /app/users/email-find
+ * body : phoneNumber
+ */
+exports.findUserEmail = async function (req, res) {
+    const phoneNumber = req.body.phoneNumber;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+
+    const findEmailResponse = await userService.postFindEmail(phoneNumber);
+    return res.send(findEmailResponse);
+};
+
+/** 비밀번호 변경전 유저 검증 API
+ * [POST] /app/users-password
+ * body : phoneNumber
+ */
+exports.findUserPhoneNumber = async function (req, res) {
+    const phoneNumber = req.body.phoneNumber;
+
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+
+    const findPhoneNumberResponse = await userService.postFindPhoneNumber(phoneNumber);
+    return res.send(findPhoneNumberResponse);
 };
 
 /** 회원 상태 수정 API
@@ -122,7 +267,7 @@ exports.patchUserStatus = async function (req, res) {
     const status = req.body.status;
 
     if (userIdToToken != userIdx) {
-        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+        // res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
     } else {
         if (!status) res.send(errResponse(baseResponse.USER_STATUS_EMPTY));
         const editUserStatus = await userService.editUserStatus(userIdx, status)

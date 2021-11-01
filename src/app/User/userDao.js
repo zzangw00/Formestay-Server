@@ -1,24 +1,36 @@
 const {pool} = require("../../../config/database");
 
-// 모든 유저 조회
-async function selectUser(connection) {
-    const selectUserListQuery = `
-        SELECT email, nickname
-        FROM UserInfo;
+// 유저 snsId 체크
+async function isExistUserBySNSId(connection, snsId) {
+    const isExistUserBySNSIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM UserInfo
+        WHERE snsId = ? and status = "ACTIVE";
     `;
-    const [userRows] = await connection.query(selectUserListQuery);
-    return userRows;
+    const [isExistUserBySNSIdRows] = await connection.query(isExistUserBySNSIdQuery, snsId);
+    return isExistUserBySNSIdRows;
 }
 
-// 이메일로 회원 조회
-async function selectUserEmail(connection, email) {
-    const selectUserEmailQuery = `
-        SELECT userIdx, email, nickname
+// 유저 핸드폰 번호 존재 체크
+async function isExistUserByPhoneNumber(connection, phoneNumber) {
+    const isExistUserByPhoneNumberQuery = `
+        SELECT COUNT(*) as CNT
         FROM UserInfo
-        WHERE email = ?;
+        WHERE phoneNumber = ? and status = "ACTIVE";
     `;
-    const [emailRows] = await connection.query(selectUserEmailQuery, email);
-    return emailRows;
+    const [isExistUserByPhoneNumberRows] = await connection.query(isExistUserByPhoneNumberQuery, phoneNumber);
+    return isExistUserByPhoneNumberRows;
+}
+
+// 유저 이메일 존재 체크
+async function isExistUserByEmail(connection, email) {
+    const isExistUserByEmailQuery = `
+        SELECT COUNT(*) as CNT
+        FROM UserInfo
+        WHERE email = ? and status = "ACTIVE";
+    `;
+    const [isExistUserByEmailRows] = await connection.query(isExistUserByEmailQuery, email);
+    return isExistUserByEmailRows;
 }
 
 // userId 회원 조회
@@ -46,8 +58,8 @@ async function selectUserNickname(connection, nickname) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-        INSERT INTO UserInfo(email, password, nickname)
-        VALUES (?, ?, ?);
+        INSERT INTO UserInfo(name, nickname, gender, birthday, phoneNumber, email, password, salt, isPermitAlarm, snsId, profileImgURL)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertUserInfoRow = await connection.query(
         insertUserInfoQuery,
@@ -55,6 +67,30 @@ async function insertUserInfo(connection, insertUserInfoParams) {
     );
 
     return insertUserInfoRow;
+}
+
+// 이메일 찾기
+async function selectUsersEmailByPhoneNumber(connection, phoneNumber) {
+    const selectUsersEmailByPhoneNumberQuery = `
+        SELECT email, date_format(createdAt, "%Y-%m-%d") as createdAt
+        FROM UserInfo
+        WHERE phoneNumber = ? and snsId = 0 and status = "ACTIVE";
+    `;
+
+    const [selectUsersEmailByPhoneNumberRows] = await connection.query(selectUsersEmailByPhoneNumberQuery, phoneNumber);
+    return selectUsersEmailByPhoneNumberRows;
+}
+
+// 유저 아이디 찾기 찾기
+async function selectUserIdByPhoneNumber(connection, phoneNumber) {
+    const selectUserIdByPhoneNumberQuery = `
+        SELECT userId
+        FROM UserInfo
+        WHERE phoneNumber = ? and snsId = 0 and status = "ACTIVE";
+    `;
+
+    const [selectUserIdByPhoneNumberRows] = await connection.query(selectUserIdByPhoneNumberQuery, phoneNumber);
+    return selectUserIdByPhoneNumberRows;
 }
 
 // UserSalt 테이블 컬럼 추가
@@ -115,12 +151,40 @@ async function selectUserAccount(connection, email) {
 
 async function selectUserInfoByEmail(connection, email) {
     const selectUserQuery = `
-        SELECT userIdx, email, nickname
+        SELECT userId, name, nickname, phoneNumber, password, salt
         FROM UserInfo
-        WHERE email = ?;`;
+        WHERE email = ? and status = "ACTIVE";`;
     const selectUserRow = await connection.query(selectUserQuery, email);
     return selectUserRow[0];
 }
+
+async function selectUserInfoBySocialId(connection, kakaoId) {
+    const selectUserInfoBySocialIdQuery = `
+        SELECT userId, name, nickname, phoneNumber
+        FROM UserInfo
+        WHERE snsId = ? and status = "ACTIVE";`;
+    const selectUserInfoBySocialIdRows = await connection.query(selectUserInfoBySocialIdQuery, kakaoId);
+    return selectUserInfoBySocialIdRows[0];
+}
+
+async function SelectUserByUserId(connection, userId) {
+    const SelectUserByUserIdQuery = `
+        SELECT userId, name, nickname, phoneNumber
+        FROM UserInfo
+        WHERE userId = ? and status = "ACTIVE";`;
+    const [SelectUserByUserIdRows] = await connection.query(SelectUserByUserIdQuery, userId);
+    return SelectUserByUserIdRows;
+}
+
+async function updateUsersPassword(connection, userId, password, salt) {
+    const updateUsersPasswordQuery = `
+        UPDATE UserInfo
+        SET password = ?, salt = ?
+        WHERE userId = ? and status = "ACTIVE";`;
+
+    await connection.query(updateUsersPasswordQuery, [password, salt, userId]);
+}
+
 
 async function updateUserInfo(connection, userIdx, nickname) {
     const updateUserQuery = `
@@ -158,16 +222,22 @@ async function selectUserHashedPasswordAndSalt(connection, userIdx) {
 
 
 module.exports = {
-    selectUser,
-    selectUserEmail,
+    isExistUserByPhoneNumber,
+    isExistUserByEmail,
+    isExistUserBySNSId,
+    selectUserInfoBySocialId,
     selectUserId,
     selectUserNickname,
+    SelectUserByUserId,
     insertUserInfo,
     insertUserSalt,
     insertUserLevel,
+    selectUsersEmailByPhoneNumber,
+    selectUserIdByPhoneNumber,
     selectUserPassword,
     selectUserAccount,
     selectUserInfoByEmail,
+    updateUsersPassword,
     updateUserInfo,
     updateUserStatus,
     selectUserHashedPasswordAndSalt,

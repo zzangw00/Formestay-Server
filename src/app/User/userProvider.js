@@ -5,21 +5,74 @@ const userDao = require("./userDao");
 
 //Provider : Read의 비즈니스 로직 처리
 
-exports.retrieveUserList = async function (email) {
-    if (!email) {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await userDao.selectUser(connection);
-        connection.release();
+exports.retrieveUserByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserByPhoneNumber(connection, phoneNumber);
 
-        return userListResult;
+    connection.release();
 
-    } else {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await userDao.selectUserEmail(connection, email);
-        connection.release();
+    return result[0].CNT;
+};
 
-        return userListResult;
-    }
+exports.retrieveUserBySNSId = async function (snsId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserBySNSId(connection, snsId);
+
+    connection.release();
+
+    return result[0].CNT;
+};
+
+exports.retrieveUserByEmail = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.isExistUserByEmail(connection, email);
+
+    connection.release();
+
+    return result[0].CNT;
+};
+
+exports.selectUserInfoByEmail = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserInfoByEmail(connection, email);
+
+    connection.release();
+
+    return result[0];
+};
+
+exports.selectUserInfoBySocialId = async function (kakaoId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserInfoBySocialId(connection, kakaoId);
+
+    connection.release();
+
+    return result[0];
+};
+
+exports.retrieveUserInfoByUserId = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.SelectUserByUserId(connection, userId);
+
+    connection.release();
+
+    return result[0];
+};
+
+exports.retrieveUserIdByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUserIdByPhoneNumber(connection, phoneNumber);
+
+    connection.release();
+    return result[0];
+};
+
+exports.retrieveUsersEmailByPhoneNumber = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await userDao.selectUsersEmailByPhoneNumber(connection, phoneNumber);
+
+    connection.release();
+    return result[0];
 };
 
 exports.retrieveUser = async function (userIdx) {
