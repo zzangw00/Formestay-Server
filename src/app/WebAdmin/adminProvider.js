@@ -1,23 +1,22 @@
-const {pool} = require("../../../config/database");
-const {logger} = require("../../../config/winston");
+const { pool } = require('../../../config/database');
+const { logger } = require('../../../config/winston');
 
-const adminDao = require("./adminDao");
+const adminDao = require('./adminDao');
 
-//Provider : Read의 비즈니스 로직 처리
+// admin 회원가입 email 중복체크
+exports.emailCheck = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminEmailResult = await adminDao.checkAdminEmail(connection, email);
+    connection.release();
 
-exports.retrieveUserList = async function (email) {
-    if (!email) {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await adminDao.selectUser(connection);
-        connection.release();
+    return adminEmailResult;
+};
 
-        return userListResult;
+// admin 회원가입 nickname 중복체크
+exports.nicknameCheck = async function (nickname) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminNicknameResult = await adminDao.checkAdminNickname(connection, nickname);
+    connection.release();
 
-    } else {
-        const connection = await pool.getConnection(async (conn) => conn);
-        const userListResult = await adminDao.selectUserEmail(connection, email);
-        connection.release();
-
-        return userListResult;
-    }
+    return adminNicknameResult;
 };
