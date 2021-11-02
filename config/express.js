@@ -25,6 +25,8 @@ module.exports = function () {
     //require('../src/app/indexRoute')(app);
     require('../src/app/User/userRoute')(app);
     require('../src/app/WebAdmin/adminRoute')(app);
+    require('../src/app/Enterprise/enterpriseRoute')(app);
+    require('../src/app/Test/testRoute')(app);
 
     /* Web */
     // require('../src/web/routes/indexRoute')(app);
