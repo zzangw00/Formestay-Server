@@ -15,3 +15,19 @@ exports.retrieveBestEnterpriseList = async function () {
 
     return bestEnterpriseListResult;
 };
+
+exports.retrieveEnterpriseList = async function (category, page) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let enterpriseListResult;
+    if (category == 0)
+        enterpriseListResult = await enterpriseDao.selectAllEnterprises(connection, page);
+    else
+        enterpriseListResult = await enterpriseDao.selectCategoryEnterprises(connection, category, page);
+    connection.release();
+
+    enterpriseListResult = common.returnTagList(enterpriseListResult);
+
+    return enterpriseListResult;
+};
+
+

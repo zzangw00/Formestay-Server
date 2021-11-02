@@ -23,13 +23,22 @@ exports.getBestEnterprises = async function (req, res) {
  * [GET] app/enterprises
  */
 exports.getEnterprises = async function (req, res) {
-    const {category, page} = req.query;
+    let {category, page} = req.query;
 
-    console.log(category, page)
-    // const bestEnterpriseList = await enterpriseProvider.retrieveBestEnterpriseList();
-    //
-    // const data = {
-    //     bestEnterpriseList: bestEnterpriseList
-    // }
-    return res.send(response(baseResponse.SUCCESS));
+    if (!category)
+        return res.send(response(baseResponse.ENTERPRISE_CATEGORY_EMPTY));
+    if (category < 0 || category > 4)
+        return res.send(response(baseResponse.ENTERPRISE_CATEGORY_ERROR_TYPE));
+    if (!page)
+        return res.send(response(baseResponse.PAGE_EMPTY));
+    if (page < 1)
+        return res.send(response(baseResponse.PAGE_ERROR_TYPE));
+
+    page = (page - 1) * 10;
+
+    const enterpriseList = await enterpriseProvider.retrieveEnterpriseList(category, page);
+    const data = {
+        enterpriseList: enterpriseList
+    }
+    return res.send(response(baseResponse.SUCCESS, data));
 };
