@@ -30,4 +30,19 @@ exports.retrieveEnterpriseList = async function (category, page) {
     return enterpriseListResult;
 };
 
+exports.retrieveEnterprise = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterpriseInfo = await enterpriseDao.selectEnterpriseById(connection, enterpriseId);
+    let programList = await enterpriseDao.selectProgramsByEnterpriseId(connection, enterpriseId);
+    connection.release();
+
+    programList = common.returnTagList(programList);
+    const data = {
+        enterpriseInfo: enterpriseInfo,
+        programList: programList
+    }
+
+    return data;
+};
+
 

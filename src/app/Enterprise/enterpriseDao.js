@@ -41,8 +41,32 @@ async function selectCategoryEnterprises(connection, category, page) {
     return selectCategoryEnterprisesRows;
 }
 
+// 업체 상세 조회
+async function selectEnterpriseById(connection, enterpriseId) {
+    const selectEnterpriseByIdQuery = `
+        select enterpriseId, korName, primeLocation, category, location, description, phoneNumber, thumbnailURL
+        from Enterprise
+        where enterpriseId = ? and status = "ACTIVE";
+    `;
+    const [selectEnterpriseByIdRows] = await connection.query(selectEnterpriseByIdQuery, enterpriseId);
+    return selectEnterpriseByIdRows[0];
+}
+
+// 업체 프로그램 리스트 조회
+async function selectProgramsByEnterpriseId(connection, enterpriseId) {
+    const selectProgramsByEnterpriseIdQuery = `
+        select programId, name, description, tag, thumbnailURL
+        from Program
+        where enterpriseId = ? and status = "ACTIVE";
+    `;
+    const [selectProgramsByEnterpriseIdRows] = await connection.query(selectProgramsByEnterpriseIdQuery, enterpriseId);
+    return selectProgramsByEnterpriseIdRows;
+}
+
 module.exports = {
     selectBestEnterprises,
     selectAllEnterprises,
-    selectCategoryEnterprises
+    selectCategoryEnterprises,
+    selectEnterpriseById,
+    selectProgramsByEnterpriseId
 };

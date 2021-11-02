@@ -42,3 +42,20 @@ exports.getEnterprises = async function (req, res) {
     }
     return res.send(response(baseResponse.SUCCESS, data));
 };
+
+/** 업체 상세 조회 API
+ * [GET] app/enterprises/:enterpriseId
+ */
+exports.getEnterpriseById = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+
+    if (!enterpriseId)
+        return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
+
+    const result = await enterpriseProvider.retrieveEnterprise(enterpriseId);
+
+    return res.send(response(baseResponse.SUCCESS, result));
+};
+
+
+

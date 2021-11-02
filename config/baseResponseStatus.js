@@ -32,6 +32,7 @@ module.exports = {
     ENTERPRISE_CATEGORY_ERROR_TYPE : { "isSuccess": false, "code": 2032, "message":"업체 조회 카테고리 번호가 잘못됐습니다." },
     PAGE_EMPTY : { "isSuccess": false, "code": 2033, "message":"페이지 번호가 없습니다." },
     PAGE_ERROR_TYPE : { "isSuccess": false, "code": 2034, "message":"페이지 번호는 1 이상입니다." },
+    ENTERPRISE_ID_EMPTY : { "isSuccess": false, "code": 2035, "message":"업체 아이디가 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

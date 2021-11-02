@@ -7,4 +7,7 @@ module.exports = function (app) {
 
     // 업체 가져오기
     app.get('/app/enterprises', enterprise.getEnterprises);
+
+    // 업체 상세 조회
+    app.get('/app/enterprises/:enterpriseId', enterprise.getEnterpriseById);
 };
