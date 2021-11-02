@@ -3,6 +3,9 @@ const {logger} = require("../../../config/winston");
 const common = require("../../../config/common");
 
 const enterpriseDao = require("./enterpriseDao");
+const {errResponse} = require("../../../config/response");
+const {response} = require("../../../config/response");
+const baseResponse = require("../../../config/baseResponseStatus");
 
 //Provider : Read의 비즈니스 로직 처리
 
@@ -36,13 +39,16 @@ exports.retrieveEnterprise = async function (enterpriseId) {
     let programList = await enterpriseDao.selectProgramsByEnterpriseId(connection, enterpriseId);
     connection.release();
 
+    if (enterpriseInfo == undefined) {
+        return errResponse(baseResponse.NON_EXIST_PROGRAM);
+    }
     programList = common.returnTagList(programList);
     const data = {
         enterpriseInfo: enterpriseInfo,
         programList: programList
     }
 
-    return data;
+    return response(baseResponse.SUCCESS, data);
 };
 
 

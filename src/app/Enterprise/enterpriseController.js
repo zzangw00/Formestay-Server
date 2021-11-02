@@ -52,9 +52,9 @@ exports.getEnterpriseById = async function (req, res) {
     if (!enterpriseId)
         return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
 
-    const result = await enterpriseProvider.retrieveEnterprise(enterpriseId);
+    const resultStatus = await enterpriseProvider.retrieveEnterprise(enterpriseId);
 
-    return res.send(response(baseResponse.SUCCESS, result));
+    return res.send(resultStatus);
 };
 
 
