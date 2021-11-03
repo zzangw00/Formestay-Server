@@ -351,7 +351,7 @@
  *  get:
  *      tags:
  *      - users
- *      description: 이메일 찾기 API
+ *      description: 자동 로그인 API
  *      produces:
  *      - application/json
  *      parameters:
