@@ -10,4 +10,7 @@ module.exports = function (app) {
 
     // 업체 상세 조회
     app.get('/app/enterprises/:enterpriseId', enterprise.getEnterpriseById);
+
+    // 업체 입장
+    app.route('/app/enterprises-entrance').post(enterprise.postEnterEnterprises);
 };

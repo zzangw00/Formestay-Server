@@ -33,7 +33,7 @@ module.exports = {
     PAGE_EMPTY : { "isSuccess": false, "code": 2033, "message":"페이지 번호가 없습니다." },
     PAGE_ERROR_TYPE : { "isSuccess": false, "code": 2034, "message":"페이지 번호는 1 이상입니다." },
     ENTERPRISE_ID_EMPTY : { "isSuccess": false, "code": 2035, "message":"업체 아이디가 없습니다." },
-    NON_EXIST_PROGRAM : { "isSuccess": false, "code": 2036, "message":"존재하지 않는 업체입니다." },
+    NON_EXIST_ENTERPRISE : { "isSuccess": false, "code": 2036, "message":"존재하지 않는 업체입니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

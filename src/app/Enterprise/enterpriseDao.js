@@ -63,10 +63,31 @@ async function selectProgramsByEnterpriseId(connection, enterpriseId) {
     return selectProgramsByEnterpriseIdRows;
 }
 
+// 유저 핸드폰 번호 존재 체크
+async function isExistEnterpriseByEnterpriseId(connection, enterpriseId) {
+    const isExistEnterpriseByEnterpriseIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM Enterprise
+        WHERE enterpriseId = ? and status = "ACTIVE";
+    `;
+    const [isExistEnterpriseByEnterpriseIdRows] = await connection.query(isExistEnterpriseByEnterpriseIdQuery, enterpriseId);
+    return isExistEnterpriseByEnterpriseIdRows;
+}
+
+// 유저 생성
+async function insertEnterpriseEntrance(connection, enterpriseId) {
+    const insertEnterpriseEntranceQuery = `
+        INSERT INTO ViewProgram(enterpriseId) VALUES (?);
+    `;
+   await connection.query(insertEnterpriseEntranceQuery, enterpriseId);
+}
+
 module.exports = {
     selectBestEnterprises,
     selectAllEnterprises,
     selectCategoryEnterprises,
     selectEnterpriseById,
-    selectProgramsByEnterpriseId
+    selectProgramsByEnterpriseId,
+    isExistEnterpriseByEnterpriseId,
+    insertEnterpriseEntrance
 };

@@ -40,7 +40,7 @@ exports.retrieveEnterprise = async function (enterpriseId) {
     connection.release();
 
     if (enterpriseInfo == undefined) {
-        return errResponse(baseResponse.NON_EXIST_PROGRAM);
+        return errResponse(baseResponse.NON_EXIST_ENTERPRISE);
     }
     programList = common.returnTagList(programList);
     const data = {
@@ -51,4 +51,12 @@ exports.retrieveEnterprise = async function (enterpriseId) {
     return response(baseResponse.SUCCESS, data);
 };
 
+exports.retrieveEnterpriseByEnterpriseId = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await enterpriseDao.isExistEnterpriseByEnterpriseId(connection, enterpriseId);
+
+    connection.release();
+
+    return result[0].CNT;
+};
 
