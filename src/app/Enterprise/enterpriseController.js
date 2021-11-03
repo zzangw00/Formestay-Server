@@ -57,20 +57,6 @@ exports.getEnterpriseById = async function (req, res) {
     return res.send(resultStatus);
 };
 
-/** 업체 입장 API
- * [GET] app/enterprises-entrance
- */
-exports.postEnterEnterprises = async function (req, res) {
-    const enterpriseId = req.body.enterpriseId;
-
-    if (!enterpriseId)
-        return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
-
-    const resultStatus = await enterpriseService.createEnterprisesEntrance(enterpriseId);
-
-    return res.send(resultStatus);
-};
-
 /** 업체 검색 API
  * [GET] app/enterprises
  */
