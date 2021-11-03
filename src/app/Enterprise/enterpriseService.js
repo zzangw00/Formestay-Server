@@ -15,22 +15,13 @@ const security = require("../../../utils/security");
 exports.createEnterprisesEntrance = async function (enterpriseId) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const isExistEnterprises = await enterpriseProvider.retrieveEnterpriseByEnterpriseId(enterpriseId);
-        if (isExistEnterprises === 0) {
-            return errResponse(baseResponse.NON_EXIST_ENTERPRISE);
-        }
-
         await connection.beginTransaction(); // START TRANSACTION
         await enterpriseDao.insertEnterpriseEntrance(connection, enterpriseId);
         await connection.commit(); // COMMIT
         connection.release();
-
-        return response(baseResponse.SUCCESS);
-
     } catch (err) {
         connection.rollback(); //ROLLBACK
         connection.release();
         logger.error(`App - createEnterprisesEntrance Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
     }
 };

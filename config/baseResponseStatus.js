@@ -34,6 +34,7 @@ module.exports = {
     PAGE_ERROR_TYPE : { "isSuccess": false, "code": 2034, "message":"페이지 번호는 1 이상입니다." },
     ENTERPRISE_ID_EMPTY : { "isSuccess": false, "code": 2035, "message":"업체 아이디가 없습니다." },
     NON_EXIST_ENTERPRISE : { "isSuccess": false, "code": 2036, "message":"존재하지 않는 업체입니다." },
+    SEARCH_CONTENT_EMPTY : { "isSuccess": false, "code": 2037, "message":"검색 문구가 비었습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

@@ -3,6 +3,7 @@ const {logger} = require("../../../config/winston");
 const common = require("../../../config/common");
 
 const enterpriseDao = require("./enterpriseDao");
+const enterpriseService = require("./enterpriseService");
 const {errResponse} = require("../../../config/response");
 const {response} = require("../../../config/response");
 const baseResponse = require("../../../config/baseResponseStatus");
@@ -33,7 +34,7 @@ exports.retrieveEnterpriseList = async function (category, page) {
     return enterpriseListResult;
 };
 
-exports.retrieveEnterprise = async function (enterpriseId) {
+exports.retrieveEnterprisesPrograms = async function (enterpriseId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const enterpriseInfo = await enterpriseDao.selectEnterpriseById(connection, enterpriseId);
     let programList = await enterpriseDao.selectProgramsByEnterpriseId(connection, enterpriseId);
@@ -42,6 +43,8 @@ exports.retrieveEnterprise = async function (enterpriseId) {
     if (enterpriseInfo == undefined) {
         return errResponse(baseResponse.NON_EXIST_ENTERPRISE);
     }
+
+    await enterpriseService.createEnterprisesEntrance(enterpriseId);
     programList = common.returnTagList(programList);
     const data = {
         enterpriseInfo: enterpriseInfo,
@@ -60,3 +63,11 @@ exports.retrieveEnterpriseByEnterpriseId = async function (enterpriseId) {
     return result[0].CNT;
 };
 
+exports.retrieveSearchEnterpriseList = async function (content, page) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let enterpriseListResult = await enterpriseDao.selectSearchEnterprises(connection, content, page);
+    connection.release();
+    enterpriseListResult = common.returnTagList(enterpriseListResult);
+
+    return enterpriseListResult;
+};

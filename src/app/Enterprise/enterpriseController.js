@@ -52,7 +52,7 @@ exports.getEnterpriseById = async function (req, res) {
     if (!enterpriseId)
         return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
 
-    const resultStatus = await enterpriseProvider.retrieveEnterprise(enterpriseId);
+    const resultStatus = await enterpriseProvider.retrieveEnterprisesPrograms(enterpriseId);
 
     return res.send(resultStatus);
 };
@@ -71,5 +71,26 @@ exports.postEnterEnterprises = async function (req, res) {
     return res.send(resultStatus);
 };
 
+/** 업체 검색 API
+ * [GET] app/enterprises
+ */
+exports.getSearchEnterprises = async function (req, res) {
+    let {content, page} = req.query;
+
+    if (!content)
+        return res.send(response(baseResponse.SEARCH_CONTENT_EMPTY));
+    if (!page)
+        return res.send(response(baseResponse.PAGE_EMPTY));
+    if (page < 1)
+        return res.send(response(baseResponse.PAGE_ERROR_TYPE));
+
+    page = (page - 1) * 10;
+
+    const enterpriseList = await enterpriseProvider.retrieveSearchEnterpriseList(content, page);
+    const data = {
+        enterpriseList: enterpriseList
+    }
+    return res.send(response(baseResponse.SUCCESS, data));
+};
 
 

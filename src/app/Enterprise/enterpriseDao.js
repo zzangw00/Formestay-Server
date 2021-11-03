@@ -74,12 +74,24 @@ async function isExistEnterpriseByEnterpriseId(connection, enterpriseId) {
     return isExistEnterpriseByEnterpriseIdRows;
 }
 
-// 유저 생성
+// 업체 입장
 async function insertEnterpriseEntrance(connection, enterpriseId) {
     const insertEnterpriseEntranceQuery = `
         INSERT INTO ViewProgram(enterpriseId) VALUES (?);
     `;
    await connection.query(insertEnterpriseEntranceQuery, enterpriseId);
+}
+
+// 검색 업체 조회
+async function selectSearchEnterprises(connection, content, page) {
+    const selectSearchEnterprisesQuery = `
+        select enterpriseId, korName, engName, location, tag, thumbnailURL
+        from Enterprise
+        where korName like concat(concat("%", ?), "%") and status="ACTIVE"
+        order by createdAt desc LIMIT ?, 10;
+    `;
+    const [selectSearchEnterprisesRows] = await connection.query(selectSearchEnterprisesQuery, [content, page]);
+    return selectSearchEnterprisesRows;
 }
 
 module.exports = {
@@ -89,5 +101,6 @@ module.exports = {
     selectEnterpriseById,
     selectProgramsByEnterpriseId,
     isExistEnterpriseByEnterpriseId,
-    insertEnterpriseEntrance
+    insertEnterpriseEntrance,
+    selectSearchEnterprises
 };
