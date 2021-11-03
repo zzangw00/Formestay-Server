@@ -78,4 +78,40 @@
  *        2036:
  *          description: 존재하지 않는 업체입니다.
  *
+ * /app/enterprises-search:
+ *  get:
+ *      tags:
+ *      - enterprises
+ *      description: 업체 검색 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *          - in: query
+ *            name: content
+ *            schema:
+ *              type: string
+ *            required: true
+ *            example: 하우스
+ *            description: 검색내용
+ *
+ *          - in: query
+ *            name: page
+ *            schema:
+ *              type: Integer
+ *            required: true
+ *            example: 1
+ *            description: 1부터 입력해주세요. 10개씩 페이징 처리되었습니다.
+ *
+ *      responses:
+ *          1000:
+ *              description: 성공
+ *
+ *          2033:
+ *              description: 페이지 번호가 없습니다.
+ *
+ *          2034:
+ *              description: 페이지 번호는 1 이상입니다.
+ *
+ *          2037:
+ *              description: 검색 문구가 비었습니다.
  */
