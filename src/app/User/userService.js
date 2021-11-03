@@ -14,6 +14,8 @@ const axios = require('axios')
 // Service Create, Update, Delete 의 로직 처리
 
 exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
+
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
         const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
         if (isExistPhoneNumber === 1) {
@@ -41,47 +43,41 @@ exports.createUser = async function (name, nickname, gender, birthday, phoneNumb
 
         // Transaction 예제
         // 회원가입 동시에 Level 테이블에도 컬럼 추가
-        const connection = await pool.getConnection(async (conn) => conn);
-        try {
-            await connection.beginTransaction(); // START TRANSACTION
+        await connection.beginTransaction(); // START TRANSACTION
 
-            // UserInfo 테이블에 데이터 추가
-            const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
-            const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+        // UserInfo 테이블에 데이터 추가
+        const insertUserInfoParams = [name, nickname, gender, birthday, phoneNumber, email, userHashedPassword, userSalt, isPermitAlarm, snsId, profileImgURL];
+        const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
 
-            const userId = userIdResult[0].insertId;
+        const userId = userIdResult[0].insertId;
 
-            await connection.commit(); // COMMIT
-            connection.release();
+        await connection.commit(); // COMMIT
+        connection.release();
 
-            //토큰 생성 Service
-            let token = await jwt.sign(
-                {
-                    userInfo: userId,
-                }, // 토큰의 내용(payload)
-                secret_config.jwtsecret, // 비밀 키
-                {
-                    expiresIn: "30d",
-                    subject: "userInfo",
-                } // 유효 시간은 30일
-            );
+        //토큰 생성 Service
+        let token = await jwt.sign(
+            {
+                userInfo: userId,
+            }, // 토큰의 내용(payload)
+            secret_config.jwtsecret, // 비밀 키
+            {
+                expiresIn: "30d",
+                subject: "userInfo",
+            } // 유효 시간은 30일
+        );
 
-            const data = {
-                jwt: token,
-                name: name,
-                nickname: nickname,
-                phoneNumber: phoneNumber
-            }
-            return response(baseResponse.SUCCESS, data);
-
-        } catch (err) {
-            connection.rollback(); //ROLLBACK
-            connection.release();
-            logger.error(`App - createUser Transaction error\n: ${err.message}`);
-            return errResponse(baseResponse.DB_ERROR);
+        const data = {
+            jwt: token,
+            name: name,
+            nickname: nickname,
+            phoneNumber: phoneNumber
         }
+        return response(baseResponse.SUCCESS, data);
+
     } catch (err) {
-        logger.error(`App - createUser Service error\n: ${err.message}`);
+        connection.rollback(); //ROLLBACK
+        connection.release();
+        logger.error(`App - createUser Transaction error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
 };

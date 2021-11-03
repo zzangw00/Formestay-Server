@@ -13,13 +13,13 @@ const security = require("../../../utils/security");
 // Service Create, Update, Delete 의 로직 처리
 
 exports.createEnterprisesEntrance = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
         const isExistEnterprises = await enterpriseProvider.retrieveEnterpriseByEnterpriseId(enterpriseId);
         if (isExistEnterprises === 0) {
             return errResponse(baseResponse.NON_EXIST_ENTERPRISE);
         }
 
-        const connection = await pool.getConnection(async (conn) => conn);
         await connection.beginTransaction(); // START TRANSACTION
         await enterpriseDao.insertEnterpriseEntrance(connection, enterpriseId);
         await connection.commit(); // COMMIT
@@ -28,6 +28,8 @@ exports.createEnterprisesEntrance = async function (enterpriseId) {
         return response(baseResponse.SUCCESS);
 
     } catch (err) {
+        connection.rollback(); //ROLLBACK
+        connection.release();
         logger.error(`App - createEnterprisesEntrance Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }
