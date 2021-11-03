@@ -78,4 +78,31 @@
  *        2036:
  *          description: 존재하지 않는 업체입니다.
  *
+ * /app/enterprises-entrance:
+ *  post:
+ *      tags:
+ *      - enterprises
+ *      description: 업체 입장 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: body
+ *          name: body
+ *          required: true
+ *          schema:
+ *              type: object
+ *              properties:
+ *                  enterpriseId:
+ *                      type: Integer
+ *                      required: true
+ *                      description: 업체 아이디
+ *                      example: 1
+ *
+ *      responses:
+ *        1000:
+ *          description: 성공
+ *
+ *        2036:
+ *          description: 존재하지 않는 업체입니다.
+ *
  */
