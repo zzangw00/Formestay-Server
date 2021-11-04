@@ -35,6 +35,8 @@ module.exports = {
     ENTERPRISE_ID_EMPTY : { "isSuccess": false, "code": 2035, "message":"업체 아이디가 없습니다." },
     NON_EXIST_ENTERPRISE : { "isSuccess": false, "code": 2036, "message":"존재하지 않는 업체입니다." },
     SEARCH_CONTENT_EMPTY : { "isSuccess": false, "code": 2037, "message":"검색 문구가 비었습니다." },
+    PROGRAM_ID_EMPTY : { "isSuccess": false, "code": 2038, "message":"프로그램 아이디가 없습니다." },
+    NON_EXIST_PROGRAM : { "isSuccess": false, "code": 2039, "message":"존재하지 않는 프로그램입니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

@@ -22,6 +22,30 @@ function returnTagList(list) {
     return list;
 }
 
+function returnOneTagList(object) {
+    let count = 0;
+    let idx = -1;
+    let tagList = [];
+    let tag = object['tag'];
+    if (tag != null) {
+        count = 1;
+        do {
+            idx = tag.indexOf('|', idx + 1);
+            if (idx != -1) {
+                count++;
+            }
+        } while (idx != -1);
+
+        tagList = tag.split('|');
+        object['tag'] = tagList;
+    } else {
+        object['tag'] = null;
+    }
+
+    return object;
+}
+
 module.exports = {
-    returnTagList
+    returnTagList,
+    returnOneTagList
 };
