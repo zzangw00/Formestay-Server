@@ -27,6 +27,7 @@ module.exports = function () {
     require('../src/app/WebAdmin/adminRoute')(app);
     require('../src/app/Enterprise/enterpriseRoute')(app);
     require('../src/app/Test/testRoute')(app);
+    require('../src/app/Program/programRoute')(app);
 
     /* Web */
     // require('../src/web/routes/indexRoute')(app);
