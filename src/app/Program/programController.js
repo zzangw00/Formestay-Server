@@ -34,7 +34,7 @@ exports.getBookmarks = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, result));
 };
 
-/** 찜 하기 API
+/** 찜 하기 및 해제 API
  * [POST] app/bookmarks
  */
 exports.postBookmarks = async function (req, res) {

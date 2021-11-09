@@ -18,12 +18,18 @@ exports.createBookmarks = async function (userId, programId) {
     const isExistProgram = await programDao.isExistProgramsById(connection, programId);
 
     if (isExistProgram[0]['CNT'] == 0) {
-        console.log('hi')
         return errResponse(baseResponse.NON_EXIST_PROGRAM);
     }
+
+
     try {
         await connection.beginTransaction(); // START TRANSACTION
-        await programDao.insertBookMarks(connection, programId, userId);
+        const bookmarkInfo = await programDao.selectBookMarkInfoById(connection, programId);
+        if (bookmarkInfo[0] == undefined) {
+            await programDao.insertBookMarks(connection, programId, userId);
+        } else {
+            await programDao.updateBookMarks(connection, bookmarkInfo[0].bookMarkId);
+        }
         await connection.commit(); // COMMIT
         connection.release();
         return response(baseResponse.SUCCESS);

@@ -61,12 +61,35 @@ async function insertBookMarks(connection, programId, userId) {
     );
 }
 
+// bookmark 정보 가져오기
+async function selectBookMarkInfoById(connection, programId) {
+    const selectBookMarkInfoByIdQuery = `
+        select bookMarkId, programId, userId, status
+        from BookMark
+        where programId = ? and status = "ACTIVE";
+    `;
+    const [selectBookMarkInfoByIdRows] = await connection.query(selectBookMarkInfoByIdQuery, programId);
+    return selectBookMarkInfoByIdRows;
+}
 
+// 찜하기 업데이트
+async function updateBookMarks(connection, bookMarkId) {
+    const updateBookMarksQuery = `
+        update BookMark
+        set status = "INACTIVE"
+        where bookMarkId = ?;
+    `;
+    const updateBookMarksRows = await connection.query(
+        updateBookMarksQuery, bookMarkId
+    );
+}
 
 module.exports = {
     selectProgramsById,
     selectProgramImagesById,
     selectBookmarksByUserId,
     isExistProgramsById,
-    insertBookMarks
+    insertBookMarks,
+    selectBookMarkInfoById,
+    updateBookMarks
 };
