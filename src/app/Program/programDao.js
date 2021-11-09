@@ -24,7 +24,49 @@ async function selectProgramImagesById(connection, programId) {
     return selectProgramImagesByIdRows;
 }
 
+// 찜 목록 조회
+async function selectBookmarksByUserId(connection, userId) {
+    const selectBookmarksByUserIdQuery = `
+        select BookMark.programId, category, name, location, Program.thumbnailURL, Program.tag
+        from BookMark left join Program
+                                on BookMark.programId = Program.programId
+                      left join Enterprise
+                                on Program.enterpriseId = Enterprise.enterpriseId
+        where BookMark.userId = ? and BookMark.status = "ACTIVE" and Program.status="ACTIVE" and Enterprise.status="ACTIVE";
+    `;
+    const [selectBookmarksByUserIdRows] = await connection.query(selectBookmarksByUserIdQuery, userId);
+    return selectBookmarksByUserIdRows;
+}
+
+// 존재하는 프로그램인지 조회
+async function isExistProgramsById(connection, programId) {
+    const isExistProgramsByIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM Program
+        WHERE programId = ? and status = "ACTIVE";
+    `;
+    const [isExistProgramsByIdRows] = await connection.query(isExistProgramsByIdQuery, programId);
+    return isExistProgramsByIdRows;
+}
+
+// 찜하기 삽입
+async function insertBookMarks(connection, programId, userId) {
+    const insertBookMarksQuery = `
+        INSERT INTO BookMark(programId, userId)
+        VALUES (?, ?);
+    `;
+    const insertBookMarksRows = await connection.query(
+        insertBookMarksQuery,
+        [programId, userId]
+    );
+}
+
+
+
 module.exports = {
     selectProgramsById,
-    selectProgramImagesById
+    selectProgramImagesById,
+    selectBookmarksByUserId,
+    isExistProgramsById,
+    insertBookMarks
 };

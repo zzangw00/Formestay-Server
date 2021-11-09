@@ -8,9 +8,6 @@ const common = require("../../../config/common");
 
 //Provider : Read의 비즈니스 로직 처리
 
-
-
-
 exports.retrieveProgramsByProgramId = async function (programId) {
     const connection = await pool.getConnection(async (conn) => conn);
     let programInfo = await programDao.selectProgramsById(connection, programId);
@@ -32,4 +29,17 @@ exports.retrieveProgramsByProgramId = async function (programId) {
     }
 
     return response(baseResponse.SUCCESS, data);
+};
+
+exports.retrieveBookmarks = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let bookmarkInfo = await programDao.selectBookmarksByUserId(connection, userId);
+    connection.release();
+    bookmarkInfo = common.returnTagList(bookmarkInfo);
+
+    const data = {
+        bookmarkList: bookmarkInfo
+    }
+
+    return data;
 };
