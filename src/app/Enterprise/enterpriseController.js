@@ -14,7 +14,7 @@ exports.getBestEnterprises = async function (req, res) {
     const bestEnterpriseList = await enterpriseProvider.retrieveBestEnterpriseList();
 
     const data = {
-        bestEnterpriseList: bestEnterpriseList
+        enterpriseList: bestEnterpriseList
     }
     return res.send(response(baseResponse.SUCCESS, data));
 };
