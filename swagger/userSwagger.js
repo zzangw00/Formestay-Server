@@ -34,7 +34,7 @@
  *                      type: string
  *                      required: true
  *                      description: 핸드폰 번호
- *                      example: 01012341234
+ *                      example: 010-1234-1234
  *                  birthday:
  *                      type: string
  *                      required: true
@@ -153,7 +153,7 @@
  *                      type: string
  *                      required: true
  *                      description: 핸드폰 번호
- *                      example: 01012341234
+ *                      example: 010-1234-1234
  *                  birthday:
  *                      type: string
  *                      required: true
