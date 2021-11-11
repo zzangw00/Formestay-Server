@@ -114,4 +114,28 @@
  *
  *          2037:
  *              description: 검색 문구가 비었습니다.
+ *
+ * /app/bookmarks:
+ *  get:
+ *      tags:
+ *      - enterprises
+ *      description: 찜 목록 조회 API
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *          - in: header
+ *            name: x-access-token
+ *            required: true
+ *            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWR4IjozNywiaWQiOiJrb29raXN1bmciLCJwdyI6IjkxNmNiNGRmYWUzNDJhNTM4ZjA2NjBiN2IyYjUyZTNkOTY2NmQzOTBmZjMxMTgzYWM4YTJhNzkzZThiYmUxZTc5ZGI5Mjc5ZjczODBlYmNhZGI0OGY3YmE2ZWM3NzhiMDZlOTFlZWNiZDgyZTMxZTViNGEwODZkZjRlZGZkZjVkIiwiaWF0IjoxNjEwNTg5OTQ4LCJleHAiOjE2MTU3NzM5NDgsInN1YiI6InVzZXJJbmZvIn0.74H9MLRWsHnG2tKKZtsdI55aul6qIEu97BQxyqeBTX0
+ *
+ *      responses:
+ *          1000:
+ *              description: 성공
+ *
+ *          2000:
+ *              description: JWT 토큰이 입력되지 않았습니다.
+ *
+ *          3000:
+ *              description: JWT 토큰 검증 실패했습니다.
+ *
  */
