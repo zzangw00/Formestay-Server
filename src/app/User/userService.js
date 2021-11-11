@@ -14,18 +14,19 @@ const axios = require('axios')
 // Service Create, Update, Delete 의 로직 처리
 
 exports.createUser = async function (name, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL) {
+    const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
+    if (isExistPhoneNumber === 1) {
+        return errResponse(baseResponse.EXIST_PHONE_NUMBER);
+    }
+
+    const isExistEmail = await userProvider.retrieveUserByEmail(email);
+    if (isExistEmail === 1) {
+        return errResponse(baseResponse.EXIST_EMAIL);
+    }
 
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
-        if (isExistPhoneNumber === 1) {
-            return errResponse(baseResponse.EXIST_PHONE_NUMBER);
-        }
 
-        const isExistEmail = await userProvider.retrieveUserByEmail(email);
-        if (isExistEmail === 1) {
-            return errResponse(baseResponse.EXIST_EMAIL);
-        }
 
         // 비밀번호 암호화
         let securityData
