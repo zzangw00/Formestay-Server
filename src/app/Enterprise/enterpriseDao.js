@@ -132,7 +132,17 @@ async function updateBookMarks(connection, bookMarkId) {
 // 찜 목록 조회
 async function selectBookmarksByUserId(connection, userId) {
     const selectBookmarksByUserIdQuery = `
-        select BookMark.enterpriseId, category, korName, location, Enterprise.thumbnailURL, Enterprise.tag
+        select BookMark.enterpriseId,
+               case
+                   when category = 1
+                       then '단식원'
+                   when category = 2
+                       then '템플스테이'
+                   when category = 3
+                       then '힐링캠프'
+                   when category = 4
+                       then '산후조리원'
+                   end as category, korName, location, Enterprise.thumbnailURL, Enterprise.tag
         from BookMark left join Enterprise
                                 on BookMark.enterpriseId = Enterprise.enterpriseId
         where BookMark.userId = ? and BookMark.status = "ACTIVE" and Enterprise.status="ACTIVE";
