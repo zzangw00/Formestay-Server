@@ -13,4 +13,10 @@ module.exports = function (app) {
 
     // 업체 검색 조회
     app.get('/app/enterprises-search', enterprise.getSearchEnterprises);
+
+    // 찜 목록 조회
+    app.get('/app/bookmarks', jwtMiddleware, enterprise.getBookmarks);
+
+    // 찜 하기
+    app.route('/app/bookmarks').post(jwtMiddleware, enterprise.postBookmarks);
 };

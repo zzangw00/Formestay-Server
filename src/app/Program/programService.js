@@ -11,32 +11,3 @@ const {connect} = require("http2");
 const security = require("../../../utils/security");
 
 // Service Create, Update, Delete 의 로직 처리
-
-exports.createBookmarks = async function (userId, programId) {
-
-    const connection = await pool.getConnection(async (conn) => conn);
-    const isExistProgram = await programDao.isExistProgramsById(connection, programId);
-
-    if (isExistProgram[0]['CNT'] == 0) {
-        return errResponse(baseResponse.NON_EXIST_PROGRAM);
-    }
-
-
-    try {
-        await connection.beginTransaction(); // START TRANSACTION
-        const bookmarkInfo = await programDao.selectBookMarkInfoById(connection, programId);
-        if (bookmarkInfo[0] == undefined) {
-            await programDao.insertBookMarks(connection, programId, userId);
-        } else {
-            await programDao.updateBookMarks(connection, bookmarkInfo[0].bookMarkId);
-        }
-        await connection.commit(); // COMMIT
-        connection.release();
-        return response(baseResponse.SUCCESS);
-    } catch (err) {
-        connection.rollback(); //ROLLBACK
-        connection.release();
-        logger.error(`App - createBookmarks Service error\n: ${err.message}`);
-        return errResponse(baseResponse.DB_ERROR);
-    }
-};

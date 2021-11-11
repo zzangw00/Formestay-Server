@@ -79,4 +79,30 @@ exports.getSearchEnterprises = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, data));
 };
 
+/** 찜 목록 조회 API
+ * [GET] app/bookmarks
+ */
+exports.getBookmarks = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+
+    const result = await enterpriseProvider.retrieveBookmarks(userIdResult);
+
+    return res.send(response(baseResponse.SUCCESS, result));
+};
+
+/** 찜 하기 및 해제 API
+ * [POST] app/bookmarks
+ */
+exports.postBookmarks = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+    const enterpriseId = req.body.enterpriseId;
+
+    if (!enterpriseId)
+        return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
+
+    const resultStatus = await enterpriseService.createBookmarks(userIdResult, enterpriseId);
+
+    return res.send(resultStatus);
+};
+
 

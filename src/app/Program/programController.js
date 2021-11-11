@@ -23,31 +23,9 @@ exports.getProgramsById = async function (req, res) {
     return res.send(resultStatus);
 };
 
-/** 찜 목록 조회 API
- * [GET] app/bookmarks
- */
-exports.getBookmarks = async function (req, res) {
-    const userIdResult = req.verifiedToken.userInfo;
 
-    const result = await programProvider.retrieveBookmarks(userIdResult);
 
-    return res.send(response(baseResponse.SUCCESS, result));
-};
 
-/** 찜 하기 및 해제 API
- * [POST] app/bookmarks
- */
-exports.postBookmarks = async function (req, res) {
-    const userIdResult = req.verifiedToken.userInfo;
-    const programId = req.body.programId;
-
-    if (!programId)
-        return res.send(response(baseResponse.PROGRAM_ID_EMPTY));
-
-    const resultStatus = await programService.createBookmarks(userIdResult, programId);
-
-    return res.send(resultStatus);
-};
 
 
 

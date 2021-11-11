@@ -71,3 +71,16 @@ exports.retrieveSearchEnterpriseList = async function (content, page) {
 
     return enterpriseListResult;
 };
+
+exports.retrieveBookmarks = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let bookmarkInfo = await enterpriseDao.selectBookmarksByUserId(connection, userId);
+    connection.release();
+    bookmarkInfo = common.returnTagList(bookmarkInfo);
+
+    const data = {
+        bookmarkList: bookmarkInfo
+    }
+
+    return data;
+};

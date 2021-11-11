@@ -31,15 +31,3 @@ exports.retrieveProgramsByProgramId = async function (programId) {
     return response(baseResponse.SUCCESS, data);
 };
 
-exports.retrieveBookmarks = async function (userId) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    let bookmarkInfo = await programDao.selectBookmarksByUserId(connection, userId);
-    connection.release();
-    bookmarkInfo = common.returnTagList(bookmarkInfo);
-
-    const data = {
-        bookmarkList: bookmarkInfo
-    }
-
-    return data;
-};

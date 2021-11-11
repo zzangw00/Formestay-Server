@@ -94,6 +94,53 @@ async function selectSearchEnterprises(connection, content, page) {
     return selectSearchEnterprisesRows;
 }
 
+// 찜하기 삽입
+async function insertBookMarks(connection, enterpriseId, userId) {
+    const insertBookMarksQuery = `
+        INSERT INTO BookMark(enterpriseId, userId)
+        VALUES (?, ?);
+    `;
+    const insertBookMarksRows = await connection.query(
+        insertBookMarksQuery,
+        [enterpriseId, userId]
+    );
+}
+
+// bookmark 정보 가져오기
+async function selectBookMarkInfoById(connection, enterpriseId) {
+    const selectBookMarkInfoByIdQuery = `
+        select bookMarkId, enterpriseId, userId, status
+        from BookMark
+        where enterpriseId = ? and status = "ACTIVE";
+    `;
+    const [selectBookMarkInfoByIdRows] = await connection.query(selectBookMarkInfoByIdQuery, enterpriseId);
+    return selectBookMarkInfoByIdRows;
+}
+
+// 찜하기 업데이트
+async function updateBookMarks(connection, bookMarkId) {
+    const updateBookMarksQuery = `
+        update BookMark
+        set status = "INACTIVE"
+        where bookMarkId = ?;
+    `;
+    const updateBookMarksRows = await connection.query(
+        updateBookMarksQuery, bookMarkId
+    );
+}
+
+// 찜 목록 조회
+async function selectBookmarksByUserId(connection, userId) {
+    const selectBookmarksByUserIdQuery = `
+        select BookMark.enterpriseId, category, korName, location, Enterprise.thumbnailURL, Enterprise.tag
+        from BookMark left join Enterprise
+                                on BookMark.enterpriseId = Enterprise.enterpriseId
+        where BookMark.userId = ? and BookMark.status = "ACTIVE" and Enterprise.status="ACTIVE";
+    `;
+    const [selectBookmarksByUserIdRows] = await connection.query(selectBookmarksByUserIdQuery, userId);
+    return selectBookmarksByUserIdRows;
+}
+
 module.exports = {
     selectBestEnterprises,
     selectAllEnterprises,
@@ -102,5 +149,9 @@ module.exports = {
     selectProgramsByEnterpriseId,
     isExistEnterpriseByEnterpriseId,
     insertEnterpriseEntrance,
-    selectSearchEnterprises
+    selectSearchEnterprises,
+    insertBookMarks,
+    selectBookMarkInfoById,
+    updateBookMarks,
+    selectBookmarksByUserId
 };
