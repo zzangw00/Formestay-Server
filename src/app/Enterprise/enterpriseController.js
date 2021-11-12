@@ -1,4 +1,6 @@
 const jwtMiddleware = require("../../../config/jwtMiddleware");
+const jwt = require('jsonwebtoken');
+const secret_config = require('../../../config/secret');
 const enterpriseProvider = require("../../app/Enterprise/enterpriseProvider");
 const enterpriseService = require("../../app/Enterprise/enterpriseService");
 const baseResponse = require("../../../config/baseResponseStatus");
@@ -48,11 +50,20 @@ exports.getEnterprises = async function (req, res) {
  */
 exports.getEnterpriseById = async function (req, res) {
     const enterpriseId = req.params.enterpriseId;
+    let userId = 0
+    if (req.headers['x-access-token'] != undefined) {
+        await jwt.verify(req.headers['x-access-token'], secret_config.jwtsecret, (error, decoded) => {
+            if(error){
+                return res.send(errResponse(baseResponse.TOKEN_VERIFICATION_FAILURE))
+            }
+            userId = decoded.userInfo;
+        });
+    }
 
     if (!enterpriseId)
         return res.send(response(baseResponse.ENTERPRISE_ID_EMPTY));
 
-    const resultStatus = await enterpriseProvider.retrieveEnterprisesPrograms(enterpriseId);
+    const resultStatus = await enterpriseProvider.retrieveEnterprisesPrograms(enterpriseId, userId);
 
     return res.send(resultStatus);
 };

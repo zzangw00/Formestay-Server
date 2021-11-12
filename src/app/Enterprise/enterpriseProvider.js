@@ -34,9 +34,15 @@ exports.retrieveEnterpriseList = async function (category, page) {
     return enterpriseListResult;
 };
 
-exports.retrieveEnterprisesPrograms = async function (enterpriseId) {
+exports.retrieveEnterprisesPrograms = async function (enterpriseId, userId) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const enterpriseInfo = await enterpriseDao.selectEnterpriseById(connection, enterpriseId);
+    let enterpriseInfo;
+
+    if (userId == 0) {
+        enterpriseInfo = await enterpriseDao.selectEnterpriseById(connection, enterpriseId);
+    } else {
+        enterpriseInfo = await enterpriseDao.selectLoginEnterpriseById(connection, userId, enterpriseId);
+    }
     let programList = await enterpriseDao.selectProgramsByEnterpriseId(connection, enterpriseId);
     connection.release();
 

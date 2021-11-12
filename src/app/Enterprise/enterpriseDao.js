@@ -41,15 +41,28 @@ async function selectCategoryEnterprises(connection, category, page) {
     return selectCategoryEnterprisesRows;
 }
 
-// 업체 상세 조회
+// 업체 상세 조회 (로그인 하지않은 경우)
 async function selectEnterpriseById(connection, enterpriseId) {
     const selectEnterpriseByIdQuery = `
-        select enterpriseId, korName, primeLocation, category, location, description, phoneNumber, thumbnailURL
+        select enterpriseId, korName, primeLocation, category, location, description, phoneNumber, thumbnailURL, 0 as isBookmarked
         from Enterprise
         where enterpriseId = ? and status = "ACTIVE";
     `;
     const [selectEnterpriseByIdRows] = await connection.query(selectEnterpriseByIdQuery, enterpriseId);
     return selectEnterpriseByIdRows[0];
+}
+
+// 업체 상세 조회 (로그인 한 경우)
+async function selectLoginEnterpriseById(connection, userId, enterpriseId) {
+    const selectLoginEnterpriseByIdQuery = `
+        select Enterprise.enterpriseId, korName, primeLocation, category, location, description, phoneNumber, thumbnailURL, if(BS.status = "ACTIVE", true, false) as isBookmarked
+        from Enterprise left outer join (select *
+                                         from BookMark
+                                         where userId = ? and status = "ACTIVE") as BS on Enterprise.enterpriseId = BS.enterpriseId
+        where Enterprise.enterpriseId = ?;
+    `;
+    const [selectLoginEnterpriseByIdRows] = await connection.query(selectLoginEnterpriseByIdQuery, [userId, enterpriseId]);
+    return selectLoginEnterpriseByIdRows[0];
 }
 
 // 업체 프로그램 리스트 조회
@@ -156,6 +169,7 @@ module.exports = {
     selectAllEnterprises,
     selectCategoryEnterprises,
     selectEnterpriseById,
+    selectLoginEnterpriseById,
     selectProgramsByEnterpriseId,
     isExistEnterpriseByEnterpriseId,
     insertEnterpriseEntrance,
