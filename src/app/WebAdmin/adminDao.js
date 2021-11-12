@@ -116,6 +116,16 @@ async function retrieveEnterpriseList(connection) {
     return retrieveEnterpriseListRows;
 }
 
+// 업체 상세정보 가져오기
+async function enterpriseInfo(connection, enterpriseId) {
+    const enterpriseInfoQuery = `
+        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [enterpriseInfoRows] = await connection.query(enterpriseInfoQuery, enterpriseId);
+    return enterpriseInfoRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -128,4 +138,5 @@ module.exports = {
     userInfo,
     changeUserStatus,
     retrieveEnterpriseList,
+    enterpriseInfo,
 };

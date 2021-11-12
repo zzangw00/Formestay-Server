@@ -86,3 +86,12 @@ exports.retrieveEnterpriseList = async function () {
 
     return enterprisesListResult;
 };
+
+// 업체 상세정보 가져오기
+exports.enterpriseInfo = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterpriseResult = await adminDao.enterpriseInfo(connection, enterpriseId);
+    connection.release();
+
+    return enterpriseResult;
+};

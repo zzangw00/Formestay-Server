@@ -22,4 +22,7 @@ module.exports = function (app) {
 
     // 업체 조회 API
     app.get('/admin/enterprises', jwtMiddleware, admin.getEnterprises);
+
+    // 업체 상세 조회 API
+    app.get('/admin/enterprises/:enterpriseId', jwtMiddleware, admin.getEnterprise);
 };

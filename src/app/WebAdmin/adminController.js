@@ -105,7 +105,7 @@ exports.deleteUser = async function (req, res) {
     return res.send(response(AdminBaseResponse.SUCCESS));
 };
 
-/** 회원 전체 조회 API
+/** 업체 전체 조회 API
  * [GET] /admin/enterprises
  *
  *
@@ -113,4 +113,15 @@ exports.deleteUser = async function (req, res) {
 exports.getEnterprises = async function (req, res) {
     const enterpriseListResult = await adminProvider.retrieveEnterpriseList();
     return res.send(response(AdminBaseResponse.SUCCESS, enterpriseListResult));
+};
+
+/** 업체 상세조회 API
+ * [GET] /admin/enterprises/:enterpriseId
+ * params : enterpriseId
+ *
+ */
+exports.getEnterprise = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    const enterpriseResult = await adminProvider.enterpriseInfo(enterpriseId);
+    return res.send(response(AdminBaseResponse.SUCCESS, enterpriseResult));
 };
