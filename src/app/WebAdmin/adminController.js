@@ -53,6 +53,7 @@ exports.postAdmin = async function (req, res) {
  */
 exports.loginAdmin = async function (req, res) {
     const { email, password } = req.body;
+
     if (!email) {
         return res.send(response(AdminBaseResponse.ADMIN_SIGNIN_EMAIL_EMPTY));
     } else if (!password) {
@@ -89,7 +90,6 @@ exports.autoLogin = async function (req, res) {
 exports.getUser = async function (req, res) {
     const userId = req.params.userId;
     const userResult = await adminProvider.userInfo(userId);
-    console.log(userResult);
     return res.send(response(AdminBaseResponse.SUCCESS, userResult));
 };
 
@@ -103,4 +103,14 @@ exports.deleteUser = async function (req, res) {
     const status = req.body.status;
     const userStatus = await adminService.patchUserStatus(status, userId);
     return res.send(response(AdminBaseResponse.SUCCESS));
+};
+
+/** 회원 전체 조회 API
+ * [GET] /admin/enterprises
+ *
+ *
+ */
+exports.getEnterprises = async function (req, res) {
+    const enterpriseListResult = await adminProvider.retrieveEnterpriseList();
+    return res.send(response(AdminBaseResponse.SUCCESS, enterpriseListResult));
 };

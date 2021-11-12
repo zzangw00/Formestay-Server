@@ -106,6 +106,16 @@ async function changeUserStatus(connection, status, userId) {
     const [changeUserStatusRows] = await connection.query(changeUserStatusQuery, [status, userId]);
     return changeUserStatusRows;
 }
+
+// 업체 정보 가져오기
+async function retrieveEnterpriseList(connection) {
+    const retrieveEnterpriseListQuery = `
+        select enterpriseId, korName, engName, primeLocation, status
+        from Enterprise`;
+    const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
+    return retrieveEnterpriseListRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -117,4 +127,5 @@ module.exports = {
     retrieveUserList,
     userInfo,
     changeUserStatus,
+    retrieveEnterpriseList,
 };

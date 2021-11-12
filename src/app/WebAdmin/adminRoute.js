@@ -19,4 +19,7 @@ module.exports = function (app) {
 
     // 유저 탈퇴 API
     app.patch('/admin/users/:userId/status', jwtMiddleware, admin.deleteUser);
+
+    // 업체 조회 API
+    app.get('/admin/enterprises', jwtMiddleware, admin.getEnterprises);
 };
