@@ -60,6 +60,10 @@
  *      produces:
  *      - application/json
  *      parameters:
+ *        - in: header
+ *          name: x-access-token
+ *          required: false
+ *          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWR4IjozNywiaWQiOiJrb29raXN1bmciLCJwdyI6IjkxNmNiNGRmYWUzNDJhNTM4ZjA2NjBiN2IyYjUyZTNkOTY2NmQzOTBmZjMxMTgzYWM4YTJhNzkzZThiYmUxZTc5ZGI5Mjc5ZjczODBlYmNhZGI0OGY3YmE2ZWM3NzhiMDZlOTFlZWNiZDgyZTMxZTViNGEwODZkZjRlZGZkZjVkIiwiaWF0IjoxNjEwNTg5OTQ4LCJleHAiOjE2MTU3NzM5NDgsInN1YiI6InVzZXJJbmZvIn0.74H9MLRWsHnG2tKKZtsdI55aul6qIEu97BQxyqeBTX0
  *        - in : path
  *          name: enterpriseId
  *          schema:
