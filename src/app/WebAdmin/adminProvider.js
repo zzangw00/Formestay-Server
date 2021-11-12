@@ -95,3 +95,11 @@ exports.enterpriseInfo = async function (enterpriseId) {
 
     return enterpriseResult;
 };
+
+// 업체 정보 가져오기
+exports.retrieveProgramList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programsListResult = await adminDao.retrieveProgramsList(connection, enterpriseId);
+    connection.release();
+    return programsListResult;
+};

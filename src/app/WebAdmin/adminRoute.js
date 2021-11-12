@@ -25,4 +25,7 @@ module.exports = function (app) {
 
     // 업체 상세 조회 API
     app.get('/admin/enterprises/:enterpriseId', jwtMiddleware, admin.getEnterprise);
+
+    // 프로그램 조회 API
+    app.get('/admin/programs/:enterpriseId', jwtMiddleware, admin.getPrograms);
 };

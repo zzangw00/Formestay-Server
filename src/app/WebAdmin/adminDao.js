@@ -126,6 +126,19 @@ async function enterpriseInfo(connection, enterpriseId) {
     return enterpriseInfoRows;
 }
 
+// 프로그램 정보 가져오기
+async function retrieveProgramsList(connection, enterpriseId) {
+    const retrieveProgramsListQuery = `
+        select programId, name, status
+        from Program
+        where enterpriseId = ?`;
+    const [retrieveProgramsListRows] = await connection.query(
+        retrieveProgramsListQuery,
+        enterpriseId,
+    );
+    return retrieveProgramsListRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -139,4 +152,5 @@ module.exports = {
     changeUserStatus,
     retrieveEnterpriseList,
     enterpriseInfo,
+    retrieveProgramsList,
 };

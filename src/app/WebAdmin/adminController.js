@@ -125,3 +125,14 @@ exports.getEnterprise = async function (req, res) {
     const enterpriseResult = await adminProvider.enterpriseInfo(enterpriseId);
     return res.send(response(AdminBaseResponse.SUCCESS, enterpriseResult));
 };
+
+/** 프로그램 전체 조회 API
+ * [GET] /admin/programs
+ *
+ *
+ */
+exports.getPrograms = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    const programListResult = await adminProvider.retrieveProgramList(enterpriseId);
+    return res.send(response(AdminBaseResponse.SUCCESS, programListResult));
+};
