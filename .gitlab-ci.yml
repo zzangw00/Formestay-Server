@@ -4,6 +4,6 @@ stages:
 Build NodeJS App:
     stage: build
     script: 
-        - echo "hi" > vim /home/ubuntu/test.txt
+        - rm test.txt
     tags:
         - formestay
