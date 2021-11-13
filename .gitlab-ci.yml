@@ -4,7 +4,6 @@ stages:
 Build NodeJS App:
     stage: build
     script: 
-        - sudo su
-        - rm test.txt
+        - echo "hi"
     tags:
         - formestay
