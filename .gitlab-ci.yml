@@ -3,7 +3,7 @@ stages:
 
 Build NodeJS App:
     stage: build
-    script:
+    script: 
         - whoami
         - cd /var/www/html/server/
         - sudo chown -R $USER .git/
