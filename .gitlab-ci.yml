@@ -4,7 +4,6 @@ stages:
 Build NodeJS App:
     stage: deploy
     script: 
-        - cd /var/www/html/server/
-        - pm2 restart "formestay"
+        - echo "hi"
     tags:
         - formestay
