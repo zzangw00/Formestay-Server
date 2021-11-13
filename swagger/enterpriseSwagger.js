@@ -9,7 +9,7 @@
  *
  *      responses:
  *          1000:
- *              description: 성공
+ *              description: 성공 CI
  *
  * /app/enterprises:
  *  get:
