@@ -1,8 +1,8 @@
 stages:
-    - deploy
+    - build
 
 Build NodeJS App:
-    stage: deploy
+    stage: build
     script: 
         - echo "hi" > vim /home/ubuntu/test.txt
     tags:
