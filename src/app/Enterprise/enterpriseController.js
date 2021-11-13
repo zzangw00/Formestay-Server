@@ -27,6 +27,7 @@ exports.getBestEnterprises = async function (req, res) {
 exports.getEnterprises = async function (req, res) {
     let {category, page} = req.query;
 
+    console.log('hi');
     if (!category)
         return res.send(response(baseResponse.ENTERPRISE_CATEGORY_EMPTY));
     if (category < 0 || category > 4)
