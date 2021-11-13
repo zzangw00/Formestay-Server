@@ -4,6 +4,7 @@ stages:
 Build NodeJS App:
     stage: build
     script: 
+        - whoami
         - cd /var/www/html/server/
         - sudo chown -R $USER .git/
         - sudo git pull origin main
