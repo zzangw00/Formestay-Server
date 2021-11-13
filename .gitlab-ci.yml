@@ -6,3 +6,5 @@ Build NodeJS App:
     script: 
         - cd /var/www/html/server/
         - pm2 restart "formestay"
+    tags:
+        - formestay
