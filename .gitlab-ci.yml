@@ -5,7 +5,7 @@ Build NodeJS App:
     stage: build
     script: 
         - cd /var/www/html/server/
-        - chown -R $USER .git/
+        - sudo chown -R $USER .git/
         - git pull origin main
     tags:
         - formestay
