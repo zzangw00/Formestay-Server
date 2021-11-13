@@ -5,6 +5,6 @@ Build NodeJS App:
     stage: build
     script: 
         - cd /var/www/html/server/
-        - whoami
+        - git pull origin main
     tags:
         - formestay
