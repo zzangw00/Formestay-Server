@@ -1,0 +1,10 @@
+stages:
+    - build
+
+Build NodeJS App:
+    stage: build
+    script: 
+        - pm2 restart "formestay"
+    artifacts:
+        paths:
+            - /var/www/html/server/
