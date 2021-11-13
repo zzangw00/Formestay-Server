@@ -1,8 +1,8 @@
 stages:
-    - build
+    - deploy
 
 Build NodeJS App:
-    stage: build
+    stage: deploy
     script: 
         - cd /var/www/html/server/
         - pm2 restart "formestay"
