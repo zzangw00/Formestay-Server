@@ -4,7 +4,6 @@ stages:
 Build NodeJS App:
     stage: build
     script: 
-        - sudo su
         - cd /var/www/html/server/
     tags:
         - formestay
