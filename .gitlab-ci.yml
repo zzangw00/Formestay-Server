@@ -6,6 +6,7 @@ Build NodeJS App:
     script: 
         - cd /var/www/html/server/
         - sudo chown -R $USER .git/
+        - sudo git pull origin main
         - sudo pm2 restart "formestay"
     tags:
         - formestay
