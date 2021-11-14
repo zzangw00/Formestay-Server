@@ -139,6 +139,35 @@ async function retrieveProgramsList(connection, enterpriseId) {
     return retrieveProgramsListRows;
 }
 
+// 유저 닉네임 체크
+async function nicknameCheck(connection, userId) {
+    const nicknameCheckQuery = `
+        select nickname
+        from UserInfo
+        where userId = ?;`;
+    const [nicknameCheckRows] = await connection.query(nicknameCheckQuery, userId);
+    return nicknameCheckRows;
+}
+
+// 유저 닉네임 체크
+async function nicknameOverlap(connection, nickname) {
+    const nicknameOverlapQuery = `
+        select exists(select nickname
+        from UserInfo
+        where nickname = ?) as exist;`;
+    const [nicknameOverlapRows] = await connection.query(nicknameOverlapQuery, nickname);
+    return nicknameOverlapRows;
+}
+
+// 유저 정보 수정
+async function patchUserInfo(connection, nickname, userId) {
+    const patchUserQuery = `
+        update UserInfo
+        set nickname = ?
+        where userId = ?;`;
+    const [patchUserRows] = await connection.query(patchUserQuery, [nickname, userId]);
+    return patchUserRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -153,4 +182,7 @@ module.exports = {
     retrieveEnterpriseList,
     enterpriseInfo,
     retrieveProgramsList,
+    nicknameCheck,
+    nicknameOverlap,
+    patchUserInfo,
 };

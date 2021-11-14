@@ -136,3 +136,19 @@ exports.getPrograms = async function (req, res) {
     const programListResult = await adminProvider.retrieveProgramList(enterpriseId);
     return res.send(response(AdminBaseResponse.SUCCESS, programListResult));
 };
+
+/** 유저 정보 수정 API
+ * [PATCH] /admin/users/:userId
+ * body : nickname, phoneNumber
+ */
+exports.patchUser = async function (req, res) {
+    const userId = req.params.userId;
+    const { nickname } = req.body;
+    if (!nickname) {
+        return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_NICKNAME_EMPTY));
+    }
+
+    const patchUserResponse = await adminService.patchUser(nickname, userId);
+
+    return res.send(patchUserResponse);
+};

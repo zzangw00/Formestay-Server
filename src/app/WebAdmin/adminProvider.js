@@ -103,3 +103,19 @@ exports.retrieveProgramList = async function (enterpriseId) {
     connection.release();
     return programsListResult;
 };
+
+// 유저가 기존의 자기와 같은 닉네임으로 바꾸는지 체크
+exports.checkNickname = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const nicknameResult = await adminDao.nicknameCheck(connection, userId);
+    connection.release();
+    return nicknameResult;
+};
+
+// 닉네임 중복 체크
+exports.overlapNickname = async function (nickname) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.nicknameOverlap(connection, nickname);
+    connection.release();
+    return overlapResult;
+};
