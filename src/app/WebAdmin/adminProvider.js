@@ -77,3 +77,45 @@ exports.userInfo = async function (userId) {
 
     return userResult;
 };
+
+// 업체 정보 가져오기
+exports.retrieveEnterpriseList = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterprisesListResult = await adminDao.retrieveEnterpriseList(connection);
+    connection.release();
+
+    return enterprisesListResult;
+};
+
+// 업체 상세정보 가져오기
+exports.enterpriseInfo = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterpriseResult = await adminDao.enterpriseInfo(connection, enterpriseId);
+    connection.release();
+
+    return enterpriseResult;
+};
+
+// 업체 정보 가져오기
+exports.retrieveProgramList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programsListResult = await adminDao.retrieveProgramsList(connection, enterpriseId);
+    connection.release();
+    return programsListResult;
+};
+
+// 유저가 기존의 자기와 같은 닉네임으로 바꾸는지 체크
+exports.checkNickname = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const nicknameResult = await adminDao.nicknameCheck(connection, userId);
+    connection.release();
+    return nicknameResult;
+};
+
+// 닉네임 중복 체크
+exports.overlapNickname = async function (nickname) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.nicknameOverlap(connection, nickname);
+    connection.release();
+    return overlapResult;
+};

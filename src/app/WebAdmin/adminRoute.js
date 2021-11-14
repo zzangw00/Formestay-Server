@@ -19,4 +19,16 @@ module.exports = function (app) {
 
     // 유저 탈퇴 API
     app.patch('/admin/users/:userId/status', jwtMiddleware, admin.deleteUser);
+
+    // 업체 조회 API
+    app.get('/admin/enterprises', jwtMiddleware, admin.getEnterprises);
+
+    // 업체 상세 조회 API
+    app.get('/admin/enterprises/:enterpriseId', jwtMiddleware, admin.getEnterprise);
+
+    // 프로그램 조회 API
+    app.get('/admin/programs/:enterpriseId', jwtMiddleware, admin.getPrograms);
+
+    // 유저 정보 수정 API
+    app.patch('/admin/users/:userId', jwtMiddleware, admin.patchUser);
 };

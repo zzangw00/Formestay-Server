@@ -29,7 +29,7 @@ exports.createAdmin = async function (email, password, nickname, phoneNumber) {
 
         const insertAdminInfoParams = [email, hashedPassword, nickname, phoneNumber];
         const connection = await pool.getConnection(async (conn) => conn);
-        const createAdmin = await userDao.insertAdminInfo(connection, insertAdminInfoParams);
+        const createAdmin = await adminDao.insertAdminInfo(connection, insertAdminInfoParams);
         connection.release();
 
         return response(AdminBaseResponse.SUCCESS);
@@ -109,8 +109,36 @@ exports.makeJWT = async function (adminInfo) {
 
 // 회원 탈퇴
 exports.patchUserStatus = async function (status, userId) {
-    const connection = await pool.getConnection(async (conn) => conn);
-    const changeStatus = await adminDao.changeUserStatus(connection, status, userId);
-    connection.release();
-    return changeStatus;
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.changeUserStatus(connection, status, userId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchUserStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 유저 정보 수정
+exports.patchUser = async function (nickname, userId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const checkNickname = await adminProvider.checkNickname(userId);
+        const overlapNickname = await adminProvider.overlapNickname(nickname);
+        if (nickname == checkNickname[0].nickname) {
+            const patchInfo = await adminDao.patchUserInfo(connection, nickname, userId);
+            connection.release();
+            return response(AdminBaseResponse.SUCCESS);
+        } else if (overlapNickname[0].exist == 1) {
+            return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_NICKNAME);
+        } else {
+            const patchInfo = await adminDao.patchUserInfo(connection, nickname, userId);
+            connection.release();
+            return response(AdminBaseResponse.SUCCESS);
+        }
+    } catch (err) {
+        logger.error(`App - patchUser Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
 };

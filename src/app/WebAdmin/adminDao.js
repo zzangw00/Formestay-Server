@@ -106,6 +106,68 @@ async function changeUserStatus(connection, status, userId) {
     const [changeUserStatusRows] = await connection.query(changeUserStatusQuery, [status, userId]);
     return changeUserStatusRows;
 }
+
+// 업체 정보 가져오기
+async function retrieveEnterpriseList(connection) {
+    const retrieveEnterpriseListQuery = `
+        select enterpriseId, korName, engName, primeLocation, status
+        from Enterprise`;
+    const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
+    return retrieveEnterpriseListRows;
+}
+
+// 업체 상세정보 가져오기
+async function enterpriseInfo(connection, enterpriseId) {
+    const enterpriseInfoQuery = `
+        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [enterpriseInfoRows] = await connection.query(enterpriseInfoQuery, enterpriseId);
+    return enterpriseInfoRows;
+}
+
+// 프로그램 정보 가져오기
+async function retrieveProgramsList(connection, enterpriseId) {
+    const retrieveProgramsListQuery = `
+        select programId, name, status
+        from Program
+        where enterpriseId = ?`;
+    const [retrieveProgramsListRows] = await connection.query(
+        retrieveProgramsListQuery,
+        enterpriseId,
+    );
+    return retrieveProgramsListRows;
+}
+
+// 유저 닉네임 체크
+async function nicknameCheck(connection, userId) {
+    const nicknameCheckQuery = `
+        select nickname
+        from UserInfo
+        where userId = ?;`;
+    const [nicknameCheckRows] = await connection.query(nicknameCheckQuery, userId);
+    return nicknameCheckRows;
+}
+
+// 유저 닉네임 체크
+async function nicknameOverlap(connection, nickname) {
+    const nicknameOverlapQuery = `
+        select exists(select nickname
+        from UserInfo
+        where nickname = ?) as exist;`;
+    const [nicknameOverlapRows] = await connection.query(nicknameOverlapQuery, nickname);
+    return nicknameOverlapRows;
+}
+
+// 유저 정보 수정
+async function patchUserInfo(connection, nickname, userId) {
+    const patchUserQuery = `
+        update UserInfo
+        set nickname = ?
+        where userId = ?;`;
+    const [patchUserRows] = await connection.query(patchUserQuery, [nickname, userId]);
+    return patchUserRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -117,4 +179,10 @@ module.exports = {
     retrieveUserList,
     userInfo,
     changeUserStatus,
+    retrieveEnterpriseList,
+    enterpriseInfo,
+    retrieveProgramsList,
+    nicknameCheck,
+    nicknameOverlap,
+    patchUserInfo,
 };
