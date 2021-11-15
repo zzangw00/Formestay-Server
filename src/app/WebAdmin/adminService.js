@@ -24,6 +24,11 @@ exports.createAdmin = async function (email, password, nickname, phoneNumber) {
         if (nicknameRows.length > 0)
             return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_NICKNAME);
 
+        // 전화번호 중복 확인
+        const phoneNumberRows = await adminProvider.phoneNumberCheck(phoneNumber);
+        if (phoneNumberRows.length > 0)
+            return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_PHONENUMBER);
+
         // 비밀번호 암호화
         const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 

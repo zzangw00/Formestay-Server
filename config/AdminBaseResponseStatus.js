@@ -53,6 +53,11 @@ module.exports = {
         code: 3503,
         message: '아이디 혹은 비밀번호가 틀렸습니다.',
     },
+    ADMIN_SIGNUP_REDUNDANT_PHONENUMBER: {
+        isSuccess: false,
+        code: 3504,
+        message: '중복된 핸드폰 번호입니다.',
+    },
     FIND_NO_EXIST_ADMIN: { isSuccess: false, code: 3504, message: '존재하지 않는 관리자입니다.' },
     //Connection, Transaction 등의 서버 오류
     DB_ERROR: { isSuccess: false, code: 4000, message: '데이터 베이스 에러' },

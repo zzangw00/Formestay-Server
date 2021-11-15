@@ -22,6 +22,20 @@ async function checkAdminNickname(connection, nickname) {
     return nicknameRows;
 }
 
+// admin 회원가입 phoneNumber check
+async function checkAdminPhoneNumber(connection, phoneNumber) {
+    const checkAdminPhoneNumberquery = `
+        SELECT phoneNumber
+        FROM Admin
+        WHERE phoneNumber = ?;
+    `;
+    const [checkAdminPhoneNumberRows] = await connection.query(
+        checkAdminPhoneNumberquery,
+        phoneNumber,
+    );
+    return checkAdminPhoneNumberRows;
+}
+
 // admin 회원가입
 async function insertAdminInfo(connection, insertAdminInfoParams) {
     const query = `
@@ -185,4 +199,5 @@ module.exports = {
     nicknameCheck,
     nicknameOverlap,
     patchUserInfo,
+    checkAdminPhoneNumber,
 };

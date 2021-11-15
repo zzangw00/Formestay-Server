@@ -21,6 +21,15 @@ exports.nicknameCheck = async function (nickname) {
     return adminNicknameResult;
 };
 
+// admin 회원가입 phoneNumber 중복체크
+exports.phoneNumberCheck = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminPhoneNumberResult = await adminDao.checkAdminPhoneNumber(connection, phoneNumber);
+    connection.release();
+
+    return adminPhoneNumberResult;
+};
+
 // admin 로그인 email존재여부 체크
 exports.emailCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
