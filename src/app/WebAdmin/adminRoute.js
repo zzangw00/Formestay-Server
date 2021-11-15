@@ -31,4 +31,7 @@ module.exports = function (app) {
 
     // 유저 정보 수정 API
     app.patch('/admin/users/:userId', jwtMiddleware, admin.patchUser);
+
+    // 업체 정보 수정 API
+    app.patch('/admin/enterprises/:enterpriseId', jwtMiddleware, admin.patchEnterprise);
 };

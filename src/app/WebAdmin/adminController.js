@@ -139,7 +139,7 @@ exports.getPrograms = async function (req, res) {
 
 /** 유저 정보 수정 API
  * [PATCH] /admin/users/:userId
- * body : nickname, phoneNumber
+ * body : nickname
  */
 exports.patchUser = async function (req, res) {
     const userId = req.params.userId;
@@ -151,4 +151,61 @@ exports.patchUser = async function (req, res) {
     const patchUserResponse = await adminService.patchUser(nickname, userId);
 
     return res.send(patchUserResponse);
+};
+/** 업체 정보 수정 API
+ * [PATCH] /admin/enterprises/:enterpriseId
+ * param : enterpriseId
+ * body : korName, engName, category, phoneNumber, primeLocation, location, tag, description
+ */
+exports.patchEnterprise = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    let { korName, engName, category, phoneNumber, primeLocation, location, tag, description } =
+        req.body;
+    if (!korName) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_KORNAME_EMPTY));
+    }
+    if (!engName) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_ENGNAME_EMPTY));
+    }
+    if (!category) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_CATEGORY_EMPTY));
+    }
+    if (!phoneNumber) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PHONENUMBER_EMPTY));
+    }
+    if (!primeLocation) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PRIMELOCATION_EMPTY));
+    }
+    if (!location) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_LOCATION_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_TAG_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
+    }
+    if (category == '단식원') {
+        category = 1;
+    } else if (category == '템플스테이') {
+        category = 2;
+    } else if (category == '힐링캠프') {
+        category = 3;
+    } else if (category == '산후조리원') {
+        category = 4;
+    } else {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_WRONG_CATEGORY));
+    }
+    const patchEnterpriseResponse = await adminService.patchEnterprise(
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        enterpriseId,
+    );
+    return res.send(patchEnterpriseResponse);
 };

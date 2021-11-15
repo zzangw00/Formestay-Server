@@ -147,3 +147,105 @@ exports.patchUser = async function (nickname, userId) {
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 업체 정보 수정
+exports.patchEnterprise = async function (
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    enterpriseId,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const checkKorName = await adminProvider.checkKorName(enterpriseId);
+        const checkEngName = await adminProvider.checkEngName(enterpriseId);
+        const overlapKorName = await adminProvider.overlapKorName(korName);
+        const overlapEngName = await adminProvider.overlapEngName(engName);
+
+        if (korName == checkKorName[0].korName) {
+            if (engName != checkEngName[0].engName) {
+                if (overlapEngName[0].exist == 1) {
+                    return errResponse(AdminBaseResponse.ENTERPRISE_PATCH_REDUNDANT_ENGNAME);
+                } else {
+                    const patchInfo = await adminDao.patchEnterpriseInfo(
+                        connection,
+                        korName,
+                        engName,
+                        category,
+                        primeLocation,
+                        location,
+                        tag,
+                        description,
+                        phoneNumber,
+                        enterpriseId,
+                    );
+                    connection.release();
+                    return response(AdminBaseResponse.SUCCESS);
+                }
+            } else {
+                const patchInfo = await adminDao.patchEnterpriseInfo(
+                    connection,
+                    korName,
+                    engName,
+                    category,
+                    primeLocation,
+                    location,
+                    tag,
+                    description,
+                    phoneNumber,
+                    enterpriseId,
+                );
+                connection.release();
+                return response(AdminBaseResponse.SUCCESS);
+            }
+        } else if (korName != checkKorName[0].korName) {
+            if (overlapKorName[0].exist == 1) {
+                return errResponse(AdminBaseResponse.ENTERPRISE_PATCH_REDUNDANT_KORNAME);
+            } else {
+                if (engName != checkEngName[0].engName) {
+                    if (overlapEngName[0].exist == 1) {
+                        return errResponse(AdminBaseResponse.ENTERPRISE_PATCH_REDUNDANT_ENGNAME);
+                    } else {
+                        const patchInfo = await adminDao.patchEnterpriseInfo(
+                            connection,
+                            korName,
+                            engName,
+                            category,
+                            primeLocation,
+                            location,
+                            tag,
+                            description,
+                            phoneNumber,
+                            enterpriseId,
+                        );
+                        connection.release();
+                        return response(AdminBaseResponse.SUCCESS);
+                    }
+                } else {
+                    const patchInfo = await adminDao.patchEnterpriseInfo(
+                        connection,
+                        korName,
+                        engName,
+                        category,
+                        primeLocation,
+                        location,
+                        tag,
+                        description,
+                        phoneNumber,
+                        enterpriseId,
+                    );
+                    connection.release();
+                    return response(AdminBaseResponse.SUCCESS);
+                }
+            }
+        }
+    } catch (err) {
+        logger.error(`App - patchEnterprise Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

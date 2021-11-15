@@ -128,3 +128,35 @@ exports.overlapNickname = async function (nickname) {
     connection.release();
     return overlapResult;
 };
+
+// 기존의 자기와 같은 한글 이름으로 바꾸는지 체크
+exports.checkKorName = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const korNameResult = await adminDao.korNameCheck(connection, enterpriseId);
+    connection.release();
+    return korNameResult;
+};
+
+// 기존의 자기와 같은 영어 이름으로 바꾸는지 체크
+exports.checkEngName = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const engNameResult = await adminDao.engNameCheck(connection, enterpriseId);
+    connection.release();
+    return engNameResult;
+};
+
+// 한글 이름 중복 체크
+exports.overlapKorName = async function (korName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.korNameOverlap(connection, korName);
+    connection.release();
+    return overlapResult;
+};
+
+// 영어 이름 중복 체크
+exports.overlapEngName = async function (engName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.engNameOverlap(connection, engName);
+    connection.release();
+    return overlapResult;
+};

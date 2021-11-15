@@ -165,7 +165,7 @@ async function nicknameCheck(connection, userId) {
     return nicknameCheckRows;
 }
 
-// 유저 닉네임 체크
+// 유저 닉네임 중복 체크
 async function nicknameOverlap(connection, nickname) {
     const nicknameOverlapQuery = `
         select exists(select nickname
@@ -184,6 +184,85 @@ async function patchUserInfo(connection, nickname, userId) {
     const [patchUserRows] = await connection.query(patchUserQuery, [nickname, userId]);
     return patchUserRows;
 }
+
+// 업체 정보 수정
+async function patchEnterpriseInfo(
+    connection,
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    enterpriseId,
+) {
+    const patchEnterpriseQuery = `
+        update Enterprise
+        set korName = ?,
+            engName = ?,
+            category = ?,
+            primeLocation = ?,
+            location = ?,
+            tag = ?,
+            description = ?,
+            phoneNumber = ?
+        where enterpriseId = ?;`;
+    const [patchEnterpriseRows] = await connection.query(patchEnterpriseQuery, [
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        enterpriseId,
+    ]);
+    return patchEnterpriseRows;
+}
+
+// 업체 한글 이름 체크
+async function korNameCheck(connection, enterpriseId) {
+    const korNameCheckQuery = `
+        select korName
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [korNameCheckRows] = await connection.query(korNameCheckQuery, enterpriseId);
+    return korNameCheckRows;
+}
+
+// 업체 영어 이름 체크
+async function engNameCheck(connection, enterpriseId) {
+    const engNameCheckQuery = `
+        select engName
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [engNameCheckRows] = await connection.query(engNameCheckQuery, enterpriseId);
+    return engNameCheckRows;
+}
+
+// 업체 한글 이름 중복 체크
+async function korNameOverlap(connection, korName) {
+    const korNameOverlapQuery = `
+        select exists(select korName
+        from Enterprise
+        where korName = ?) as exist;`;
+    const [korNameOverlapRows] = await connection.query(korNameOverlapQuery, korName);
+    return korNameOverlapRows;
+}
+
+// 업체 영어 이름 중복 체크
+async function engNameOverlap(connection, engName) {
+    const engNameOverlapQuery = `
+        select exists(select engName
+        from Enterprise
+        where engName = ?) as exist;`;
+    const [engNameOverlapRows] = await connection.query(engNameOverlapQuery, engName);
+    return engNameOverlapRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -202,4 +281,9 @@ module.exports = {
     nicknameOverlap,
     patchUserInfo,
     checkAdminPhoneNumber,
+    patchEnterpriseInfo,
+    korNameCheck,
+    engNameCheck,
+    korNameOverlap,
+    engNameOverlap,
 };
