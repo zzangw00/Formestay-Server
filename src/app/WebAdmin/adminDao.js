@@ -95,8 +95,9 @@ async function selectAdminByAdminId(connection, adminId) {
 // 유저 정보 가져오기
 async function retrieveUserList(connection, adminIdFromJWT) {
     const retrieveUserListQuery = `
-        select userId, nickname, email, createdAt, status
-        from UserInfo;`;
+        select userId, nickname, email, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        from UserInfo
+        order by createdAt desc`;
     const [retrieveUserListRows] = await connection.query(retrieveUserListQuery, adminIdFromJWT);
     return retrieveUserListRows;
 }
