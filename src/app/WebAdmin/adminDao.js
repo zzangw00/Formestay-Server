@@ -125,8 +125,9 @@ async function changeUserStatus(connection, status, userId) {
 // 업체 정보 가져오기
 async function retrieveEnterpriseList(connection) {
     const retrieveEnterpriseListQuery = `
-        select enterpriseId, korName, engName, primeLocation, status
-        from Enterprise`;
+        select enterpriseId, korName, engName, primeLocation, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        from Enterprise
+        order by createdAt desc`;
     const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
     return retrieveEnterpriseListRows;
 }
