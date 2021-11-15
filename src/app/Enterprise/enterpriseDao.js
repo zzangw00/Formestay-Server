@@ -76,7 +76,7 @@ async function selectProgramsByEnterpriseId(connection, enterpriseId) {
     return selectProgramsByEnterpriseIdRows;
 }
 
-// 유저 핸드폰 번호 존재 체크
+// 업체아이디로 업체 조회
 async function isExistEnterpriseByEnterpriseId(connection, enterpriseId) {
     const isExistEnterpriseByEnterpriseIdQuery = `
         SELECT COUNT(*) as CNT
