@@ -95,7 +95,7 @@ async function selectAdminByAdminId(connection, adminId) {
 // 유저 정보 가져오기
 async function retrieveUserList(connection, adminIdFromJWT) {
     const retrieveUserListQuery = `
-        select userId, nickname, email, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        select userId, nickname, email, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, snsId, status
         from UserInfo
         order by createdAt desc`;
     const [retrieveUserListRows] = await connection.query(retrieveUserListQuery, adminIdFromJWT);
@@ -105,7 +105,7 @@ async function retrieveUserList(connection, adminIdFromJWT) {
 // 유저 상세정보 가져오기
 async function userInfo(connection, userId) {
     const UserInfoQuery = `
-        select userId, email, name, nickname, gender, birthday, phoneNumber, isPermitAlarm, appVersion, createdAt, status
+        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, appVersion, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
         from UserInfo
         where userId = ?;`;
     const [UserInfoRows] = await connection.query(UserInfoQuery, userId);
