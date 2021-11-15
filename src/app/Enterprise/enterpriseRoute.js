@@ -17,6 +17,6 @@ module.exports = function (app) {
     // 찜 목록 조회
     app.get('/app/bookmarks', jwtMiddleware, enterprise.getBookmarks);
 
-    // 찜 하기
+    // 찜 하기 및 해제하기
     app.route('/app/bookmarks').post(jwtMiddleware, enterprise.postBookmarks);
 };

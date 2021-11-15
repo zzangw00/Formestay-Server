@@ -1,6 +1,8 @@
 module.exports = {
     // Success
     SUCCESS : { "isSuccess": true, "code": 1000, "message":"성공" },
+    BOOKMARK_ENROLL_SUCCESS : { "isSuccess": true, "code": 1001, "message":"찜하기 성공" },
+    BOOKMARK_END_SUCCESS : { "isSuccess": true, "code": 1002, "message":"찜 해제 성공" },
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰이 입력되지 않았습니다." },

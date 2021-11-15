@@ -27,7 +27,7 @@ exports.createEnterprisesEntrance = async function (enterpriseId) {
 };
 
 exports.createBookmarks = async function (userId, enterpriseId) {
-
+    let flag = false;
     const connection = await pool.getConnection(async (conn) => conn);
     const isExistProgram = await enterpriseDao.isExistEnterpriseByEnterpriseId(connection, enterpriseId);
 
@@ -40,12 +40,19 @@ exports.createBookmarks = async function (userId, enterpriseId) {
 
         if (bookmarkInfo[0] == undefined) {
             await enterpriseDao.insertBookMarks(connection, enterpriseId, userId);
+            flag = true;
         } else {
             await enterpriseDao.updateBookMarks(connection, bookmarkInfo[0].bookMarkId);
+            flag = false;
         }
         await connection.commit(); // COMMIT
         connection.release();
-        return response(baseResponse.SUCCESS);
+
+        if (flag == true) {
+            return response(baseResponse.BOOKMARK_ENROLL_SUCCESS);
+        } else {
+            return response(baseResponse.BOOKMARK_END_SUCCESS);
+        }
     } catch (err) {
         connection.rollback(); //ROLLBACK
         connection.release();
