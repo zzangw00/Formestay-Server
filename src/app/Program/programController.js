@@ -28,7 +28,7 @@ exports.getProgramsById = async function (req, res) {
  */
 exports.postReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
-    const programId = req.body.programId;
+    const {programId, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
 
     let now = new Date();
     let timestamp = now.getFullYear().toString();
@@ -44,6 +44,7 @@ exports.postReservations = async function (req, res) {
     } else {
         timestamp += now.getMilliseconds().toString();
     }
-    console.log(timestamp)
+
+    await programService.createReservations(userIdResult, programId);
     return res.send(baseResponse.SUCCESS);
 };
