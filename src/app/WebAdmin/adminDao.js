@@ -127,7 +127,7 @@ async function retrieveEnterpriseList(connection) {
     const retrieveEnterpriseListQuery = `
         select enterpriseId, korName, engName, primeLocation, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
         from Enterprise
-        order by createdAt desc`;
+        order by createdAt desc;`;
     const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
     return retrieveEnterpriseListRows;
 }
@@ -135,7 +135,7 @@ async function retrieveEnterpriseList(connection) {
 // 업체 상세정보 가져오기
 async function enterpriseInfo(connection, enterpriseId) {
     const enterpriseInfoQuery = `
-        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber
+        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber, thumbnailURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
         from Enterprise
         where enterpriseId = ?;`;
     const [enterpriseInfoRows] = await connection.query(enterpriseInfoQuery, enterpriseId);
@@ -147,7 +147,7 @@ async function retrieveProgramsList(connection, enterpriseId) {
     const retrieveProgramsListQuery = `
         select programId, name, status
         from Program
-        where enterpriseId = ?`;
+        where enterpriseId = ?;`;
     const [retrieveProgramsListRows] = await connection.query(
         retrieveProgramsListQuery,
         enterpriseId,
