@@ -9,25 +9,21 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {connect} = require("http2");
 const security = require("../../../utils/security");
+const common = require("../../../config/common");
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createReservations = async function (userId, programId) {
+exports.createReservations = async function (userId, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const isExistProgram = await enterpriseDao.isExistEnterpriseByEnterpriseId(connection, enterpriseId);
+    const isExistProgram = await programDao.isExistProgramByProgramId(connection, programId);
 
     if (isExistProgram[0]['CNT'] == 0) {
-        return errResponse(baseResponse.NON_EXIST_ENTERPRISE);
+        return errResponse(baseResponse.NON_EXIST_PROGRAM);
     }
     try {
         await connection.beginTransaction(); // START TRANSACTION
-        const bookmarkInfo = await enterpriseDao.selectBookMarkInfoById(connection, enterpriseId);
+        await programDao.insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, common.makeReservationNumber());
 
-        if (bookmarkInfo[0] == undefined) {
-            await enterpriseDao.insertBookMarks(connection, enterpriseId, userId);
-        } else {
-            await enterpriseDao.updateBookMarks(connection, bookmarkInfo[0].bookMarkId);
-        }
         await connection.commit(); // COMMIT
         connection.release();
 

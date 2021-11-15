@@ -28,23 +28,25 @@ exports.getProgramsById = async function (req, res) {
  */
 exports.postReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
-    const {programId, nickname, gender, birthday, phoneNumber, email, password, isPermitAlarm, snsId, profileImgURL} = req.body;
+    const {programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay} = req.body;
 
-    let now = new Date();
-    let timestamp = now.getFullYear().toString();
-    timestamp += (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1).toString();
-    timestamp += (now.getDate() < 10 ? '0' : '') + now.getDate().toString();
-    timestamp += (now.getHours() < 10 ? '0' : '') + now.getHours().toString();
-    timestamp += (now.getMinutes() < 10 ? '0' : '') + now.getMinutes().toString();
-    timestamp += (now.getSeconds() < 10 ? '0' : '') + now.getSeconds().toString();
-    if (now.getMilliseconds() < 10) {
-        timestamp += '00' + now.getMilliseconds().toString();
-    } else if (now.getMilliseconds() < 100) {
-        timestamp += '0' + now.getMilliseconds().toString();
-    } else {
-        timestamp += now.getMilliseconds().toString();
-    }
+    if (!programId)
+        return res.send(response(baseResponse.PROGRAM_ID_EMPTY));
+    if (!name)
+        return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
+    if (!phoneNumber)
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_EMPTY));
+    if (!regex.phoneNumberRegex.test(phoneNumber))
+        return res.send(response(baseResponse.SIGNUP_PHONE_NUMBER_ERROR_TYPE));
+    if (!totalPerson)
+        return res.send(response(baseResponse.RESERVATION_TOTAL_PERSON_EMPTY));
+    if (!startDate)
+        return res.send(response(baseResponse.RESERVATION_START_DATE_EMPTY));
+    if (!endDate)
+        return res.send(response(baseResponse.RESERVATION_END_DATE_EMPTY));
+    if (!paymentWay)
+        return res.send(response(baseResponse.RESERVATION_PAYMENT_WAY_EMPTY));
 
-    await programService.createReservations(userIdResult, programId);
+    await programService.createReservations(userIdResult, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay);
     return res.send(baseResponse.SUCCESS);
 };

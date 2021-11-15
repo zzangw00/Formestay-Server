@@ -24,8 +24,32 @@ async function selectProgramImagesById(connection, programId) {
     return selectProgramImagesByIdRows;
 }
 
+// 프로그램 아이디로 프로그램 조회
+async function isExistProgramByProgramId(connection, programId) {
+    const isExistProgramByProgramIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM Program
+        WHERE programId = ? and status = "ACTIVE";
+    `;
+    const [isExistProgramByProgramIdRows] = await connection.query(isExistProgramByProgramIdQuery, programId);
+    return isExistProgramByProgramIdRows;
+}
+
+// 찜하기 삽입
+async function insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber) {
+    const insertReservationQuery = `
+        INSERT INTO Reservation(programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+    const insertReservationRows = await connection.query(
+        insertReservationQuery,
+        [programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber]
+    );
+}
 
 module.exports = {
     selectProgramsById,
-    selectProgramImagesById
+    selectProgramImagesById,
+    isExistProgramByProgramId,
+    insertReservation
 };
