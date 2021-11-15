@@ -23,9 +23,27 @@ exports.getProgramsById = async function (req, res) {
     return res.send(resultStatus);
 };
 
+/** 프로그램 예약하기 API
+ * [POST] app/reservations
+ */
+exports.postReservations = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+    const programId = req.body.programId;
 
-
-
-
-
-
+    let now = new Date();
+    let timestamp = now.getFullYear().toString();
+    timestamp += (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1).toString();
+    timestamp += (now.getDate() < 10 ? '0' : '') + now.getDate().toString();
+    timestamp += (now.getHours() < 10 ? '0' : '') + now.getHours().toString();
+    timestamp += (now.getMinutes() < 10 ? '0' : '') + now.getMinutes().toString();
+    timestamp += (now.getSeconds() < 10 ? '0' : '') + now.getSeconds().toString();
+    if (now.getMilliseconds() < 10) {
+        timestamp += '00' + now.getMilliseconds().toString();
+    } else if (now.getMilliseconds() < 100) {
+        timestamp += '0' + now.getMilliseconds().toString();
+    } else {
+        timestamp += now.getMilliseconds().toString();
+    }
+    console.log(timestamp)
+    return res.send(baseResponse.SUCCESS);
+};
