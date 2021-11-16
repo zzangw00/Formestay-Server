@@ -102,7 +102,7 @@ exports.deleteUser = async function (req, res) {
     const userId = req.params.userId;
     const status = req.body.status;
     const userStatus = await adminService.patchUserStatus(status, userId);
-    return res.send(response(AdminBaseResponse.SUCCESS));
+    return res.send(userStatus);
 };
 
 /** 업체 전체 조회 API
@@ -208,4 +208,16 @@ exports.patchEnterprise = async function (req, res) {
         enterpriseId,
     );
     return res.send(patchEnterpriseResponse);
+};
+
+/** 회원 탈퇴 API
+ * [PATCH] /admin/user/:userId
+ * params : userId
+ * body : status
+ */
+exports.deleteEnterprise = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    const status = req.body.status;
+    const enterpriseStatus = await adminService.patchEnterpriseStatus(status, enterpriseId);
+    return res.send(enterpriseStatus);
 };

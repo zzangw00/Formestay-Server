@@ -249,3 +249,20 @@ exports.patchEnterprise = async function (
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 업체 삭제
+exports.patchEnterpriseStatus = async function (status, enterpriseId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.changeEnterpriseStatus(
+            connection,
+            status,
+            enterpriseId,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchEnterpriseStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

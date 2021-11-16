@@ -263,6 +263,19 @@ async function engNameOverlap(connection, engName) {
     return engNameOverlapRows;
 }
 
+// 업체 삭제
+async function changeEnterpriseStatus(connection, status, enterpriseId) {
+    const changeEnterpriseStatusQuery = `
+        Update Enterprise
+        set status = ?
+        where enterpriseId = ?;`;
+    const [changeEnterpriseStatusRows] = await connection.query(changeEnterpriseStatusQuery, [
+        status,
+        enterpriseId,
+    ]);
+    return changeEnterpriseStatusRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -286,4 +299,5 @@ module.exports = {
     engNameCheck,
     korNameOverlap,
     engNameOverlap,
+    changeEnterpriseStatus,
 };
