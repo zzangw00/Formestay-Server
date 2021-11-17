@@ -21,6 +21,15 @@ exports.nicknameCheck = async function (nickname) {
     return adminNicknameResult;
 };
 
+// admin 회원가입 phoneNumber 중복체크
+exports.phoneNumberCheck = async function (phoneNumber) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminPhoneNumberResult = await adminDao.checkAdminPhoneNumber(connection, phoneNumber);
+    connection.release();
+
+    return adminPhoneNumberResult;
+};
+
 // admin 로그인 email존재여부 체크
 exports.emailCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -116,6 +125,38 @@ exports.checkNickname = async function (userId) {
 exports.overlapNickname = async function (nickname) {
     const connection = await pool.getConnection(async (conn) => conn);
     const overlapResult = await adminDao.nicknameOverlap(connection, nickname);
+    connection.release();
+    return overlapResult;
+};
+
+// 기존의 자기와 같은 한글 이름으로 바꾸는지 체크
+exports.checkKorName = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const korNameResult = await adminDao.korNameCheck(connection, enterpriseId);
+    connection.release();
+    return korNameResult;
+};
+
+// 기존의 자기와 같은 영어 이름으로 바꾸는지 체크
+exports.checkEngName = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const engNameResult = await adminDao.engNameCheck(connection, enterpriseId);
+    connection.release();
+    return engNameResult;
+};
+
+// 한글 이름 중복 체크
+exports.overlapKorName = async function (korName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.korNameOverlap(connection, korName);
+    connection.release();
+    return overlapResult;
+};
+
+// 영어 이름 중복 체크
+exports.overlapEngName = async function (engName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const overlapResult = await adminDao.engNameOverlap(connection, engName);
     connection.release();
     return overlapResult;
 };

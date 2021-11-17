@@ -22,6 +22,20 @@ async function checkAdminNickname(connection, nickname) {
     return nicknameRows;
 }
 
+// admin 회원가입 phoneNumber check
+async function checkAdminPhoneNumber(connection, phoneNumber) {
+    const checkAdminPhoneNumberquery = `
+        SELECT phoneNumber
+        FROM Admin
+        WHERE phoneNumber = ?;
+    `;
+    const [checkAdminPhoneNumberRows] = await connection.query(
+        checkAdminPhoneNumberquery,
+        phoneNumber,
+    );
+    return checkAdminPhoneNumberRows;
+}
+
 // admin 회원가입
 async function insertAdminInfo(connection, insertAdminInfoParams) {
     const query = `
@@ -81,8 +95,9 @@ async function selectAdminByAdminId(connection, adminId) {
 // 유저 정보 가져오기
 async function retrieveUserList(connection, adminIdFromJWT) {
     const retrieveUserListQuery = `
-        select userId, nickname, email, createdAt, status
-        from UserInfo;`;
+        select userId, nickname, email, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, snsId, status
+        from UserInfo
+        order by createdAt desc`;
     const [retrieveUserListRows] = await connection.query(retrieveUserListQuery, adminIdFromJWT);
     return retrieveUserListRows;
 }
@@ -90,7 +105,7 @@ async function retrieveUserList(connection, adminIdFromJWT) {
 // 유저 상세정보 가져오기
 async function userInfo(connection, userId) {
     const UserInfoQuery = `
-        select userId, email, name, nickname, gender, birthday, phoneNumber, isPermitAlarm, appVersion, createdAt, status
+        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, appVersion, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
         from UserInfo
         where userId = ?;`;
     const [UserInfoRows] = await connection.query(UserInfoQuery, userId);
@@ -110,8 +125,9 @@ async function changeUserStatus(connection, status, userId) {
 // 업체 정보 가져오기
 async function retrieveEnterpriseList(connection) {
     const retrieveEnterpriseListQuery = `
-        select enterpriseId, korName, engName, primeLocation, status
-        from Enterprise`;
+        select enterpriseId, korName, engName, primeLocation, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        from Enterprise
+        order by createdAt desc;`;
     const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
     return retrieveEnterpriseListRows;
 }
@@ -119,7 +135,7 @@ async function retrieveEnterpriseList(connection) {
 // 업체 상세정보 가져오기
 async function enterpriseInfo(connection, enterpriseId) {
     const enterpriseInfoQuery = `
-        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber
+        select enterpriseId, korName, engName, category, primeLocation, location, tag, description, phoneNumber, thumbnailURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
         from Enterprise
         where enterpriseId = ?;`;
     const [enterpriseInfoRows] = await connection.query(enterpriseInfoQuery, enterpriseId);
@@ -131,7 +147,7 @@ async function retrieveProgramsList(connection, enterpriseId) {
     const retrieveProgramsListQuery = `
         select programId, name, status
         from Program
-        where enterpriseId = ?`;
+        where enterpriseId = ?;`;
     const [retrieveProgramsListRows] = await connection.query(
         retrieveProgramsListQuery,
         enterpriseId,
@@ -149,7 +165,7 @@ async function nicknameCheck(connection, userId) {
     return nicknameCheckRows;
 }
 
-// 유저 닉네임 체크
+// 유저 닉네임 중복 체크
 async function nicknameOverlap(connection, nickname) {
     const nicknameOverlapQuery = `
         select exists(select nickname
@@ -168,6 +184,98 @@ async function patchUserInfo(connection, nickname, userId) {
     const [patchUserRows] = await connection.query(patchUserQuery, [nickname, userId]);
     return patchUserRows;
 }
+
+// 업체 정보 수정
+async function patchEnterpriseInfo(
+    connection,
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    enterpriseId,
+) {
+    const patchEnterpriseQuery = `
+        update Enterprise
+        set korName = ?,
+            engName = ?,
+            category = ?,
+            primeLocation = ?,
+            location = ?,
+            tag = ?,
+            description = ?,
+            phoneNumber = ?
+        where enterpriseId = ?;`;
+    const [patchEnterpriseRows] = await connection.query(patchEnterpriseQuery, [
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        enterpriseId,
+    ]);
+    return patchEnterpriseRows;
+}
+
+// 업체 한글 이름 체크
+async function korNameCheck(connection, enterpriseId) {
+    const korNameCheckQuery = `
+        select korName
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [korNameCheckRows] = await connection.query(korNameCheckQuery, enterpriseId);
+    return korNameCheckRows;
+}
+
+// 업체 영어 이름 체크
+async function engNameCheck(connection, enterpriseId) {
+    const engNameCheckQuery = `
+        select engName
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [engNameCheckRows] = await connection.query(engNameCheckQuery, enterpriseId);
+    return engNameCheckRows;
+}
+
+// 업체 한글 이름 중복 체크
+async function korNameOverlap(connection, korName) {
+    const korNameOverlapQuery = `
+        select exists(select korName
+        from Enterprise
+        where korName = ?) as exist;`;
+    const [korNameOverlapRows] = await connection.query(korNameOverlapQuery, korName);
+    return korNameOverlapRows;
+}
+
+// 업체 영어 이름 중복 체크
+async function engNameOverlap(connection, engName) {
+    const engNameOverlapQuery = `
+        select exists(select engName
+        from Enterprise
+        where engName = ?) as exist;`;
+    const [engNameOverlapRows] = await connection.query(engNameOverlapQuery, engName);
+    return engNameOverlapRows;
+}
+
+// 업체 삭제
+async function changeEnterpriseStatus(connection, status, enterpriseId) {
+    const changeEnterpriseStatusQuery = `
+        Update Enterprise
+        set status = ?
+        where enterpriseId = ?;`;
+    const [changeEnterpriseStatusRows] = await connection.query(changeEnterpriseStatusQuery, [
+        status,
+        enterpriseId,
+    ]);
+    return changeEnterpriseStatusRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -185,4 +293,11 @@ module.exports = {
     nicknameCheck,
     nicknameOverlap,
     patchUserInfo,
+    checkAdminPhoneNumber,
+    patchEnterpriseInfo,
+    korNameCheck,
+    engNameCheck,
+    korNameOverlap,
+    engNameOverlap,
+    changeEnterpriseStatus,
 };
