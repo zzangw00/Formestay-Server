@@ -50,3 +50,14 @@ exports.postReservations = async function (req, res) {
     await programService.createReservations(userIdResult, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay);
     return res.send(baseResponse.SUCCESS);
 };
+
+/** 찜 목록 조회 API
+ * [GET] app/bookmarks
+ */
+exports.getReservations = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+
+    const result = await programProvider.retrieveReservations(userIdResult);
+
+    return res.send(response(baseResponse.SUCCESS, result));
+};
