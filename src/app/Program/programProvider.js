@@ -31,3 +31,15 @@ exports.retrieveProgramsByProgramId = async function (programId) {
     return response(baseResponse.SUCCESS, data);
 };
 
+exports.retrieveReservations = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let reservationList = await programDao.selectReservationsByUserId(connection, userId);
+    connection.release();
+    reservationList = common.returnTagList(reservationList);
+
+    const data = {
+        reservationList: reservationList
+    }
+
+    return data;
+};

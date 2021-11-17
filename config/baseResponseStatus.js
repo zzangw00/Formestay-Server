@@ -39,6 +39,10 @@ module.exports = {
     SEARCH_CONTENT_EMPTY : { "isSuccess": false, "code": 2037, "message":"검색 문구가 비었습니다." },
     PROGRAM_ID_EMPTY : { "isSuccess": false, "code": 2038, "message":"프로그램 아이디가 없습니다." },
     NON_EXIST_PROGRAM : { "isSuccess": false, "code": 2039, "message":"존재하지 않는 프로그램입니다." },
+    RESERVATION_TOTAL_PERSON_EMPTY : { "isSuccess": false, "code": 2040, "message":"총 인원수가 없습니다." },
+    RESERVATION_START_DATE_EMPTY : { "isSuccess": false, "code": 2041, "message":"시작일이 없습니다." },
+    RESERVATION_END_DATE_EMPTY : { "isSuccess": false, "code": 2042, "message":"종료일이 없습니다." },
+    RESERVATION_PAYMENT_WAY_EMPTY : { "isSuccess": false, "code": 2043, "message":"결제수단이 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },
