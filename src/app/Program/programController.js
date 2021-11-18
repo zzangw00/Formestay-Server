@@ -69,7 +69,10 @@ exports.getReservationsDetail = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
     const reservationId = req.params.reservationId;
 
-    const result = await programProvider.retrieveReservations(userIdResult);
+    if (!reservationId)
+        return res.send(response(baseResponse.RESERVATION_ID_EMPTY));
+
+    const result = await programProvider.retrieveReservation(userIdResult, reservationId);
 
     return res.send(response(baseResponse.SUCCESS, result));
 };

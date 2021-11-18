@@ -43,3 +43,17 @@ exports.retrieveReservations = async function (userId) {
 
     return data;
 };
+
+exports.retrieveReservation = async function (userId, reservationId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let reservationInfo = await programDao.selectReservationsDetailById(connection, userId, reservationId);
+    connection.release();
+    reservationInfo = common.returnOneTagList(reservationInfo);
+
+    const data = {
+        reservationInfo: reservationInfo
+    }
+
+    return data;
+};
+
