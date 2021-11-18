@@ -112,7 +112,23 @@ async function selectReservationsByUserId(connection, userId) {
                        then '이용완료'
                    end as reservationStatus,
                thumbnailURL,
-               date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt
+               date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
+               case
+                   when weekday(Reservation.createdAt) = 0
+                       then '월'
+                   when weekday(Reservation.createdAt) = 1
+                       then '화'
+                   when weekday(Reservation.createdAt) = 2
+                       then '수'
+                   when weekday(Reservation.createdAt) = 3
+                       then '목'
+                   when weekday(Reservation.createdAt) = 4
+                       then '금'
+                   when weekday(Reservation.createdAt) = 5
+                       then '토'
+                   when weekday(Reservation.createdAt) = 6
+                       then '일'
+                   end as createdAtWeekDay
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
@@ -140,9 +156,9 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                    when category = 4
                        then '산후조리원'
                    end as category,
-               PE.name,
+               PE.name as programName,
                PE.tag,
-               PE.phoneNumber,
+               PE.phoneNumber as programPhoneNumber,
                DATEDIFF(endDate, startDate) as totalDate,
                totalPerson,
                date_format(startDate, "%Y-%m-%d") as startDate,
@@ -191,9 +207,25 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                    end as reservationStatus,
                thumbnailURL,
                date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
+               case
+                   when weekday(Reservation.createdAt) = 0
+                       then '월'
+                   when weekday(Reservation.createdAt) = 1
+                       then '화'
+                   when weekday(Reservation.createdAt) = 2
+                       then '수'
+                   when weekday(Reservation.createdAt) = 3
+                       then '목'
+                   when weekday(Reservation.createdAt) = 4
+                       then '금'
+                   when weekday(Reservation.createdAt) = 5
+                       then '토'
+                   when weekday(Reservation.createdAt) = 6
+                       then '일'
+                   end as createdAtWeekDay,
                ((dayPerMoney * (DATEDIFF(endDate, startDate)+1)) + (personPerMoney * totalPerson)) as money,
-               Reservation.name,
-               Reservation.phoneNumber,
+               Reservation.name as userName,
+               Reservation.phoneNumber as userPhoneNumber,
                case
                    when paymentWay = 1
                        then '신용카드'
