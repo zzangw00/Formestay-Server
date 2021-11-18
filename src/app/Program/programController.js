@@ -51,13 +51,28 @@ exports.postReservations = async function (req, res) {
     return res.send(baseResponse.SUCCESS);
 };
 
-/** 찜 목록 조회 API
+/** 예약조회 API
  * [GET] app/bookmarks
  */
 exports.getReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
 
     const result = await programProvider.retrieveReservations(userIdResult);
+
+    return res.send(response(baseResponse.SUCCESS, result));
+};
+
+/** 예약상세 조회 API
+ * [GET] app/bookmarks
+ */
+exports.getReservationsDetail = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+    const reservationId = req.params.reservationId;
+
+    if (!reservationId)
+        return res.send(response(baseResponse.RESERVATION_ID_EMPTY));
+
+    const result = await programProvider.retrieveReservation(userIdResult, reservationId);
 
     return res.send(response(baseResponse.SUCCESS, result));
 };

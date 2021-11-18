@@ -15,7 +15,7 @@ module.exports = {
     SIGNUP_NICKNAME_LENGTH : { "isSuccess": false,"code": 2003,"message":"닉네임은 2~20자리로 입력해주세요." },
     SIGNUP_GENDER_EMPTY : { "isSuccess": false,"code": 2004,"message":"성별을 선택해주세요." },
     SIGNUP_GENDER_ERROR_TYPE : { "isSuccess": false, "code": 2005, "message":"성별형식을 정확하게 입력해주세요." },
-    SIGNUP_PHONE_NUMBER_EMPTY : { "isSuccess": false,"code": 2006,"message":"핸드폰 번호를 선택해주세요." },
+    SIGNUP_PHONE_NUMBER_EMPTY : { "isSuccess": false,"code": 2006,"message":"핸드폰 번호를 입력해주세요." },
     SIGNUP_PHONE_NUMBER_ERROR_TYPE : { "isSuccess": false, "code": 2007, "message":"핸드폰 번호을 정확하게 입력해주세요." },
     SIGNUP_BIRTHDAY_EMPTY : { "isSuccess": false, "code": 2008, "message":"생년월일을 입력해주세요." },
     SIGNUP_BIRTHDAY_ERROR_TYPE : { "isSuccess": false, "code": 2009, "message":"생년월일 형식을 정확하게 입력해주세요." },
@@ -43,6 +43,7 @@ module.exports = {
     RESERVATION_START_DATE_EMPTY : { "isSuccess": false, "code": 2041, "message":"시작일이 없습니다." },
     RESERVATION_END_DATE_EMPTY : { "isSuccess": false, "code": 2042, "message":"종료일이 없습니다." },
     RESERVATION_PAYMENT_WAY_EMPTY : { "isSuccess": false, "code": 2043, "message":"결제수단이 없습니다." },
+    RESERVATION_ID_EMPTY : { "isSuccess": false, "code": 2044, "message":"예약 아이디가 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

@@ -11,4 +11,7 @@ module.exports = function (app) {
 
     // 예약조회
     app.get('/app/reservations', jwtMiddleware, program.getReservations);
+
+    // 예약 상세 조회
+    app.get('/app/reservations/:reservationId', jwtMiddleware, program.getReservationsDetail);
 };

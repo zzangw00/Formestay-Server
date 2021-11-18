@@ -112,7 +112,23 @@ async function selectReservationsByUserId(connection, userId) {
                        then '이용완료'
                    end as reservationStatus,
                thumbnailURL,
-               Reservation.createdAt
+               date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
+               case
+                   when weekday(Reservation.createdAt) = 0
+                       then '월'
+                   when weekday(Reservation.createdAt) = 1
+                       then '화'
+                   when weekday(Reservation.createdAt) = 2
+                       then '수'
+                   when weekday(Reservation.createdAt) = 3
+                       then '목'
+                   when weekday(Reservation.createdAt) = 4
+                       then '금'
+                   when weekday(Reservation.createdAt) = 5
+                       then '토'
+                   when weekday(Reservation.createdAt) = 6
+                       then '일'
+                   end as createdAtWeekDay
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
@@ -125,10 +141,114 @@ async function selectReservationsByUserId(connection, userId) {
     return selectReservationsByUserIdRows;
 }
 
+// 예약 상세 조회
+async function selectReservationsDetailById(connection, userId, reservationId) {
+    const selectReservationsDetailByIdQuery = `
+        select Reservation.reservationId,
+               reservationNumber,
+               case
+                   when category = 1
+                       then '단식원'
+                   when category = 2
+                       then '템플스테이'
+                   when category = 3
+                       then '힐링캠프'
+                   when category = 4
+                       then '산후조리원'
+                   end as category,
+               PE.name as programName,
+               PE.tag,
+               PE.phoneNumber as programPhoneNumber,
+               DATEDIFF(endDate, startDate) as totalDate,
+               totalPerson,
+               date_format(startDate, "%Y-%m-%d") as startDate,
+               date_format(endDate, "%Y-%m-%d") as endDate,
+               case
+                   when weekday(startDate) = 0
+                       then '월'
+                   when weekday(startDate) = 1
+                       then '화'
+                   when weekday(startDate) = 2
+                       then '수'
+                   when weekday(startDate) = 3
+                       then '목'
+                   when weekday(startDate) = 4
+                       then '금'
+                   when weekday(startDate) = 5
+                       then '토'
+                   when weekday(startDate) = 6
+                       then '일'
+                   end as startWeekDay,
+               case
+                   when weekday(endDate) = 0
+                       then '월'
+                   when weekday(endDate) = 1
+                       then '화'
+                   when weekday(endDate) = 2
+                       then '수'
+                   when weekday(endDate) = 3
+                       then '목'
+                   when weekday(endDate) = 4
+                       then '금'
+                   when weekday(endDate) = 5
+                       then '토'
+                   when weekday(endDate) = 6
+                       then '일'
+                   end as endWeekDay,
+               checkIn,
+               checkOut,
+               case
+                   when date_format(now(), "%Y-%m-%d") between startDate and endDate
+                       then '이용중'
+                   when date_format(now(), "%Y-%m-%d") < startDate
+                       then '예약중'
+                   when date_format(now(), "%Y-%m-%d") > endDate
+                       then '이용완료'
+                   end as reservationStatus,
+               thumbnailURL,
+               date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
+               case
+                   when weekday(Reservation.createdAt) = 0
+                       then '월'
+                   when weekday(Reservation.createdAt) = 1
+                       then '화'
+                   when weekday(Reservation.createdAt) = 2
+                       then '수'
+                   when weekday(Reservation.createdAt) = 3
+                       then '목'
+                   when weekday(Reservation.createdAt) = 4
+                       then '금'
+                   when weekday(Reservation.createdAt) = 5
+                       then '토'
+                   when weekday(Reservation.createdAt) = 6
+                       then '일'
+                   end as createdAtWeekDay,
+               ((dayPerMoney * (DATEDIFF(endDate, startDate)+1)) + (personPerMoney * totalPerson)) as money,
+               Reservation.name as userName,
+               Reservation.phoneNumber as userPhoneNumber,
+               case
+                   when paymentWay = 1
+                       then '신용카드'
+                   else '기타'
+                   end as paymentWay
+
+        from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber, Program.dayPerMoney, Program.personPerMoney
+                                    from Program left join Enterprise
+                                                           on Program.enterpriseId = Enterprise.enterpriseId
+                                    where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
+                                   on Reservation.programId = PE.programId
+        where userId = ? and Reservation.reservationId = ? and Reservation.status = "ACTIVE";
+    `;
+    const [selectReservationsDetailByIdRows] = await connection.query(selectReservationsDetailByIdQuery, [userId, reservationId]);
+    return selectReservationsDetailByIdRows[0];
+}
+
+
 module.exports = {
     selectProgramsById,
     selectProgramImagesById,
     isExistProgramByProgramId,
     insertReservation,
-    selectReservationsByUserId
+    selectReservationsByUserId,
+    selectReservationsDetailById
 };
