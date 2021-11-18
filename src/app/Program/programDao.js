@@ -112,7 +112,7 @@ async function selectReservationsByUserId(connection, userId) {
                        then '이용완료'
                    end as reservationStatus,
                thumbnailURL,
-               Reservation.createdAt
+               date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
