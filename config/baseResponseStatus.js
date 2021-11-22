@@ -3,6 +3,8 @@ module.exports = {
     SUCCESS : { "isSuccess": true, "code": 1000, "message":"성공" },
     BOOKMARK_ENROLL_SUCCESS : { "isSuccess": true, "code": 1001, "message":"찜하기 성공" },
     BOOKMARK_END_SUCCESS : { "isSuccess": true, "code": 1002, "message":"찜 해제 성공" },
+    MY_PAGE_LOGIN_SUCCESS : { "isSuccess": true, "code": 1003, "message":"로그인시 마이 페이지 조회 성공" },
+    MY_PAGE_NO_LOGIN_SUCCESS : { "isSuccess": true, "code": 1004, "message":"미로그인시 마이 페이지 조회 성공" },
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰이 입력되지 않았습니다." },
@@ -44,6 +46,7 @@ module.exports = {
     RESERVATION_END_DATE_EMPTY : { "isSuccess": false, "code": 2042, "message":"종료일이 없습니다." },
     RESERVATION_PAYMENT_WAY_EMPTY : { "isSuccess": false, "code": 2043, "message":"결제수단이 없습니다." },
     RESERVATION_ID_EMPTY : { "isSuccess": false, "code": 2044, "message":"예약 아이디가 없습니다." },
+    PROFILE_IMAGE_EMPTY : { "isSuccess": false, "code": 2045, "message":"프로필 이미지가 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },
