@@ -343,3 +343,22 @@ exports.getUserFindByEmail = async function (email) {
     }
 
 }
+
+exports.patchUserProfileImage = async function (userId, profileImgURL) {
+
+    try {
+        const isExistUser = await userProvider.retrieveUserInfoByUserId(userId);
+        if (isExistUser == undefined) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        }
+        const connection = await pool.getConnection(async (conn) => conn);
+        await userDao.updateUserProfileImage(connection, userId, profileImgURL);
+        connection.release();
+
+        return response(baseResponse.SUCCESS)
+
+    } catch (err) {
+        logger.error(`App - postFindPhoneNumber Service error\n: ${err.message} \n${JSON.stringify(err)}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};

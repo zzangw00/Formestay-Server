@@ -239,8 +239,13 @@ async function selectMyPage(connection, userId) {
     return selectMyPageRows[0];
 }
 
-
-
+async function updateUserProfileImage(connection, userId, profileImgURL) {
+    const updateUserProfileImageQuery = `
+        UPDATE UserInfo
+        SET profileImgURL = ?
+        WHERE userId = ?;`;
+    const updateUserProfileImageRows = await connection.query(updateUserProfileImageQuery, [profileImgURL, userId]);
+}
 
 module.exports = {
     isExistUserByPhoneNumber,
@@ -263,5 +268,6 @@ module.exports = {
     updateUserStatus,
     selectUserHashedPasswordAndSalt,
     selectAppVersion,
-    selectMyPage
+    selectMyPage,
+    updateUserProfileImage
 };
