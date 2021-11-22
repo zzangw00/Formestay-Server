@@ -158,6 +158,7 @@ exports.patchEnterprise = async function (
     tag,
     description,
     phoneNumber,
+    thumbnailURL,
     enterpriseId,
 ) {
     try {
@@ -182,6 +183,7 @@ exports.patchEnterprise = async function (
                         tag,
                         description,
                         phoneNumber,
+                        thumbnailURL,
                         enterpriseId,
                     );
                     connection.release();
@@ -198,6 +200,7 @@ exports.patchEnterprise = async function (
                     tag,
                     description,
                     phoneNumber,
+                    thumbnailURL,
                     enterpriseId,
                 );
                 connection.release();
@@ -221,6 +224,7 @@ exports.patchEnterprise = async function (
                             tag,
                             description,
                             phoneNumber,
+                            thumbnailURL,
                             enterpriseId,
                         );
                         connection.release();
@@ -237,6 +241,7 @@ exports.patchEnterprise = async function (
                         tag,
                         description,
                         phoneNumber,
+                        thumbnailURL,
                         enterpriseId,
                     );
                     connection.release();

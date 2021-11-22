@@ -196,6 +196,7 @@ async function patchEnterpriseInfo(
     tag,
     description,
     phoneNumber,
+    thumbnailURL,
     enterpriseId,
 ) {
     const patchEnterpriseQuery = `
@@ -207,7 +208,8 @@ async function patchEnterpriseInfo(
             location = ?,
             tag = ?,
             description = ?,
-            phoneNumber = ?
+            phoneNumber = ?,
+            thumbnailURL = ?
         where enterpriseId = ?;`;
     const [patchEnterpriseRows] = await connection.query(patchEnterpriseQuery, [
         korName,
@@ -218,6 +220,7 @@ async function patchEnterpriseInfo(
         tag,
         description,
         phoneNumber,
+        thumbnailURL,
         enterpriseId,
     ]);
     return patchEnterpriseRows;

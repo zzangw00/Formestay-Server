@@ -37,4 +37,7 @@ module.exports = function (app) {
 
     // 업체 삭제 API
     app.patch('/admin/enterprises/:enterpriseId/status', jwtMiddleware, admin.deleteEnterprise);
+
+    // 업체 추가 API
+    app.post('/admin/enterprise', jwtMiddleware, admin.addEnterprise);
 };
