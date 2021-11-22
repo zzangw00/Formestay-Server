@@ -240,31 +240,34 @@ exports.addEnterprise = async function (req, res) {
         thumbnailURL,
     } = req.body;
     if (!korName) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_KORNAME_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_KORNAME_EMPTY));
     }
     if (!engName) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_ENGNAME_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_ENGNAME_EMPTY));
     }
     if (!category) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_CATEGORY_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_CATEGORY_EMPTY));
     }
     if (!phoneNumber) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PHONENUMBER_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_PHONENUMBER_EMPTY));
     }
     if (!primeLocation) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PRIMELOCATION_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_PRIMELOCATION_EMPTY));
     }
     if (!location) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_LOCATION_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_LOCATION_EMPTY));
     }
     if (!tag) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_TAG_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_TAG_EMPTY));
     }
     if (!description) {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_DESCRIPTION_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_IMAGE_EMPTY));
     }
 
-    const patchEnterpriseResponse = await adminService.patchEnterprise(
+    const patchEnterpriseResponse = await adminService.addEnterprise(
         korName,
         engName,
         category,
@@ -274,7 +277,6 @@ exports.addEnterprise = async function (req, res) {
         description,
         phoneNumber,
         thumbnailURL,
-        enterpriseId,
     );
     return res.send(patchEnterpriseResponse);
 };

@@ -78,11 +78,56 @@ module.exports = {
     ENTERPRISE_PATCH_DESCRIPTION_EMPTY: {
         isSuccess: false,
         code: 2516,
+        message: '설명을 입력해주세요',
+    },
+    ENTERPRISE_POST_KORNAME_EMPTY: {
+        isSuccess: false,
+        code: 2517,
         message: '한글 이름을 입력해주세요',
+    },
+    ENTERPRISE_POST_ENGNAME_EMPTY: {
+        isSuccess: false,
+        code: 2518,
+        message: '영어 이름을 입력해주세요',
+    },
+    ENTERPRISE_POST_CATEGORY_EMPTY: {
+        isSuccess: false,
+        code: 2519,
+        message: '카테고리를 입력해주세요',
+    },
+    ENTERPRISE_POST_PHONENUMBER_EMPTY: {
+        isSuccess: false,
+        code: 2520,
+        message: '전화 번호를 입력해주세요',
+    },
+    ENTERPRISE_POST_PRIMELOCATION_EMPTY: {
+        isSuccess: false,
+        code: 2521,
+        message: '대표주소를 입력해주세요',
+    },
+    ENTERPRISE_POST_LOCATION_EMPTY: {
+        isSuccess: false,
+        code: 2522,
+        message: '주소를 입력해주세요',
+    },
+    ENTERPRISE_POST_TAG_EMPTY: {
+        isSuccess: false,
+        code: 2523,
+        message: '태그를 입력해주세요',
+    },
+    ENTERPRISE_POST_DESCRIPTION_EMPTY: {
+        isSuccess: false,
+        code: 2524,
+        message: '설명을 입력해주세요',
+    },
+    ENTERPRISE_POST_IMAGE_EMPTY: {
+        isSuccess: false,
+        code: 2525,
+        message: '이미지를 입력해주세요',
     },
     ENTERPRISE_PATCH_WRONG_CATEGORY: {
         isSuccess: false,
-        code: 2517,
+        code: 2526,
         message: '정확한 카테고리를 입력해주세요',
     },
     // Admin Response error
@@ -111,6 +156,16 @@ module.exports = {
     ENTERPRISE_PATCH_REDUNDANT_ENGNAME: {
         isSuccess: false,
         code: 3507,
+        message: '중복된 영어 이름입니다.',
+    },
+    ENTERPRISE_POST_REDUNDANT_KORNAME: {
+        isSuccess: false,
+        code: 3508,
+        message: '중복된 한글 이름입니다.',
+    },
+    ENTERPRISE_POST_REDUNDANT_ENGNAME: {
+        isSuccess: false,
+        code: 3509,
         message: '중복된 영어 이름입니다.',
     },
     //Connection, Transaction 등의 서버 오류

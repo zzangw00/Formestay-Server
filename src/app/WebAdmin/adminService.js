@@ -255,6 +255,49 @@ exports.patchEnterprise = async function (
     }
 };
 
+// 업체 추가
+exports.addEnterprise = async function (
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    thumbnailURL,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const overlapKorName = await adminProvider.overlapKorName(korName);
+        const overlapEngName = await adminProvider.overlapEngName(engName);
+
+        if (overlapKorName[0].exist == 1) {
+            return errResponse(AdminBaseResponse.ENTERPRISE_POST_REDUNDANT_KORNAME);
+        }
+        if (overlapEngName[0].exist == 1) {
+            return errResponse(AdminBaseResponse.ENTERPRISE_POST_REDUNDANT_ENGNAME);
+        } else {
+            const postEnterprise = await adminDao.postEnterprise(
+                connection,
+                korName,
+                engName,
+                category,
+                primeLocation,
+                location,
+                tag,
+                description,
+                phoneNumber,
+                thumbnailURL,
+            );
+            connection.release();
+            return response(AdminBaseResponse.SUCCESS);
+        }
+    } catch (err) {
+        logger.error(`App - patchEnterprise Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
 // 업체 삭제
 exports.patchEnterpriseStatus = async function (status, enterpriseId) {
     try {

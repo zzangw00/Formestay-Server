@@ -279,6 +279,44 @@ async function changeEnterpriseStatus(connection, status, enterpriseId) {
     return changeEnterpriseStatusRows;
 }
 
+// 업체 추가
+async function postEnterprise(
+    connection,
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    thumbnailURL,
+) {
+    const postEnterpriseQuery = `
+    insert into Enterprise(korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+    const [postEnterpriseRows] = await connection.query(postEnterpriseQuery, [
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL,
+    ]);
+    return postEnterpriseRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -303,4 +341,5 @@ module.exports = {
     korNameOverlap,
     engNameOverlap,
     changeEnterpriseStatus,
+    postEnterprise,
 };
