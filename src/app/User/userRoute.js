@@ -26,6 +26,9 @@ module.exports = function (app) {
     // 비밀번호 변경전 유저 검증 API
     app.route('/app/users-password').post(user.findUserPhoneNumber);
 
+    // 마이 페이지 조회 API
+    app.get('/app/my-page', user.getMyPage);
+
     //회원 정보 수정 API
     app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
 

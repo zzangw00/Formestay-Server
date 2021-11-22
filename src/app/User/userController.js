@@ -6,6 +6,8 @@ const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {emit} = require("nodemon");
 const regex = require("../../../config/regularExpress")
+const jwt = require('jsonwebtoken');
+const secret_config = require('../../../config/secret');
 
 /** 회원가입전 유효성 검증 API
  * [POST] /app/users
@@ -274,6 +276,27 @@ exports.patchUserStatus = async function (req, res) {
         return res.send(editUserStatus);
     }
 
+};
+
+
+/** 마이페이지 조회 API
+ * [GET] app/my-page
+ */
+exports.getMyPage = async function (req, res) {
+
+    let userId = 0
+    if (req.headers['x-access-token'] != undefined) {
+        await jwt.verify(req.headers['x-access-token'], secret_config.jwtsecret, (error, decoded) => {
+            if(error){
+                return res.send(errResponse(baseResponse.TOKEN_VERIFICATION_FAILURE))
+            }
+            userId = decoded.userInfo;
+        });
+    }
+
+    const resultStatus = await userProvider.retrieveMyPage(userId);
+
+    return res.send(resultStatus);
 };
 
 /** JWT 토큰 검증 API

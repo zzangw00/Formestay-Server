@@ -1,5 +1,8 @@
 const {pool} = require("../../../config/database");
 const {logger} = require("../../../config/winston");
+const {errResponse} = require("../../../config/response");
+const {response} = require("../../../config/response");
+const baseResponse = require("../../../config/baseResponseStatus");
 
 const userDao = require("./userDao");
 
@@ -57,6 +60,28 @@ exports.retrieveUserInfoByUserId = async function (userId) {
     connection.release();
 
     return result[0];
+};
+
+exports.retrieveMyPage = async function (userId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let data = {};
+
+    const appVersion = await userDao.selectAppVersion(connection);
+    data.appVersion = appVersion.version;
+
+    if (userId != 0) {
+        const myPageInfo = await userDao.selectMyPage(connection, userId);
+        data.userId = myPageInfo.userId;
+        data.phoneNumber = myPageInfo.phoneNumber.split('-')[2];
+        data.email = myPageInfo.email;
+        data.profileImgURL = myPageInfo.profileImgURL
+        connection.release();
+        return response(baseResponse.MY_PAGE_LOGIN_SUCCESS, data);
+    } else {
+        connection.release();
+        return response(baseResponse.MY_PAGE_NO_LOGIN_SUCCESS, data);
+    }
+
 };
 
 exports.retrieveUserIdByPhoneNumber = async function (phoneNumber) {
