@@ -160,3 +160,11 @@ exports.overlapEngName = async function (engName) {
     connection.release();
     return overlapResult;
 };
+
+// 프로그램 상세 정보 조회
+exports.retrieveProgram = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programResult = await adminDao.getProgram(connection, programId);
+    connection.release();
+    return programResult;
+};

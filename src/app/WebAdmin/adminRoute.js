@@ -40,4 +40,7 @@ module.exports = function (app) {
 
     // 업체 추가 API
     app.post('/admin/enterprise', jwtMiddleware, admin.addEnterprise);
+
+    // 프로그램 상세 조회 API
+    app.get('/admin/program/:programId', jwtMiddleware, admin.getProgram);
 };

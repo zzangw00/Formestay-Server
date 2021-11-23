@@ -280,3 +280,15 @@ exports.addEnterprise = async function (req, res) {
     );
     return res.send(patchEnterpriseResponse);
 };
+
+/** 프로그램 상세 조회 API
+ * [GET] /admin/programs/:programId
+ *
+ * param : programId
+ *
+ */
+exports.getProgram = async function (req, res) {
+    const programId = req.params.programId;
+    const programResult = await adminProvider.retrieveProgram(programId);
+    return res.send(response(AdminBaseResponse.SUCCESS, programResult));
+};

@@ -317,6 +317,16 @@ async function postEnterprise(
     return postEnterpriseRows;
 }
 
+// 프로그램 상세 조회
+async function getProgram(connection, programId) {
+    const getProgramQuery = `
+        select programId, name, description, tag, thumbnailURL, minPerson, maxPerson, checkIn, checkOut, programInfo, mealInfo, personPerMoney, dayPerMoney
+        from Program
+        where programId = ?;`;
+    const [getProgramRows] = await connection.query(getProgramQuery, programId);
+    return getProgramRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -342,4 +352,5 @@ module.exports = {
     engNameOverlap,
     changeEnterpriseStatus,
     postEnterprise,
+    getProgram,
 };
