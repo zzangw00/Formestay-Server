@@ -130,6 +130,8 @@ async function selectReservationsByUserId(connection, userId) {
                checkIn,
                checkOut,
                case
+                   when Reservation.status = "INACTIVE"
+                       then '예약취소'
                    when date_format(now(), "%Y-%m-%d") between startDate and endDate
                        then '이용중'
                    when date_format(now(), "%Y-%m-%d") < startDate
@@ -163,7 +165,7 @@ async function selectReservationsByUserId(connection, userId) {
                                    on Reservation.programId = PE.programId
                          left join ProgramRoomPrice
                                    on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
-        where userId = ? and Reservation.status = "ACTIVE";
+        where userId = ?;
     `;
     const [selectReservationsByUserIdRows] = await connection.query(selectReservationsByUserIdQuery, userId);
     return selectReservationsByUserIdRows;
