@@ -27,7 +27,7 @@ async function selectProgramImagesById(connection, programId) {
 // 프로그램 이미지 리스트 조회
 async function selectProgramRoomListById(connection, programId) {
     const selectProgramRoomListByIdQuery = `
-        select inRoom, price
+        select programRoomPriceId, inRoom, price
         from ProgramRoomPrice
         where programId = ? and status = "ACTIVE";
     `;

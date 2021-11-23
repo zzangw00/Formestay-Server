@@ -49,6 +49,7 @@ module.exports = {
     PROFILE_IMAGE_EMPTY : { "isSuccess": false, "code": 2045, "message":"프로필 이미지가 없습니다." },
     NOT_RESERVATION_USER : { "isSuccess": false, "code": 2046, "message":"예약한 프로그램이 아닙니다." },
     RESERVATION_PRICE_EMPTY : { "isSuccess": false, "code": 2047, "message":"결제금액이 없습니다." },
+    PROGRAM_ROOM_PRICE_ID_EMPTY : { "isSuccess": false, "code": 2048, "message":"인실 고유값이 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2019, "message": "이메일을 입력해주세요." },

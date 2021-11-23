@@ -28,10 +28,12 @@ exports.getProgramsById = async function (req, res) {
  */
 exports.postReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
-    const {programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price} = req.body;
+    const {programId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price} = req.body;
 
     if (!programId)
         return res.send(response(baseResponse.PROGRAM_ID_EMPTY));
+    if (!programRoomPriceId)
+        return res.send(response(baseResponse.PROGRAM_ROOM_PRICE_ID_EMPTY));
     if (!name)
         return res.send(response(baseResponse.SIGNUP_NAME_EMPTY));
     if (!phoneNumber)
