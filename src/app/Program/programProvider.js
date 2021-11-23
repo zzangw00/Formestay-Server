@@ -48,12 +48,15 @@ exports.retrieveReservation = async function (userId, reservationId) {
     const connection = await pool.getConnection(async (conn) => conn);
     let reservationInfo = await programDao.selectReservationsDetailById(connection, userId, reservationId);
     connection.release();
-    reservationInfo = common.returnOneTagList(reservationInfo);
+    if (reservationInfo != undefined)
+        reservationInfo = common.returnOneTagList(reservationInfo);
+    else
+        return response(baseResponse.NOT_RESERVATION_USER)
 
     const data = {
         reservationInfo: reservationInfo
     }
 
-    return data;
+    return response(baseResponse.SUCCESS, data);
 };
 

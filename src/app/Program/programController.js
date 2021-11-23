@@ -72,7 +72,7 @@ exports.getReservationsDetail = async function (req, res) {
     if (!reservationId)
         return res.send(response(baseResponse.RESERVATION_ID_EMPTY));
 
-    const result = await programProvider.retrieveReservation(userIdResult, reservationId);
+    const resultStatus = await programProvider.retrieveReservation(userIdResult, reservationId);
 
-    return res.send(response(baseResponse.SUCCESS, result));
+    return res.send(resultStatus);
 };
