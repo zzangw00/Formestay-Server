@@ -92,7 +92,7 @@ async function selectReservationsByUserId(connection, userId) {
                PE.tag,
                PE.phoneNumber,
                DATEDIFF(endDate, startDate) as totalDate,
-               totalPerson,
+               inRoom,
                date_format(startDate, "%Y-%m-%d") as startDate,
                date_format(endDate, "%Y-%m-%d") as endDate,
                case
@@ -161,6 +161,8 @@ async function selectReservationsByUserId(connection, userId) {
                                                            on Program.enterpriseId = Enterprise.enterpriseId
                                     where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
                                    on Reservation.programId = PE.programId
+                         left join ProgramRoomPrice
+                                   on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
         where userId = ? and Reservation.status = "ACTIVE";
     `;
     const [selectReservationsByUserIdRows] = await connection.query(selectReservationsByUserIdQuery, userId);
