@@ -320,7 +320,7 @@ async function postEnterprise(
 // 프로그램 상세 조회
 async function getProgram(connection, programId) {
     const getProgramQuery = `
-        select programId, name, description, tag, thumbnailURL, minPerson, maxPerson, checkIn, checkOut, programInfo, mealInfo, personPerMoney, dayPerMoney
+        select programId, name, description, tag, thumbnailURL, minPerson, maxPerson, checkIn, checkOut, programInfo, mealInfo, personPerMoney, dayPerMoney, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
         from Program
         where programId = ?;`;
     const [getProgramRows] = await connection.query(getProgramQuery, programId);
