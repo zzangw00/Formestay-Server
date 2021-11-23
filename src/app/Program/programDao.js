@@ -198,12 +198,15 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                checkIn,
                checkOut,
                case
+                   when status = "INACTIVE"
+                       then '예약취소'
                    when date_format(now(), "%Y-%m-%d") between startDate and endDate
                        then '이용중'
                    when date_format(now(), "%Y-%m-%d") < startDate
                        then '예약중'
                    when date_format(now(), "%Y-%m-%d") > endDate
                        then '이용완료'
+
                    end as reservationStatus,
                thumbnailURL,
                date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
@@ -237,7 +240,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                                                            on Program.enterpriseId = Enterprise.enterpriseId
                                     where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
                                    on Reservation.programId = PE.programId
-        where userId = ? and Reservation.reservationId = ? and Reservation.status = "ACTIVE";
+        where userId = ? and Reservation.reservationId = ?;
     `;
     const [selectReservationsDetailByIdRows] = await connection.query(selectReservationsDetailByIdQuery, [userId, reservationId]);
     return selectReservationsDetailByIdRows[0];
