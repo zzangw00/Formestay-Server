@@ -11,17 +11,21 @@ const common = require("../../../config/common");
 exports.retrieveProgramsByProgramId = async function (programId) {
     const connection = await pool.getConnection(async (conn) => conn);
     let programInfo = await programDao.selectProgramsById(connection, programId);
-    let imageList = await programDao.selectProgramImagesById(connection, programId);
-    connection.release();
-
     if (programInfo == undefined) {
         return errResponse(baseResponse.NON_EXIST_PROGRAM);
     }
+
+    let imageList = await programDao.selectProgramImagesById(connection, programId);
+    let roomList = await programDao.selectProgramRoomListById(connection, programId);
+
+    connection.release();
+
     let inputImageList = [];
     inputImageList.push(programInfo['imageList'])
     for (let image of imageList) {
         inputImageList.push(image['imageURL']);
     }
+    programInfo['roomList'] = roomList;
     programInfo['imageList'] = inputImageList;
     programInfo = common.returnOneTagList(programInfo);
     const data = {

@@ -24,6 +24,19 @@ async function selectProgramImagesById(connection, programId) {
     return selectProgramImagesByIdRows;
 }
 
+// 프로그램 이미지 리스트 조회
+async function selectProgramRoomListById(connection, programId) {
+    const selectProgramRoomListByIdQuery = `
+        select inRoom, price
+        from ProgramRoomPrice
+        where programId = ? and status = "ACTIVE";
+    `;
+    const [selectProgramRoomListByIdRows] = await connection.query(selectProgramRoomListByIdQuery, programId);
+    return selectProgramRoomListByIdRows;
+}
+
+
+
 // 프로그램 아이디로 프로그램 조회
 async function isExistProgramByProgramId(connection, programId) {
     const isExistProgramByProgramIdQuery = `
@@ -250,6 +263,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
 module.exports = {
     selectProgramsById,
     selectProgramImagesById,
+    selectProgramRoomListById,
     isExistProgramByProgramId,
     insertReservation,
     selectReservationsByUserId,
