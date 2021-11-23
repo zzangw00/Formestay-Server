@@ -13,7 +13,7 @@ const common = require("../../../config/common");
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createReservations = async function (userId, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay) {
+exports.createReservations = async function (userId, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price) {
     const connection = await pool.getConnection(async (conn) => conn);
     const isExistProgram = await programDao.isExistProgramByProgramId(connection, programId);
 
@@ -22,7 +22,7 @@ exports.createReservations = async function (userId, programId, name, phoneNumbe
     }
     try {
         await connection.beginTransaction(); // START TRANSACTION
-        await programDao.insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, common.makeReservationNumber());
+        await programDao.insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, common.makeReservationNumber(), price);
 
         await connection.commit(); // COMMIT
         connection.release();

@@ -49,14 +49,14 @@ async function isExistProgramByProgramId(connection, programId) {
 }
 
 // 찜하기 삽입
-async function insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber) {
+async function insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price) {
     const insertReservationQuery = `
-        INSERT INTO Reservation(programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Reservation(programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertReservationRows = await connection.query(
         insertReservationQuery,
-        [programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber]
+        [programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price]
     );
 }
 
