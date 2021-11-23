@@ -51,8 +51,8 @@ exports.postReservations = async function (req, res) {
     if (!price)
         return res.send(response(baseResponse.RESERVATION_PRICE_EMPTY));
 
-    await programService.createReservations(userIdResult, programId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price);
-    return res.send(baseResponse.SUCCESS);
+    const resultStatus = await programService.createReservations(userIdResult, programId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price);
+    return res.send(resultStatus);
 };
 
 /** 예약조회 API

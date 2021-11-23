@@ -48,15 +48,28 @@ async function isExistProgramByProgramId(connection, programId) {
     return isExistProgramByProgramIdRows;
 }
 
+// 프로그램 아이디로 인실 조회
+async function isExistRoomByProgramId(connection, programId, programRoomPriceId) {
+    const isExistRoomByProgramIdQuery = `
+        SELECT COUNT(*) as CNT
+        FROM ProgramRoomPrice
+        WHERE programId = ? and programRoomPriceId = ? and status = "ACTIVE";
+    `;
+    const [isExistRoomByProgramIdRows] = await connection.query(isExistRoomByProgramIdQuery, [programId, programRoomPriceId]);
+    return isExistRoomByProgramIdRows;
+}
+
+
+
 // 찜하기 삽입
-async function insertReservation(connection, programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price) {
+async function insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price) {
     const insertReservationQuery = `
-        INSERT INTO Reservation(programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Reservation(programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertReservationRows = await connection.query(
         insertReservationQuery,
-        [programId, userId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price]
+        [programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price]
     );
 }
 
@@ -265,6 +278,7 @@ module.exports = {
     selectProgramImagesById,
     selectProgramRoomListById,
     isExistProgramByProgramId,
+    isExistRoomByProgramId,
     insertReservation,
     selectReservationsByUserId,
     selectReservationsDetailById
