@@ -327,6 +327,19 @@ async function getProgram(connection, programId) {
     return getProgramRows;
 }
 
+// 프로그램 삭제
+async function changeProgramStatus(connection, status, programId) {
+    const changeProgramStatusQuery = `
+        Update Program
+        set status = ?
+        where programId = ?;`;
+    const [changeProgramStatusRows] = await connection.query(changeProgramStatusQuery, [
+        status,
+        programId,
+    ]);
+    return changeProgramStatusRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -353,4 +366,5 @@ module.exports = {
     changeEnterpriseStatus,
     postEnterprise,
     getProgram,
+    changeProgramStatus,
 };

@@ -210,8 +210,8 @@ exports.patchEnterprise = async function (req, res) {
     return res.send(patchEnterpriseResponse);
 };
 
-/** 회원 탈퇴 API
- * [PATCH] /admin/user/:userId
+/** 업체 삭제 API
+ * [PATCH] /admin/enterprises/:enterpriseId/status
  * params : userId
  * body : status
  */
@@ -291,4 +291,16 @@ exports.getProgram = async function (req, res) {
     const programId = req.params.programId;
     const programResult = await adminProvider.retrieveProgram(programId);
     return res.send(response(AdminBaseResponse.SUCCESS, programResult));
+};
+
+/** 프로그램 삭제 API
+ * [PATCH] /admin/program/:programId/status
+ * params : programId
+ * body : status
+ */
+exports.deleteProgram = async function (req, res) {
+    const programId = req.params.programId;
+    const status = req.body.status;
+    const programStatus = await adminService.patchProgramStatus(status, programId);
+    return res.send(programStatus);
 };

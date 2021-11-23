@@ -43,4 +43,7 @@ module.exports = function (app) {
 
     // 프로그램 상세 조회 API
     app.get('/admin/program/:programId', jwtMiddleware, admin.getProgram);
+
+    // 프로그램 삭제 API
+    app.patch('/admin/program/:programId/status', jwtMiddleware, admin.deleteProgram);
 };

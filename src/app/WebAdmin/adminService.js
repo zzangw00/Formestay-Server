@@ -314,3 +314,16 @@ exports.patchEnterpriseStatus = async function (status, enterpriseId) {
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 프로그램 삭제
+exports.patchProgramStatus = async function (status, programId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.changeProgramStatus(connection, status, programId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
