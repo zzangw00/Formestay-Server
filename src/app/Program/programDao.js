@@ -190,7 +190,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                PE.tag,
                PE.phoneNumber as programPhoneNumber,
                DATEDIFF(endDate, startDate) as totalDate,
-               totalPerson,
+               inRoom,
                date_format(startDate, "%Y-%m-%d") as startDate,
                date_format(endDate, "%Y-%m-%d") as endDate,
                case
@@ -228,7 +228,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                checkIn,
                checkOut,
                case
-                   when status = "INACTIVE"
+                   when Reservation.status = "INACTIVE"
                        then '예약취소'
                    when date_format(now(), "%Y-%m-%d") between startDate and endDate
                        then '이용중'
@@ -236,7 +236,6 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                        then '예약중'
                    when date_format(now(), "%Y-%m-%d") > endDate
                        then '이용완료'
-
                    end as reservationStatus,
                thumbnailURL,
                date_format(Reservation.createdAt, "%Y-%m-%d") as createdAt,
@@ -256,7 +255,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                    when weekday(Reservation.createdAt) = 6
                        then '일'
                    end as createdAtWeekDay,
-               ((dayPerMoney * (DATEDIFF(endDate, startDate)+1)) + (personPerMoney * totalPerson)) as money,
+               Reservation.price,
                Reservation.name as userName,
                Reservation.phoneNumber as userPhoneNumber,
                case
@@ -270,6 +269,8 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                                                            on Program.enterpriseId = Enterprise.enterpriseId
                                     where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
                                    on Reservation.programId = PE.programId
+                         left join ProgramRoomPrice
+                                   on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
         where userId = ? and Reservation.reservationId = ?;
     `;
     const [selectReservationsDetailByIdRows] = await connection.query(selectReservationsDetailByIdQuery, [userId, reservationId]);
