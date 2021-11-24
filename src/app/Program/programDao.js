@@ -3,7 +3,7 @@ const {pool} = require("../../../config/database");
 // 프로그램 상세 조회
 async function selectProgramsById(connection, programId) {
     const selectProgramsByIdQuery = `
-        select programId, name, location, phoneNumber, maxPerson, minPerson, personPerMoney, dayPerMoney, programInfo, mealInfo, thumbnailURL as imageList, tag
+        select programId, name, location, phoneNumber, programInfo, mealInfo, thumbnailURL as imageList, tag
         from Program left join (select enterpriseId, location, phoneNumber
                                 from Enterprise
                                 where status = "ACTIVE") as ENINFO on Program.enterpriseId = ENINFO.enterpriseId
