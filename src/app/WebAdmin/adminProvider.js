@@ -168,3 +168,11 @@ exports.retrieveProgram = async function (programId) {
     connection.release();
     return programResult;
 };
+
+// 프로그램 방 가격 정보 상세 정보 조회
+exports.retrieveProgramRoom = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programRoomResult = await adminDao.getProgramRoom(connection, programId);
+    connection.release();
+    return programRoomResult;
+};

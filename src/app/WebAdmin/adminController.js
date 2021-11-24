@@ -289,8 +289,13 @@ exports.addEnterprise = async function (req, res) {
  */
 exports.getProgram = async function (req, res) {
     const programId = req.params.programId;
-    const programResult = await adminProvider.retrieveProgram(programId);
-    return res.send(response(AdminBaseResponse.SUCCESS, programResult));
+    const programInfo = await adminProvider.retrieveProgram(programId);
+    const programRoomInfo = await adminProvider.retrieveProgramRoom(programId);
+    const result = {
+        programResult: programInfo,
+        programRoomResult: programRoomInfo,
+    };
+    return res.send(response(AdminBaseResponse.SUCCESS, result));
 };
 
 /** 프로그램 삭제 API

@@ -320,11 +320,21 @@ async function postEnterprise(
 // 프로그램 상세 조회
 async function getProgram(connection, programId) {
     const getProgramQuery = `
-        select programId, name, description, tag, thumbnailURL, minPerson, maxPerson, checkIn, checkOut, programInfo, mealInfo, personPerMoney, dayPerMoney, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
+        select programId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
         from Program
         where programId = ?;`;
     const [getProgramRows] = await connection.query(getProgramQuery, programId);
     return getProgramRows;
+}
+
+// 프로그램 상세 조회
+async function getProgramRoom(connection, programId) {
+    const getProgramRoomQuery = `
+        select programId, inRoom, price
+        from ProgramRoomPrice
+        where programId = ?;`;
+    const [getProgramRoomRows] = await connection.query(getProgramRoomQuery, programId);
+    return getProgramRoomRows;
 }
 
 // 프로그램 삭제
@@ -367,4 +377,5 @@ module.exports = {
     postEnterprise,
     getProgram,
     changeProgramStatus,
+    getProgramRoom,
 };
