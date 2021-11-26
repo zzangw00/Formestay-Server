@@ -70,6 +70,10 @@ exports.retrieveMyPage = async function (userId) {
     data.appVersion = appVersion.version;
 
     if (userId != 0) {
+        const userExist = await userDao.SelectUserByUserId(connection, userId);
+        if (userExist[0] == undefined) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        }
         const myPageInfo = await userDao.selectMyPage(connection, userId);
         data.userId = myPageInfo.userId;
         data.phoneNumber = myPageInfo.phoneNumber.split('-')[2];
