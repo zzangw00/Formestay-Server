@@ -2,6 +2,7 @@ const {pool} = require("../../../config/database");
 const {logger} = require("../../../config/winston");
 const {errResponse} = require("../../../config/response");
 const {response} = require("../../../config/response");
+const userDao = require("../User/userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const programDao = require("./programDao");
 const common = require("../../../config/common");
@@ -37,6 +38,11 @@ exports.retrieveProgramsByProgramId = async function (programId) {
 
 exports.retrieveReservations = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userExist = await userDao.SelectUserByUserId(connection, userId);
+    if (userExist[0] == undefined) {
+        return errResponse(baseResponse.FIND_NO_EXIST_USER);
+    }
+
     let reservationList = await programDao.selectReservationsByUserId(connection, userId);
     connection.release();
     reservationList = common.returnTagList(reservationList);
