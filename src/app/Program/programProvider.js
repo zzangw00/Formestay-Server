@@ -56,6 +56,11 @@ exports.retrieveReservations = async function (userId) {
 
 exports.retrieveReservation = async function (userId, reservationId) {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userExist = await userDao.SelectUserByUserId(connection, userId);
+    if (userExist[0] == undefined) {
+        return errResponse(baseResponse.FIND_NO_EXIST_USER);
+    }
+
     let reservationInfo = await programDao.selectReservationsDetailById(connection, userId, reservationId);
     connection.release();
     if (reservationInfo != undefined)
