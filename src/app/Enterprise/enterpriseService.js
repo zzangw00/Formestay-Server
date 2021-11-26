@@ -5,6 +5,7 @@ const secret_config = require("../../../config/secret");
 const enterpriseProvider = require("./enterpriseProvider");
 const enterpriseDao = require("./enterpriseDao");
 const baseResponse = require("../../../config/baseResponseStatus");
+const userDao = require("../User/userDao");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
 const {connect} = require("http2");
@@ -29,6 +30,11 @@ exports.createEnterprisesEntrance = async function (enterpriseId) {
 exports.createBookmarks = async function (userId, enterpriseId) {
     let flag = false;
     const connection = await pool.getConnection(async (conn) => conn);
+    const userExist = await userDao.SelectUserByUserId(connection, userId);
+    if (userExist[0] == undefined) {
+        return errResponse(baseResponse.FIND_NO_EXIST_USER);
+    }
+
     const isExistProgram = await enterpriseDao.isExistEnterpriseByEnterpriseId(connection, enterpriseId);
 
     if (isExistProgram[0]['CNT'] == 0) {

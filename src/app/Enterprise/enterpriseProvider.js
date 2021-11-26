@@ -83,7 +83,6 @@ exports.retrieveBookmarks = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userExist = await userDao.SelectUserByUserId(connection, userId);
     if (userExist[0] == undefined) {
-        console.log("hi")
         return errResponse(baseResponse.FIND_NO_EXIST_USER);
     }
     let bookmarkInfo = await enterpriseDao.selectBookmarksByUserId(connection, userId);
