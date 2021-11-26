@@ -158,7 +158,9 @@ async function selectBookmarksByUserId(connection, userId) {
                    end as category, korName, location, Enterprise.thumbnailURL, Enterprise.tag
         from BookMark left join Enterprise
                                 on BookMark.enterpriseId = Enterprise.enterpriseId
-        where BookMark.userId = ? and BookMark.status = "ACTIVE" and Enterprise.status="ACTIVE";
+                      left join UserInfo
+                                on BookMark.userId = UserInfo.userId
+        where BookMark.userId = ? and BookMark.status = "ACTIVE" and Enterprise.status="ACTIVE" and UserInfo.status="ACTIVE";
     `;
     const [selectBookmarksByUserIdRows] = await connection.query(selectBookmarksByUserIdQuery, userId);
     return selectBookmarksByUserIdRows;
