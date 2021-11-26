@@ -133,9 +133,9 @@ async function selectReservationsByUserId(connection, userId) {
                    when Reservation.status = "INACTIVE"
                        then '예약취소'
                    when date_format(now(), "%Y-%m-%d") between startDate and endDate
-                       then '이용중'
-                   when date_format(now(), "%Y-%m-%d") < startDate
                        then '예약중'
+                   when date_format(now(), "%Y-%m-%d") < startDate
+                       then '예약완료'
                    when date_format(now(), "%Y-%m-%d") > endDate
                        then '이용완료'
                    end as reservationStatus,
@@ -231,9 +231,9 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                    when Reservation.status = "INACTIVE"
                        then '예약취소'
                    when date_format(now(), "%Y-%m-%d") between startDate and endDate
-                       then '이용중'
-                   when date_format(now(), "%Y-%m-%d") < startDate
                        then '예약중'
+                   when date_format(now(), "%Y-%m-%d") < startDate
+                       then '예약완료'
                    when date_format(now(), "%Y-%m-%d") > endDate
                        then '이용완료'
                    end as reservationStatus,
@@ -264,7 +264,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                    else '기타'
                    end as paymentWay
 
-        from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber, Program.dayPerMoney, Program.personPerMoney
+        from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
                                                            on Program.enterpriseId = Enterprise.enterpriseId
                                     where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
