@@ -42,6 +42,10 @@ exports.retrieveEnterprisesPrograms = async function (enterpriseId, userId) {
     if (userId == 0) {
         enterpriseInfo = await enterpriseDao.selectEnterpriseById(connection, enterpriseId);
     } else {
+        const userExist = await userDao.SelectUserByUserId(connection, userId);
+        if (userExist[0] == undefined) {
+            return errResponse(baseResponse.FIND_NO_EXIST_USER);
+        }
         enterpriseInfo = await enterpriseDao.selectLoginEnterpriseById(connection, userId, enterpriseId);
     }
     let programList = await enterpriseDao.selectProgramsByEnterpriseId(connection, enterpriseId);
