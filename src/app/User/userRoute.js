@@ -32,12 +32,7 @@ module.exports = function (app) {
     // 프로필 사진 변경 API
     app.route('/app/users-profile-image').patch(jwtMiddleware, user.patchUsersProfileImg);
 
-    //회원 정보 수정 API
-    app.route('/app/users/:userIdx').patch(jwtMiddleware, user.patchUsers);
-
-    //회원 정보 수정 API
-    app.route('/app/users/:userIdx/status').patch(jwtMiddleware, user.patchUserStatus);
-
-
+    // 회원탈퇴 API
+    app.route('/app/users/status').patch(jwtMiddleware, user.patchUsersStatus);
 
 };

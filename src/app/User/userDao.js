@@ -195,16 +195,12 @@ async function updateUserInfo(connection, userIdx, nickname) {
     return updateUserRow[0];
 }
 
-async function updateUserStatus(connection, userIdx, status) {
+async function updateUserStatus(connection, userId) {
     const updateUserStatusQuery = `
         UPDATE UserInfo
-        SET status = ?
-        WHERE userIdx = ?;`;
-    const updateUserStatusRow = await connection.query(updateUserStatusQuery, [
-        status,
-        userIdx,
-    ]);
-    return updateUserStatusRow[0];
+        SET status = "INACTIVE"
+        WHERE userId = ?;`;
+    const updateUserStatusRow = await connection.query(updateUserStatusQuery, userId);
 }
 
 async function selectUserHashedPasswordAndSalt(connection, userIdx) {

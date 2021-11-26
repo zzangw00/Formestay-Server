@@ -292,27 +292,16 @@ exports.getMyPage = async function (req, res) {
 
 
 /** 회원 상태 수정 API
- * [PATCH] /app/users/:userId/status
- * body : status
+ * [PATCH] /app/users/status
  */
-exports.patchUserStatus = async function (req, res) {
+exports.patchUsersStatus = async function (req, res) {
 
     const userIdToToken = req.verifiedToken.userInfo
-    const userIdx = req.params.userIdx;
-    const status = req.body.status;
 
-    if (userIdToToken != userIdx) {
-        // res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
-    } else {
-        if (!status) res.send(errResponse(baseResponse.USER_STATUS_EMPTY));
-        const editUserStatus = await userService.editUserStatus(userIdx, status)
-        return res.send(editUserStatus);
-    }
+    const resultStatus = await userService.editUserStatus(userIdToToken)
+    return res.send(resultStatus);
 
 };
-
-
-
 
 /** JWT 토큰 검증 API
  * [GET] app/users/check
