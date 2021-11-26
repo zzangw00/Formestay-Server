@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const secret_config = require("../../../config/secret");
 const programProvider = require("./programProvider");
 const programDao = require("./programDao");
+const userDao = require("../User/userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
@@ -13,8 +14,13 @@ const common = require("../../../config/common");
 
 // Service Create, Update, Delete 의 로직 처리
 
-exports.createReservations = async function (userId, programId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, price) {
+exports.createReservations = async function (userId, programId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, price) {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userExist = await userDao.SelectUserByUserId(connection, userId);
+    if (userExist[0] == undefined) {
+        return errResponse(baseResponse.FIND_NO_EXIST_USER);
+    }
+
     const isExistProgram = await programDao.isExistProgramByProgramId(connection, programId);
 
     if (isExistProgram[0]['CNT'] == 0) {
@@ -28,7 +34,7 @@ exports.createReservations = async function (userId, programId, programRoomPrice
 
     try {
         await connection.beginTransaction(); // START TRANSACTION
-        await programDao.insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, common.makeReservationNumber(), price);
+        await programDao.insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, common.makeReservationNumber(), price);
 
         await connection.commit(); // COMMIT
         connection.release();

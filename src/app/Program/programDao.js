@@ -62,14 +62,14 @@ async function isExistRoomByProgramId(connection, programId, programRoomPriceId)
 
 
 // 찜하기 삽입
-async function insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price) {
+async function insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price) {
     const insertReservationQuery = `
-        INSERT INTO Reservation(programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Reservation(programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertReservationRows = await connection.query(
         insertReservationQuery,
-        [programId, userId, programRoomPriceId, name, phoneNumber, totalPerson, startDate, endDate, paymentWay, reservationNumber, price]
+        [programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price]
     );
 }
 
