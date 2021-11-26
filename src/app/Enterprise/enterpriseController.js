@@ -27,7 +27,6 @@ exports.getBestEnterprises = async function (req, res) {
 exports.getEnterprises = async function (req, res) {
     let {category, page} = req.query;
 
-    console.log('why');
     if (!category)
         return res.send(response(baseResponse.ENTERPRISE_CATEGORY_EMPTY));
     if (category < 0 || category > 4)
@@ -96,10 +95,9 @@ exports.getSearchEnterprises = async function (req, res) {
  */
 exports.getBookmarks = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
+    const resultStatus = await enterpriseProvider.retrieveBookmarks(userIdResult);
 
-    const result = await enterpriseProvider.retrieveBookmarks(userIdResult);
-
-    return res.send(response(baseResponse.SUCCESS, result));
+    return res.send(resultStatus);
 };
 
 /** 찜 하기 및 해제 API

@@ -303,8 +303,8 @@ exports.editUser = async function (userIdx, nickname) {
 exports.editUserStatus = async function (userId) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-        const result = await userDao.SelectUserByUserId(connection, userId);
-        if (result[0] == undefined) {
+        const userExist = await userDao.SelectUserByUserId(connection, userId);
+        if (userExist[0] == undefined) {
             return errResponse(baseResponse.FIND_NO_EXIST_USER);
         }
         await userDao.updateUserStatus(connection, userId)

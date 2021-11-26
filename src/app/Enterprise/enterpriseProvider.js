@@ -3,6 +3,7 @@ const {logger} = require("../../../config/winston");
 const common = require("../../../config/common");
 
 const enterpriseDao = require("./enterpriseDao");
+const userDao = require("../User/userDao");
 const enterpriseService = require("./enterpriseService");
 const {errResponse} = require("../../../config/response");
 const {response} = require("../../../config/response");
@@ -80,6 +81,11 @@ exports.retrieveSearchEnterpriseList = async function (content, page) {
 
 exports.retrieveBookmarks = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
+    const userExist = await userDao.SelectUserByUserId(connection, userId);
+    if (userExist[0] == undefined) {
+        console.log("hi")
+        return errResponse(baseResponse.FIND_NO_EXIST_USER);
+    }
     let bookmarkInfo = await enterpriseDao.selectBookmarksByUserId(connection, userId);
     connection.release();
     bookmarkInfo = common.returnTagList(bookmarkInfo);
@@ -88,5 +94,5 @@ exports.retrieveBookmarks = async function (userId) {
         bookmarkList: bookmarkInfo
     }
 
-    return data;
+    return response(baseResponse.SUCCESS, data);
 };
