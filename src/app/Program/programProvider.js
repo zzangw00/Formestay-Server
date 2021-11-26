@@ -51,7 +51,7 @@ exports.retrieveReservations = async function (userId) {
         reservationList: reservationList
     }
 
-    return data;
+    return response(baseResponse.SUCCESS, data);
 };
 
 exports.retrieveReservation = async function (userId, reservationId) {

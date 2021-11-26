@@ -59,9 +59,9 @@ exports.postReservations = async function (req, res) {
 exports.getReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
 
-    const result = await programProvider.retrieveReservations(userIdResult);
+    const resultStatus = await programProvider.retrieveReservations(userIdResult);
 
-    return res.send(response(baseResponse.SUCCESS, result));
+    return res.send(resultStatus);
 };
 
 /** 예약상세 조회 API
