@@ -320,7 +320,7 @@ async function postEnterprise(
 // 프로그램 상세 조회
 async function getProgram(connection, programId) {
     const getProgramQuery = `
-        select programId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
+        select programId, enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
         from Program
         where programId = ?;`;
     const [getProgramRows] = await connection.query(getProgramQuery, programId);
@@ -332,7 +332,7 @@ async function getProgramRoom(connection, programId) {
     const getProgramRoomQuery = `
         select programId, inRoom, price
         from ProgramRoomPrice
-        where programId = ?;`;
+        where programId = ?; and status = 'ACTIVE'`;
     const [getProgramRoomRows] = await connection.query(getProgramRoomQuery, programId);
     return getProgramRoomRows;
 }
@@ -348,6 +348,44 @@ async function changeProgramStatus(connection, status, programId) {
         programId,
     ]);
     return changeProgramStatusRows;
+}
+
+// 프로그램 정보 수정
+async function patchProgramInfo(
+    connection,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+    programId,
+) {
+    const patchProgramQuery = `
+        update Program
+        set name         = ?,
+            description  = ?,
+            tag          = ?,
+            thumbnailURL = ?,
+            checkIn      = ?,
+            checkOut     = ?,
+            programInfo  = ?,
+            mealInfo     = ?
+        where programId = ?;`;
+    const [patchProgramRows] = await connection.query(patchProgramQuery, [
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+        programId,
+    ]);
+    return patchProgramRows;
 }
 
 module.exports = {
@@ -378,4 +416,5 @@ module.exports = {
     getProgram,
     changeProgramStatus,
     getProgramRoom,
+    patchProgramInfo,
 };

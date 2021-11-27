@@ -46,4 +46,9 @@ module.exports = function (app) {
 
     // 프로그램 삭제 API
     app.patch('/admin/program/:programId/status', jwtMiddleware, admin.deleteProgram);
+
+    // 프로그램 정보 수정 API
+    app.patch('/admin/program/:programId', jwtMiddleware, admin.patchProgram);
+
+    // 가격 정보 추가 API
 };

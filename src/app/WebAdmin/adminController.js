@@ -309,3 +309,64 @@ exports.deleteProgram = async function (req, res) {
     const programStatus = await adminService.patchProgramStatus(status, programId);
     return res.send(programStatus);
 };
+
+/** 프로그램 정보 수정 API
+ * [PATCH] /admin/program/:programId
+ * param : programId
+ * body : name, description, tag, checkIn, checkOut, programInfo, mealInfo, thumbnailURL
+ */
+exports.patchProgram = async function (req, res) {
+    const programId = req.params.programId;
+    let { name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo } =
+        req.body;
+    if (!name) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_KORNAME_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_ENGNAME_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_CATEGORY_EMPTY));
+    }
+    if (!checkIn) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PHONENUMBER_EMPTY));
+    }
+    if (!checkOut) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PRIMELOCATION_EMPTY));
+    }
+    if (!programInfo) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_LOCATION_EMPTY));
+    }
+    if (!mealInfo) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_TAG_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
+    }
+
+    const patchProgramResponse = await adminService.patchProgram(
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+        programId,
+    );
+    return res.send(patchProgramResponse);
+};
+
+/** 프로그램 가격 추가 API
+ * [POST] /admin/program/:programId/price
+ *
+ * body : inRoom, price
+ * params : programId
+ */
+exports.addRoomPrice = async function (req, res) {
+    const { inRoom, price } = req.body;
+    const programId = req.params.programId;
+    const postRoomPriceResponse = await adminService.addRoomPrice(inRoom, price, programId);
+    return res.send(postRoomPriceResponse);
+};
