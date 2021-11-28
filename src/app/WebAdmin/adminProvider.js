@@ -176,3 +176,11 @@ exports.retrieveProgramRoom = async function (programId) {
     connection.release();
     return programRoomResult;
 };
+
+// 가격 상세 조회
+exports.getRoomPrice = async function (programRoomPriceId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programRoomResult = await adminDao.getRoomPrice(connection, programRoomPriceId);
+    connection.release();
+    return programRoomResult;
+};

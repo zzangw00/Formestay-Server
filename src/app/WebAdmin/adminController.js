@@ -362,11 +362,52 @@ exports.patchProgram = async function (req, res) {
  * [POST] /admin/program/:programId/price
  *
  * body : inRoom, price
- * params : programId
  */
 exports.addRoomPrice = async function (req, res) {
-    const { inRoom, price } = req.body;
-    const programId = req.params.programId;
-    const postRoomPriceResponse = await adminService.addRoomPrice(inRoom, price, programId);
+    const { programId, inRoom, price } = req.body;
+    const postRoomPriceResponse = await adminService.addRoomPrice(programId, inRoom, price);
     return res.send(postRoomPriceResponse);
+};
+
+/** 프로그램 가격 추가 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * body : inRoom, price
+ * params : programRoomPriceId
+ */
+exports.patchRoomPrice = async function (req, res) {
+    const { inRoom, price } = req.body;
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const patchRoomPriceResponse = await adminService.patchRoomPrice(
+        inRoom,
+        price,
+        programRoomPriceId,
+    );
+    return res.send(patchRoomPriceResponse);
+};
+
+/** 프로그램 가격 조회 API
+ * [GET] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * params : programRoomPriceId
+ */
+exports.getRoomPrice = async function (req, res) {
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const getRoomPriceResponse = await adminProvider.getRoomPrice(programRoomPriceId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getRoomPriceResponse));
+};
+
+/** 가격정보 삭제 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId/status
+ * params : programRoomPriceId
+ * body : status
+ */
+exports.deleteRoomPrice = async function (req, res) {
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const status = req.body.status;
+    const programRoomPriceStatus = await adminService.patchProgramRoomPriceStatus(
+        status,
+        programRoomPriceId,
+    );
+    return res.send(programRoomPriceStatus);
 };

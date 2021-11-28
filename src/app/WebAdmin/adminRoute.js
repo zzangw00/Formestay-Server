@@ -51,4 +51,26 @@ module.exports = function (app) {
     app.patch('/admin/program/:programId', jwtMiddleware, admin.patchProgram);
 
     // 가격 정보 추가 API
+    app.post('/admin/program/price', jwtMiddleware, admin.addRoomPrice);
+
+    // 가격 정보 수정 API
+    app.patch(
+        '/admin/program/programRoomPrice/:programRoomPriceId',
+        jwtMiddleware,
+        admin.patchRoomPrice,
+    );
+
+    // 가격 정보 조회 API
+    app.get(
+        '/admin/program/programRoomPrice/:programRoomPriceId',
+        jwtMiddleware,
+        admin.getRoomPrice,
+    );
+
+    // 가격 정보 삭제 API
+    app.patch(
+        '/admin/programRoomPrice/:programRoomPriceId/status',
+        jwtMiddleware,
+        admin.deleteRoomPrice,
+    );
 };

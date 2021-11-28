@@ -330,9 +330,9 @@ async function getProgram(connection, programId) {
 // 프로그램 상세 조회
 async function getProgramRoom(connection, programId) {
     const getProgramRoomQuery = `
-        select programId, inRoom, price
+        select programId, programRoomPriceId, inRoom, price, status
         from ProgramRoomPrice
-        where programId = ?; and status = 'ACTIVE'`;
+        where programId = ? and status = 'ACTIVE';`;
     const [getProgramRoomRows] = await connection.query(getProgramRoomQuery, programId);
     return getProgramRoomRows;
 }
@@ -388,6 +388,61 @@ async function patchProgramInfo(
     return patchProgramRows;
 }
 
+// 가격 정보 추가
+async function postRoomPrice(connection, programId, inRoom, price) {
+    const addRoomPriceQuery = `
+    insert into ProgramRoomPrice(programId, inRoom, price)
+    values (?, ?, ?);`;
+    const [addRoomPriceRows] = await connection.query(addRoomPriceQuery, [
+        programId,
+        inRoom,
+        price,
+    ]);
+    return addRoomPriceRows;
+}
+
+// 가격 정보 수정
+async function patchRoomPrice(connection, inRoom, price, programRoomPriceId) {
+    const addRoomPriceQuery = `
+        update ProgramRoomPrice
+        set inRoom = ?,
+            price = ?
+        where programRoomPriceId = ?;`;
+    const [addRoomPriceRows] = await connection.query(addRoomPriceQuery, [
+        inRoom,
+        price,
+        programRoomPriceId,
+    ]);
+    return addRoomPriceRows;
+}
+
+// 가격 정보 조회
+async function getRoomPrice(connection, programRoomPriceId) {
+    const getRoomPriceQuery = `
+        select programRoomPriceId, inRoom, price
+        from ProgramRoomPrice
+        where programRoomPriceId = ?;`;
+    const [getRoomPriceRows] = await connection.query(
+        getRoomPriceQuery,
+
+        programRoomPriceId,
+    );
+    return getRoomPriceRows;
+}
+
+// 가격정보 삭제
+async function changeProgramRoomPriceStatus(connection, status, programRoomPriceId) {
+    const changeProgramRoomPriceQuery = `
+        update ProgramRoomPrice
+        set status = ?
+        where programRoomPriceId = ?;`;
+    const [changeProgramRoomPriceRows] = await connection.query(changeProgramRoomPriceQuery, [
+        status,
+        programRoomPriceId,
+    ]);
+    return changeProgramRoomPriceRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -417,4 +472,8 @@ module.exports = {
     changeProgramStatus,
     getProgramRoom,
     patchProgramInfo,
+    postRoomPrice,
+    patchRoomPrice,
+    getRoomPrice,
+    changeProgramRoomPriceStatus,
 };
