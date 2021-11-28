@@ -410,3 +410,38 @@ exports.patchProgramRoomPriceStatus = async function (status, programRoomPriceId
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 프로그램 추가
+exports.addProgram = async function (
+    enterpriseId,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const postProgram = await adminDao.postProgram(
+            connection,
+            enterpriseId,
+            name,
+            description,
+            tag,
+            thumbnailURL,
+            checkIn,
+            checkOut,
+            programInfo,
+            mealInfo,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postProgram Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

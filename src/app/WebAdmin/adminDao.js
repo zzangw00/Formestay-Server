@@ -443,6 +443,44 @@ async function changeProgramRoomPriceStatus(connection, status, programRoomPrice
     return changeProgramRoomPriceRows;
 }
 
+// 프로그램 추가
+async function postProgram(
+    connection,
+    enterpriseId,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+) {
+    const postProgramQuery = `
+    insert into Program(enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const [postProgramRows] = await connection.query(postProgramQuery, [
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    ]);
+    return postProgramRows;
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -476,4 +514,5 @@ module.exports = {
     patchRoomPrice,
     getRoomPrice,
     changeProgramRoomPriceStatus,
+    postProgram,
 };

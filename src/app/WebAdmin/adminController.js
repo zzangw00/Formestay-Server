@@ -365,6 +365,12 @@ exports.patchProgram = async function (req, res) {
  */
 exports.addRoomPrice = async function (req, res) {
     const { programId, inRoom, price } = req.body;
+    if (!inRoom) {
+        return res.send(response(AdminBaseResponse.ROOMPRICE_POST_INROOM_EMPTY));
+    }
+    if (!price) {
+        return res.send(response(AdminBaseResponse.ROOMPRICE_POST_PRICE_EMPTY));
+    }
     const postRoomPriceResponse = await adminService.addRoomPrice(programId, inRoom, price);
     return res.send(postRoomPriceResponse);
 };
@@ -410,4 +416,61 @@ exports.deleteRoomPrice = async function (req, res) {
         programRoomPriceId,
     );
     return res.send(programRoomPriceStatus);
+};
+
+/** 프로그램 추가 API
+ * [POST] /admin/enterprise/:enterpriseId/program
+ *
+ * body : enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo
+ */
+exports.addProgram = async function (req, res) {
+    const {
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    } = req.body;
+
+    if (!name) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_NAME_EMPTY));
+    }
+    if (!checkIn) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_CHECKIN_EMPTY));
+    }
+    if (!checkOut) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_CHECKOUT_EMPTY));
+    }
+    if (!programInfo) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_PROGRAMINFO_EMPTY));
+    }
+    if (!mealInfo) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_MEALINFO_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_TAG_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_DESCRIPTION_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_THUMBNAILURL_EMPTY));
+    }
+
+    const postProgramResponse = await adminService.addProgram(
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    );
+    return res.send(postProgramResponse);
 };

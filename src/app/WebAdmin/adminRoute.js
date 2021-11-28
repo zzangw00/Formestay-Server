@@ -73,4 +73,7 @@ module.exports = function (app) {
         jwtMiddleware,
         admin.deleteRoomPrice,
     );
+
+    // 프로그램 추가 API
+    app.post('/admin/enterprise/:enterpriseId/program', jwtMiddleware, admin.addProgram);
 };

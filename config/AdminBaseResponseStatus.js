@@ -130,6 +130,56 @@ module.exports = {
         code: 2526,
         message: '정확한 카테고리를 입력해주세요',
     },
+    ROOMPRICE_POST_INROOM_EMPTY: {
+        isSuccess: false,
+        code: 2527,
+        message: '인실 정보를 입력해주세요',
+    },
+    ROOMPRICE_POST_PRICE_EMPTY: {
+        isSuccess: false,
+        code: 2528,
+        message: '가격 정보를 입력해주세요',
+    },
+    PROGRAM_POST_NAME_EMPTY: {
+        isSuccess: false,
+        code: 2529,
+        message: '프로그램명을 입력해주세요',
+    },
+    PROGRAM_POST_CHECKIN_EMPTY: {
+        isSuccess: false,
+        code: 2530,
+        message: '체크인 시간을 입력해주세요',
+    },
+    PROGRAM_POST_CHECKOUT_EMPTY: {
+        isSuccess: false,
+        code: 2531,
+        message: '체크아웃 시간을 입력해주세요',
+    },
+    PROGRAM_POST_PROGRAMINFO_EMPTY: {
+        isSuccess: false,
+        code: 2532,
+        message: '프로그램 정보를 입력해주세요',
+    },
+    PROGRAM_POST_MEALINFO_EMPTY: {
+        isSuccess: false,
+        code: 2533,
+        message: '식단 정보를 입력해주세요',
+    },
+    PROGRAM_POST_TAG_EMPTY: {
+        isSuccess: false,
+        code: 2534,
+        message: '태그를 입력해주세요',
+    },
+    PROGRAM_POST_DESCRIPTION_EMPTY: {
+        isSuccess: false,
+        code: 2535,
+        message: '설명을 입력해주세요',
+    },
+    PROGRAM_POST_THUMBNAILURL_EMPTY: {
+        isSuccess: false,
+        code: 2536,
+        message: '이미지를 입력해주세요',
+    },
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
