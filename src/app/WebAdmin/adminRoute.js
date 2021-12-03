@@ -76,4 +76,20 @@ module.exports = function (app) {
 
     // 프로그램 추가 API
     app.post('/admin/enterprise/:enterpriseId/program', jwtMiddleware, admin.addProgram);
+
+    // 예약 리스트 조회 API
+    app.get('/admin/enterprise/:enterpriseId/reservations', jwtMiddleware, admin.getReservations);
+
+    // 예약 상세 조회 API
+    app.get('/admin/reservations/:reservationId', jwtMiddleware, admin.getReservation);
+
+    // 예약 취소 API
+    app.patch(
+        '/admin/reservations/:reservationId/status-out',
+        jwtMiddleware,
+        admin.cancleReservation,
+    );
+
+    // 예약 승인 API
+    app.patch('/admin/reservations/:reservationId/status', jwtMiddleware, admin.registReservation);
 };

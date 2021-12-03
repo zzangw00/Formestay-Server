@@ -105,7 +105,7 @@ async function retrieveUserList(connection, adminIdFromJWT) {
 // 유저 상세정보 가져오기
 async function userInfo(connection, userId) {
     const UserInfoQuery = `
-        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, appVersion, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
         from UserInfo
         where userId = ?;`;
     const [UserInfoRows] = await connection.query(UserInfoQuery, userId);
@@ -481,6 +481,51 @@ async function postProgram(
     return postProgramRows;
 }
 
+// 예약 리스트 조회
+async function getReservations(connection, enterpriseId) {
+    const getReservationsQuery = `
+        select r.reservationId, p.name as programName, r.name, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.status, r.createdAt
+        from Reservation r join Program p on r.programId = p.programId
+        where p.enterpriseId = ? and r.status != 'INACTIVE';`;
+    const [getReservationsRows] = await connection.query(getReservationsQuery, enterpriseId);
+    return getReservationsRows;
+}
+
+// 예약 상세 조회
+async function getReservation(connection, reservationId) {
+    const getReservationQuery = `
+        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.paymentWay, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
+        from Reservation r join Program p on r.programId = p.programId
+        where reservationId = ?;`;
+    const [getReservationRows] = await connection.query(getReservationQuery, reservationId);
+    return getReservationRows;
+}
+
+// 예약 취소
+async function cancleReservation(connection, status, reservationId) {
+    const cancleReservationQuery = `
+        update Reservation
+        set status = ?
+        where reservationId = ?;`;
+    const [cancleReservationRows] = await connection.query(cancleReservationQuery, [
+        status,
+        reservationId,
+    ]);
+    return cancleReservationRows;
+}
+
+// 예약 승인
+async function registReservation(connection, status, reservationId) {
+    const registReservationQuery = `
+        update Reservation
+        set status = ?
+        where reservationId = ?;`;
+    const [registReservationRows] = await connection.query(registReservationQuery, [
+        status,
+        reservationId,
+    ]);
+    return registReservationRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -515,4 +560,8 @@ module.exports = {
     getRoomPrice,
     changeProgramRoomPriceStatus,
     postProgram,
+    getReservations,
+    getReservation,
+    cancleReservation,
+    registReservation,
 };

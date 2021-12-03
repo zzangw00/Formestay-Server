@@ -474,3 +474,49 @@ exports.addProgram = async function (req, res) {
     );
     return res.send(postProgramResponse);
 };
+
+/** 예약 리스트 조회 API
+ * [GET] /admin/enterprise/:enterpriseId/reservations
+ *
+ * params : enterpriseId
+ */
+exports.getReservations = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    const getReservationsResponse = await adminProvider.getReservations(enterpriseId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getReservationsResponse));
+};
+
+/** 예약 상세 조회 API
+ * [GET] /admin/reservations/:reservationId
+ *
+ * params : reservationId
+ */
+exports.getReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const getReservationResponse = await adminProvider.getReservation(reservationId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getReservationResponse));
+};
+
+/** 예약 취소 API
+ * [PATCH] /admin/reservations/:reservationId/status-out
+ * params : reservationId
+ * body : status
+ */
+exports.cancleReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const status = req.body.status;
+    const cancleReservation = await adminService.cancleReservation(status, reservationId);
+    return res.send(cancleReservation);
+};
+
+/** 예약 승인 API
+ * [PATCH] /admin/reservations/:reservationId/status-in
+ * params : reservationId
+ * body : status
+ */
+exports.registReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const status = req.body.status;
+    const registReservation = await adminService.registReservation(status, reservationId);
+    return res.send(registReservation);
+};

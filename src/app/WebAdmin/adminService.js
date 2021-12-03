@@ -445,3 +445,29 @@ exports.addProgram = async function (
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 가격정보 삭제
+exports.cancleReservation = async function (status, reservationId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.cancleReservation(connection, status, reservationId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - cancleReservation Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.registReservation = async function (status, reservationId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.registReservation(connection, status, reservationId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - registReservation Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

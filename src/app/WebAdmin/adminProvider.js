@@ -184,3 +184,19 @@ exports.getRoomPrice = async function (programRoomPriceId) {
     connection.release();
     return programRoomResult;
 };
+
+// 예약 리스트 조회
+exports.getReservations = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const reservationsResult = await adminDao.getReservations(connection, enterpriseId);
+    connection.release();
+    return reservationsResult;
+};
+
+// 예약 상세 조회
+exports.getReservation = async function (reservationId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const reservationResult = await adminDao.getReservation(connection, reservationId);
+    connection.release();
+    return reservationResult;
+};
