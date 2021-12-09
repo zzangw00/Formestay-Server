@@ -160,12 +160,13 @@ async function selectReservationsByUserId(connection, userId) {
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
-                                                           on Program.enterpriseId = Enterprise.enterpriseId
-                                    where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
+                                                           on Program.enterpriseId = Enterprise.enterpriseId) as PE
                                    on Reservation.programId = PE.programId
                          left join ProgramRoomPrice
                                    on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
-        where userId = ?;
+                         left join UserInfo
+                                   on Reservation.userId = UserInfo.userId
+        where Reservation.userId = ? and UserInfo.status = "ACTIVE";
     `;
     const [selectReservationsByUserIdRows] = await connection.query(selectReservationsByUserIdQuery, userId);
     return selectReservationsByUserIdRows;
@@ -266,8 +267,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
-                                                           on Program.enterpriseId = Enterprise.enterpriseId
-                                    where Program.status = "ACTIVE" and Enterprise.status = "ACTIVE") as PE
+                                                           on Program.enterpriseId = Enterprise.enterpriseId) as PE
                                    on Reservation.programId = PE.programId
                          left join ProgramRoomPrice
                                    on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
