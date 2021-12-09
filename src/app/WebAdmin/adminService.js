@@ -158,6 +158,7 @@ exports.patchEnterprise = async function (
     tag,
     description,
     phoneNumber,
+    thumbnailURL,
     enterpriseId,
 ) {
     try {
@@ -182,6 +183,7 @@ exports.patchEnterprise = async function (
                         tag,
                         description,
                         phoneNumber,
+                        thumbnailURL,
                         enterpriseId,
                     );
                     connection.release();
@@ -198,6 +200,7 @@ exports.patchEnterprise = async function (
                     tag,
                     description,
                     phoneNumber,
+                    thumbnailURL,
                     enterpriseId,
                 );
                 connection.release();
@@ -221,6 +224,7 @@ exports.patchEnterprise = async function (
                             tag,
                             description,
                             phoneNumber,
+                            thumbnailURL,
                             enterpriseId,
                         );
                         connection.release();
@@ -237,6 +241,7 @@ exports.patchEnterprise = async function (
                         tag,
                         description,
                         phoneNumber,
+                        thumbnailURL,
                         enterpriseId,
                     );
                     connection.release();
@@ -250,6 +255,49 @@ exports.patchEnterprise = async function (
     }
 };
 
+// 업체 추가
+exports.addEnterprise = async function (
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    thumbnailURL,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const overlapKorName = await adminProvider.overlapKorName(korName);
+        const overlapEngName = await adminProvider.overlapEngName(engName);
+
+        if (overlapKorName[0].exist == 1) {
+            return errResponse(AdminBaseResponse.ENTERPRISE_POST_REDUNDANT_KORNAME);
+        }
+        if (overlapEngName[0].exist == 1) {
+            return errResponse(AdminBaseResponse.ENTERPRISE_POST_REDUNDANT_ENGNAME);
+        } else {
+            const postEnterprise = await adminDao.postEnterprise(
+                connection,
+                korName,
+                engName,
+                category,
+                primeLocation,
+                location,
+                tag,
+                description,
+                phoneNumber,
+                thumbnailURL,
+            );
+            connection.release();
+            return response(AdminBaseResponse.SUCCESS);
+        }
+    } catch (err) {
+        logger.error(`App - patchEnterprise Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
 // 업체 삭제
 exports.patchEnterpriseStatus = async function (status, enterpriseId) {
     try {
@@ -263,6 +311,189 @@ exports.patchEnterpriseStatus = async function (status, enterpriseId) {
         return response(AdminBaseResponse.SUCCESS);
     } catch (err) {
         logger.error(`App - patchEnterpriseStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 프로그램 삭제
+exports.patchProgramStatus = async function (status, programId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.changeProgramStatus(connection, status, programId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 프로그램 정보 수정
+exports.patchProgram = async function (
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+    programId,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const patchInfo = await adminDao.patchProgramInfo(
+            connection,
+            name,
+            description,
+            tag,
+            thumbnailURL,
+            checkIn,
+            checkOut,
+            programInfo,
+            mealInfo,
+            programId,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgram Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격 정보 추가
+exports.addRoomPrice = async function (programId, inRoom, price) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const postRoomPrice = await adminDao.postRoomPrice(connection, programId, inRoom, price);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postRoomPrice Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격 정보 수정
+exports.patchRoomPrice = async function (inRoom, price, programRoomPriceId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const patchRoomPrice = await adminDao.patchRoomPrice(
+            connection,
+            inRoom,
+            price,
+            programRoomPriceId,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchRoomPrice Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.patchProgramRoomPriceStatus = async function (status, programRoomPriceId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.changeProgramRoomPriceStatus(
+            connection,
+            status,
+            programRoomPriceId,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramRoomPriceStatus Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 프로그램 추가
+exports.addProgram = async function (
+    enterpriseId,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const postProgram = await adminDao.postProgram(
+            connection,
+            enterpriseId,
+            name,
+            description,
+            tag,
+            thumbnailURL,
+            checkIn,
+            checkOut,
+            programInfo,
+            mealInfo,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postProgram Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.cancleReservation = async function (status, reservationId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.cancleReservation(connection, status, reservationId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - cancleReservation Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.registReservation = async function (status, reservationId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.registReservation(connection, status, reservationId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - registReservation Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 프로그램 이미지 추가
+exports.addProgramImages = async function (programId, image) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const postProgramImages = await adminDao.postProgramImages(connection, programId, image);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postProgramImages Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.patchProgramImageStatus = async function (programImageId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.patchProgramImage(connection, programImageId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramImage Service error\n: ${err.message}`);
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };

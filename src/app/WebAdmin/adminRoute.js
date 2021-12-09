@@ -37,4 +37,72 @@ module.exports = function (app) {
 
     // 업체 삭제 API
     app.patch('/admin/enterprises/:enterpriseId/status', jwtMiddleware, admin.deleteEnterprise);
+
+    // 업체 추가 API
+    app.post('/admin/enterprise', jwtMiddleware, admin.addEnterprise);
+
+    // 프로그램 상세 조회 API
+    app.get('/admin/program/:programId', jwtMiddleware, admin.getProgram);
+
+    // 프로그램 삭제 API
+    app.patch('/admin/program/:programId/status', jwtMiddleware, admin.deleteProgram);
+
+    // 프로그램 정보 수정 API
+    app.patch('/admin/program/:programId', jwtMiddleware, admin.patchProgram);
+
+    // 가격 정보 추가 API
+    app.post('/admin/program/price', jwtMiddleware, admin.addRoomPrice);
+
+    // 가격 정보 수정 API
+    app.patch(
+        '/admin/program/programRoomPrice/:programRoomPriceId',
+        jwtMiddleware,
+        admin.patchRoomPrice,
+    );
+
+    // 가격 정보 조회 API
+    app.get(
+        '/admin/program/programRoomPrice/:programRoomPriceId',
+        jwtMiddleware,
+        admin.getRoomPrice,
+    );
+
+    // 가격 정보 삭제 API
+    app.patch(
+        '/admin/programRoomPrice/:programRoomPriceId/status',
+        jwtMiddleware,
+        admin.deleteRoomPrice,
+    );
+
+    // 프로그램 추가 API
+    app.post('/admin/enterprise/:enterpriseId/program', jwtMiddleware, admin.addProgram);
+
+    // 예약 리스트 조회 API
+    app.get('/admin/enterprise/:enterpriseId/reservations', jwtMiddleware, admin.getReservations);
+
+    // 예약 상세 조회 API
+    app.get('/admin/reservations/:reservationId', jwtMiddleware, admin.getReservation);
+
+    // 예약 취소 API
+    app.patch(
+        '/admin/reservations/:reservationId/status-out',
+        jwtMiddleware,
+        admin.cancleReservation,
+    );
+
+    // 예약 승인 API
+    app.patch('/admin/reservations/:reservationId/status', jwtMiddleware, admin.registReservation);
+
+    // 프로그램 이미지 조회 API
+    app.get('/admin/program/:programId/images', jwtMiddleware, admin.getProgramImages);
+
+    // 프로그램 이미지 추가 API
+    app.post('/admin/program/:programId/images', jwtMiddleware, admin.addProgramImages);
+
+    // 프로그램 이미지 삭제 API
+    app.patch(
+        '/admin/programImage/:programImageId/status',
+        jwtMiddleware,
+        admin.patchProgramImages,
+    );
 };

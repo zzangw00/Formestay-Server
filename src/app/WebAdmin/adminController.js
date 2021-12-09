@@ -159,8 +159,17 @@ exports.patchUser = async function (req, res) {
  */
 exports.patchEnterprise = async function (req, res) {
     const enterpriseId = req.params.enterpriseId;
-    let { korName, engName, category, phoneNumber, primeLocation, location, tag, description } =
-        req.body;
+    let {
+        korName,
+        engName,
+        category,
+        phoneNumber,
+        primeLocation,
+        location,
+        tag,
+        description,
+        thumbnailURL,
+    } = req.body;
     if (!korName) {
         return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_KORNAME_EMPTY));
     }
@@ -185,17 +194,7 @@ exports.patchEnterprise = async function (req, res) {
     if (!description) {
         return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
     }
-    if (category == '단식원') {
-        category = 1;
-    } else if (category == '템플스테이') {
-        category = 2;
-    } else if (category == '힐링캠프') {
-        category = 3;
-    } else if (category == '산후조리원') {
-        category = 4;
-    } else {
-        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_WRONG_CATEGORY));
-    }
+
     const patchEnterpriseResponse = await adminService.patchEnterprise(
         korName,
         engName,
@@ -205,13 +204,14 @@ exports.patchEnterprise = async function (req, res) {
         tag,
         description,
         phoneNumber,
+        thumbnailURL,
         enterpriseId,
     );
     return res.send(patchEnterpriseResponse);
 };
 
-/** 회원 탈퇴 API
- * [PATCH] /admin/user/:userId
+/** 업체 삭제 API
+ * [PATCH] /admin/enterprises/:enterpriseId/status
  * params : userId
  * body : status
  */
@@ -220,4 +220,343 @@ exports.deleteEnterprise = async function (req, res) {
     const status = req.body.status;
     const enterpriseStatus = await adminService.patchEnterpriseStatus(status, enterpriseId);
     return res.send(enterpriseStatus);
+};
+
+/** 업체 추가 API
+ * [POST] /admin/enterprise
+ *
+ * body : korName, engName, category, primeLocation, location, tag, description, phoneNumber, thumbnailURL
+ */
+exports.addEnterprise = async function (req, res) {
+    const {
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL,
+    } = req.body;
+    if (!korName) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_KORNAME_EMPTY));
+    }
+    if (!engName) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_ENGNAME_EMPTY));
+    }
+    if (!category) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_CATEGORY_EMPTY));
+    }
+    if (!phoneNumber) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_PHONENUMBER_EMPTY));
+    }
+    if (!primeLocation) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_PRIMELOCATION_EMPTY));
+    }
+    if (!location) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_LOCATION_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_TAG_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_DESCRIPTION_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_IMAGE_EMPTY));
+    }
+
+    const patchEnterpriseResponse = await adminService.addEnterprise(
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL,
+    );
+    return res.send(patchEnterpriseResponse);
+};
+
+/** 프로그램 상세 조회 API
+ * [GET] /admin/programs/:programId
+ *
+ * param : programId
+ *
+ */
+exports.getProgram = async function (req, res) {
+    const programId = req.params.programId;
+    const programInfo = await adminProvider.retrieveProgram(programId);
+    const programRoomInfo = await adminProvider.retrieveProgramRoom(programId);
+    const result = {
+        programResult: programInfo,
+        programRoomResult: programRoomInfo,
+    };
+    return res.send(response(AdminBaseResponse.SUCCESS, result));
+};
+
+/** 프로그램 삭제 API
+ * [PATCH] /admin/program/:programId/status
+ * params : programId
+ * body : status
+ */
+exports.deleteProgram = async function (req, res) {
+    const programId = req.params.programId;
+    const status = req.body.status;
+    const programStatus = await adminService.patchProgramStatus(status, programId);
+    return res.send(programStatus);
+};
+
+/** 프로그램 정보 수정 API
+ * [PATCH] /admin/program/:programId
+ * param : programId
+ * body : name, description, tag, checkIn, checkOut, programInfo, mealInfo, thumbnailURL
+ */
+exports.patchProgram = async function (req, res) {
+    const programId = req.params.programId;
+    let { name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo } =
+        req.body;
+    if (!name) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_KORNAME_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_ENGNAME_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_CATEGORY_EMPTY));
+    }
+    if (!checkIn) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PHONENUMBER_EMPTY));
+    }
+    if (!checkOut) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_PRIMELOCATION_EMPTY));
+    }
+    if (!programInfo) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_LOCATION_EMPTY));
+    }
+    if (!mealInfo) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_TAG_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
+    }
+
+    const patchProgramResponse = await adminService.patchProgram(
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+        programId,
+    );
+    return res.send(patchProgramResponse);
+};
+
+/** 프로그램 가격 추가 API
+ * [POST] /admin/program/:programId/price
+ *
+ * body : inRoom, price
+ */
+exports.addRoomPrice = async function (req, res) {
+    const { programId, inRoom, price } = req.body;
+    if (!inRoom) {
+        return res.send(response(AdminBaseResponse.ROOMPRICE_POST_INROOM_EMPTY));
+    }
+    if (!price) {
+        return res.send(response(AdminBaseResponse.ROOMPRICE_POST_PRICE_EMPTY));
+    }
+    const postRoomPriceResponse = await adminService.addRoomPrice(programId, inRoom, price);
+    console.log(postRoomPriceResponse);
+    return res.send(postRoomPriceResponse);
+};
+
+/** 프로그램 가격 추가 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * body : inRoom, price
+ * params : programRoomPriceId
+ */
+exports.patchRoomPrice = async function (req, res) {
+    const { inRoom, price } = req.body;
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const patchRoomPriceResponse = await adminService.patchRoomPrice(
+        inRoom,
+        price,
+        programRoomPriceId,
+    );
+    return res.send(patchRoomPriceResponse);
+};
+
+/** 프로그램 가격 조회 API
+ * [GET] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * params : programRoomPriceId
+ */
+exports.getRoomPrice = async function (req, res) {
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const getRoomPriceResponse = await adminProvider.getRoomPrice(programRoomPriceId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getRoomPriceResponse));
+};
+
+/** 가격정보 삭제 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId/status
+ * params : programRoomPriceId
+ * body : status
+ */
+exports.deleteRoomPrice = async function (req, res) {
+    const programRoomPriceId = req.params.programRoomPriceId;
+    const status = req.body.status;
+    const programRoomPriceStatus = await adminService.patchProgramRoomPriceStatus(
+        status,
+        programRoomPriceId,
+    );
+    return res.send(programRoomPriceStatus);
+};
+
+/** 프로그램 추가 API
+ * [POST] /admin/enterprise/:enterpriseId/program
+ *
+ * body : enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo
+ */
+exports.addProgram = async function (req, res) {
+    const {
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    } = req.body;
+
+    if (!name) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_NAME_EMPTY));
+    }
+    if (!checkIn) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_CHECKIN_EMPTY));
+    }
+    if (!checkOut) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_CHECKOUT_EMPTY));
+    }
+    if (!programInfo) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_PROGRAMINFO_EMPTY));
+    }
+    if (!mealInfo) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_MEALINFO_EMPTY));
+    }
+    if (!tag) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_TAG_EMPTY));
+    }
+    if (!description) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_DESCRIPTION_EMPTY));
+    }
+    if (!thumbnailURL) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_THUMBNAILURL_EMPTY));
+    }
+
+    const postProgramResponse = await adminService.addProgram(
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    );
+    return res.send(postProgramResponse);
+};
+
+/** 예약 리스트 조회 API
+ * [GET] /admin/enterprise/:enterpriseId/reservations
+ *
+ * params : enterpriseId
+ */
+exports.getReservations = async function (req, res) {
+    const enterpriseId = req.params.enterpriseId;
+    const getReservationsResponse = await adminProvider.getReservations(enterpriseId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getReservationsResponse));
+};
+
+/** 예약 상세 조회 API
+ * [GET] /admin/reservations/:reservationId
+ *
+ * params : reservationId
+ */
+exports.getReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const getReservationResponse = await adminProvider.getReservation(reservationId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getReservationResponse));
+};
+
+/** 예약 취소 API
+ * [PATCH] /admin/reservations/:reservationId/status-out
+ * params : reservationId
+ * body : status
+ */
+exports.cancleReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const status = req.body.status;
+    const cancleReservation = await adminService.cancleReservation(status, reservationId);
+    return res.send(cancleReservation);
+};
+
+/** 예약 승인 API
+ * [PATCH] /admin/reservations/:reservationId/status-in
+ * params : reservationId
+ * body : status
+ */
+exports.registReservation = async function (req, res) {
+    const reservationId = req.params.reservationId;
+    const status = req.body.status;
+    const registReservation = await adminService.registReservation(status, reservationId);
+    return res.send(registReservation);
+};
+
+/** 프로그램 이미지 조회 API
+ * [GET] /admin/reservations/:reservationId
+ *
+ * params : programId
+ */
+exports.getProgramImages = async function (req, res) {
+    const programId = req.params.programId;
+    const getProgramImagesResponse = await adminProvider.getProgramImages(programId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getProgramImagesResponse));
+};
+
+/** 프로그램 가격 추가 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * body : images
+ * params : programId
+ */
+exports.addProgramImages = async function (req, res) {
+    const { images } = req.body;
+    const programId = req.params.programId;
+    const response = [];
+    for (let i = 0; i < images.length; i++) {
+        const addProgramImagesResponse = await adminService.addProgramImages(programId, images[i]);
+        response.push(addProgramImagesResponse);
+    }
+    return res.send(response[0]);
+};
+
+/** 가격정보 삭제 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId/status
+ * params : programRoomPriceId
+ * body : status
+ */
+exports.patchProgramImages = async function (req, res) {
+    const programImageId = req.params.programImageId;
+    const programImageStatus = await adminService.patchProgramImageStatus(programImageId);
+    return res.send(programImageStatus);
 };

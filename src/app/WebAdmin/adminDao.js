@@ -105,7 +105,7 @@ async function retrieveUserList(connection, adminIdFromJWT) {
 // 유저 상세정보 가져오기
 async function userInfo(connection, userId) {
     const UserInfoQuery = `
-        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, appVersion, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        select userId, email, name, nickname, gender, date_format(birthday, '%Y-%m-%d') as birthday, phoneNumber, isPermitAlarm, snsId, profileImgURL, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
         from UserInfo
         where userId = ?;`;
     const [UserInfoRows] = await connection.query(UserInfoQuery, userId);
@@ -196,6 +196,7 @@ async function patchEnterpriseInfo(
     tag,
     description,
     phoneNumber,
+    thumbnailURL,
     enterpriseId,
 ) {
     const patchEnterpriseQuery = `
@@ -207,7 +208,8 @@ async function patchEnterpriseInfo(
             location = ?,
             tag = ?,
             description = ?,
-            phoneNumber = ?
+            phoneNumber = ?,
+            thumbnailURL = ?
         where enterpriseId = ?;`;
     const [patchEnterpriseRows] = await connection.query(patchEnterpriseQuery, [
         korName,
@@ -218,6 +220,7 @@ async function patchEnterpriseInfo(
         tag,
         description,
         phoneNumber,
+        thumbnailURL,
         enterpriseId,
     ]);
     return patchEnterpriseRows;
@@ -276,6 +279,285 @@ async function changeEnterpriseStatus(connection, status, enterpriseId) {
     return changeEnterpriseStatusRows;
 }
 
+// 업체 추가
+async function postEnterprise(
+    connection,
+    korName,
+    engName,
+    category,
+    primeLocation,
+    location,
+    tag,
+    description,
+    phoneNumber,
+    thumbnailURL,
+) {
+    const postEnterpriseQuery = `
+    insert into Enterprise(korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+    const [postEnterpriseRows] = await connection.query(postEnterpriseQuery, [
+        korName,
+        engName,
+        category,
+        primeLocation,
+        location,
+        tag,
+        description,
+        phoneNumber,
+        thumbnailURL,
+    ]);
+    return postEnterpriseRows;
+}
+
+// 프로그램 상세 조회
+async function getProgram(connection, programId) {
+    const getProgramQuery = `
+        select programId, enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt
+        from Program
+        where programId = ?;`;
+    const [getProgramRows] = await connection.query(getProgramQuery, programId);
+    return getProgramRows;
+}
+
+// 프로그램 상세 조회
+async function getProgramRoom(connection, programId) {
+    const getProgramRoomQuery = `
+        select programId, programRoomPriceId, inRoom, price, status
+        from ProgramRoomPrice
+        where programId = ? and status = 'ACTIVE';`;
+    const [getProgramRoomRows] = await connection.query(getProgramRoomQuery, programId);
+    return getProgramRoomRows;
+}
+
+// 프로그램 삭제
+async function changeProgramStatus(connection, status, programId) {
+    const changeProgramStatusQuery = `
+        Update Program
+        set status = ?
+        where programId = ?;`;
+    const [changeProgramStatusRows] = await connection.query(changeProgramStatusQuery, [
+        status,
+        programId,
+    ]);
+    return changeProgramStatusRows;
+}
+
+// 프로그램 정보 수정
+async function patchProgramInfo(
+    connection,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+    programId,
+) {
+    const patchProgramQuery = `
+        update Program
+        set name         = ?,
+            description  = ?,
+            tag          = ?,
+            thumbnailURL = ?,
+            checkIn      = ?,
+            checkOut     = ?,
+            programInfo  = ?,
+            mealInfo     = ?
+        where programId = ?;`;
+    const [patchProgramRows] = await connection.query(patchProgramQuery, [
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+        programId,
+    ]);
+    return patchProgramRows;
+}
+
+// 가격 정보 추가
+async function postRoomPrice(connection, programId, inRoom, price) {
+    const addRoomPriceQuery = `
+    insert into ProgramRoomPrice(programId, inRoom, price)
+    values (?, ?, ?);`;
+    const [addRoomPriceRows] = await connection.query(addRoomPriceQuery, [
+        programId,
+        inRoom,
+        price,
+    ]);
+    return addRoomPriceRows;
+}
+
+// 가격 정보 수정
+async function patchRoomPrice(connection, inRoom, price, programRoomPriceId) {
+    const addRoomPriceQuery = `
+        update ProgramRoomPrice
+        set inRoom = ?,
+            price = ?
+        where programRoomPriceId = ?;`;
+    const [addRoomPriceRows] = await connection.query(addRoomPriceQuery, [
+        inRoom,
+        price,
+        programRoomPriceId,
+    ]);
+    return addRoomPriceRows;
+}
+
+// 가격 정보 조회
+async function getRoomPrice(connection, programRoomPriceId) {
+    const getRoomPriceQuery = `
+        select programRoomPriceId, inRoom, price
+        from ProgramRoomPrice
+        where programRoomPriceId = ?;`;
+    const [getRoomPriceRows] = await connection.query(
+        getRoomPriceQuery,
+
+        programRoomPriceId,
+    );
+    return getRoomPriceRows;
+}
+
+// 가격정보 삭제
+async function changeProgramRoomPriceStatus(connection, status, programRoomPriceId) {
+    const changeProgramRoomPriceQuery = `
+        update ProgramRoomPrice
+        set status = ?
+        where programRoomPriceId = ?;`;
+    const [changeProgramRoomPriceRows] = await connection.query(changeProgramRoomPriceQuery, [
+        status,
+        programRoomPriceId,
+    ]);
+    return changeProgramRoomPriceRows;
+}
+
+// 프로그램 추가
+async function postProgram(
+    connection,
+    enterpriseId,
+    name,
+    description,
+    tag,
+    thumbnailURL,
+    checkIn,
+    checkOut,
+    programInfo,
+    mealInfo,
+) {
+    const postProgramQuery = `
+    insert into Program(enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const [postProgramRows] = await connection.query(postProgramQuery, [
+        enterpriseId,
+        name,
+        description,
+        tag,
+        thumbnailURL,
+        checkIn,
+        checkOut,
+        programInfo,
+        mealInfo,
+    ]);
+    return postProgramRows;
+}
+
+// 예약 리스트 조회
+async function getReservations(connection, enterpriseId) {
+    const getReservationsQuery = `
+        select r.reservationId, p.name as programName, r.name, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.status, r.createdAt
+        from Reservation r join Program p on r.programId = p.programId
+        where p.enterpriseId = ? and r.status != 'INACTIVE';`;
+    const [getReservationsRows] = await connection.query(getReservationsQuery, enterpriseId);
+    return getReservationsRows;
+}
+
+// 예약 상세 조회
+async function getReservation(connection, reservationId) {
+    const getReservationQuery = `
+        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.paymentWay, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
+        from Reservation r join Program p on r.programId = p.programId
+        where reservationId = ?;`;
+    const [getReservationRows] = await connection.query(getReservationQuery, reservationId);
+    return getReservationRows;
+}
+
+// 예약 취소
+async function cancleReservation(connection, status, reservationId) {
+    const cancleReservationQuery = `
+        update Reservation
+        set status = ?
+        where reservationId = ?;`;
+    const [cancleReservationRows] = await connection.query(cancleReservationQuery, [
+        status,
+        reservationId,
+    ]);
+    return cancleReservationRows;
+}
+
+// 예약 승인
+async function registReservation(connection, status, reservationId) {
+    const registReservationQuery = `
+        update Reservation
+        set status = ?
+        where reservationId = ?;`;
+    const [registReservationRows] = await connection.query(registReservationQuery, [
+        status,
+        reservationId,
+    ]);
+    return registReservationRows;
+}
+
+// 프로그램 이미지 조회
+async function getProgramImages(connection, programId) {
+    const getProgramImagesQuery = `
+        select imageURL, programImageId
+        from ProgramImage
+        where programId = ?;`;
+    const [getProgramImagesRows] = await connection.query(getProgramImagesQuery, programId);
+    return getProgramImagesRows;
+}
+
+// 프로그램 이미지 추가
+async function postProgramImages(connection, programId, image) {
+    const postProgramImagesQuery = `
+        insert into ProgramImage(programId,
+            imageURL)
+            values (?, ?);`;
+    const [postProgramImagesRows] = await connection.query(postProgramImagesQuery, [
+        programId,
+        image,
+    ]);
+    return postProgramImagesRows;
+}
+
+// 가격정보 삭제
+async function patchProgramImage(connection, programImageId) {
+    const patchProgramImageQuery = `
+        delete from ProgramImage
+        where programImageId = ?;`;
+    const [patchProgramImageRows] = await connection.query(patchProgramImageQuery, programImageId);
+    return patchProgramImageRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -300,4 +582,21 @@ module.exports = {
     korNameOverlap,
     engNameOverlap,
     changeEnterpriseStatus,
+    postEnterprise,
+    getProgram,
+    changeProgramStatus,
+    getProgramRoom,
+    patchProgramInfo,
+    postRoomPrice,
+    patchRoomPrice,
+    getRoomPrice,
+    changeProgramRoomPriceStatus,
+    postProgram,
+    getReservations,
+    getReservation,
+    cancleReservation,
+    registReservation,
+    getProgramImages,
+    postProgramImages,
+    patchProgramImage,
 };

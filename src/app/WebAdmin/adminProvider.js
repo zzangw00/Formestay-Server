@@ -160,3 +160,51 @@ exports.overlapEngName = async function (engName) {
     connection.release();
     return overlapResult;
 };
+
+// 프로그램 상세 정보 조회
+exports.retrieveProgram = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programResult = await adminDao.getProgram(connection, programId);
+    connection.release();
+    return programResult;
+};
+
+// 프로그램 방 가격 정보 상세 정보 조회
+exports.retrieveProgramRoom = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programRoomResult = await adminDao.getProgramRoom(connection, programId);
+    connection.release();
+    return programRoomResult;
+};
+
+// 가격 상세 조회
+exports.getRoomPrice = async function (programRoomPriceId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programRoomResult = await adminDao.getRoomPrice(connection, programRoomPriceId);
+    connection.release();
+    return programRoomResult;
+};
+
+// 예약 리스트 조회
+exports.getReservations = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const reservationsResult = await adminDao.getReservations(connection, enterpriseId);
+    connection.release();
+    return reservationsResult;
+};
+
+// 예약 상세 조회
+exports.getReservation = async function (reservationId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const reservationResult = await adminDao.getReservation(connection, reservationId);
+    connection.release();
+    return reservationResult;
+};
+
+// 프로그램 이미지 조회
+exports.getProgramImages = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programImagesResult = await adminDao.getProgramImages(connection, programId);
+    connection.release();
+    return programImagesResult;
+};
