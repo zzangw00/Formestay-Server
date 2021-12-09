@@ -14,7 +14,7 @@ async function isExistUserBySNSId(connection, snsId) {
 // 유저 핸드폰 번호 존재 체크
 async function isExistUserByPhoneNumber(connection, phoneNumber) {
     const isExistUserByPhoneNumberQuery = `
-        SELECT COUNT(*) as CNT
+        SELECT COUNT(*) as CNT, snsId
         FROM UserInfo
         WHERE phoneNumber = ? and status = "ACTIVE";
     `;

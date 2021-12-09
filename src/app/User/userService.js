@@ -250,9 +250,13 @@ exports.postFindPhoneNumber = async function (phoneNumber) {
 
     try {
         const isExistPhoneNumber = await userProvider.retrieveUserByPhoneNumber(phoneNumber);
-        if (isExistPhoneNumber === 0) {
+        // console.log(isExistPhoneNumber)
+        if (isExistPhoneNumber.CNT === 0) {
             return errResponse(baseResponse.FIND_NO_EXIST_USER);
-        } else {
+        } else if (isExistPhoneNumber.snsId != 0) {
+            return errResponse(baseResponse.FIND_SNS_EXIST_USER);
+        }
+        else {
             return response(baseResponse.SUCCESS);
         }
 

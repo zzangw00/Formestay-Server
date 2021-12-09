@@ -14,7 +14,7 @@ exports.retrieveUserByPhoneNumber = async function (phoneNumber) {
 
     connection.release();
 
-    return result[0].CNT;
+    return result[0];
 };
 
 exports.retrieveUserBySNSId = async function (snsId) {

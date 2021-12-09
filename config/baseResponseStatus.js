@@ -63,6 +63,7 @@ module.exports = {
     SIGNIN_NO_EXIST_SOCIAL : { "isSuccess": false, "code": 2026, "message":"존재하지 않는 회원입니다." },
     FIND_NO_EXIST_EMAIL : { "isSuccess": false, "code": 2028, "message":"이메일이 존재하지 않습니다." },
     FIND_NO_EXIST_USER : { "isSuccess": false, "code": 2030, "message":"존재하지 않는 회원입니다." },
+    FIND_SNS_EXIST_USER : { "isSuccess": false, "code": 2050, "message":"SNS 회원입니다." },
 
 
  
