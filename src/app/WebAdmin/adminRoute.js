@@ -92,4 +92,17 @@ module.exports = function (app) {
 
     // 예약 승인 API
     app.patch('/admin/reservations/:reservationId/status', jwtMiddleware, admin.registReservation);
+
+    // 프로그램 이미지 조회 API
+    app.get('/admin/program/:programId/images', jwtMiddleware, admin.getProgramImages);
+
+    // 프로그램 이미지 추가 API
+    app.post('/admin/program/:programId/images', jwtMiddleware, admin.addProgramImages);
+
+    // 프로그램 이미지 삭제 API
+    app.patch(
+        '/admin/programImage/:programImageId/status',
+        jwtMiddleware,
+        admin.patchProgramImages,
+    );
 };

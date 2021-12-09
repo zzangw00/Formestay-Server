@@ -471,3 +471,29 @@ exports.registReservation = async function (status, reservationId) {
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 프로그램 이미지 추가
+exports.addProgramImages = async function (programId, image) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const postProgramImages = await adminDao.postProgramImages(connection, programId, image);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postProgramImages Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 가격정보 삭제
+exports.patchProgramImageStatus = async function (programImageId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const changeStatus = await adminDao.patchProgramImage(connection, programImageId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramImage Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

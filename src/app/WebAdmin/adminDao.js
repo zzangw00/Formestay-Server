@@ -526,6 +526,38 @@ async function registReservation(connection, status, reservationId) {
     ]);
     return registReservationRows;
 }
+
+// 프로그램 이미지 조회
+async function getProgramImages(connection, programId) {
+    const getProgramImagesQuery = `
+        select imageURL, programImageId
+        from ProgramImage
+        where programId = ?;`;
+    const [getProgramImagesRows] = await connection.query(getProgramImagesQuery, programId);
+    return getProgramImagesRows;
+}
+
+// 프로그램 이미지 추가
+async function postProgramImages(connection, programId, image) {
+    const postProgramImagesQuery = `
+        insert into ProgramImage(programId,
+            imageURL)
+            values (?, ?);`;
+    const [postProgramImagesRows] = await connection.query(postProgramImagesQuery, [
+        programId,
+        image,
+    ]);
+    return postProgramImagesRows;
+}
+
+// 가격정보 삭제
+async function patchProgramImage(connection, programImageId) {
+    const patchProgramImageQuery = `
+        delete from ProgramImage
+        where programImageId = ?;`;
+    const [patchProgramImageRows] = await connection.query(patchProgramImageQuery, programImageId);
+    return patchProgramImageRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -564,4 +596,7 @@ module.exports = {
     getReservation,
     cancleReservation,
     registReservation,
+    getProgramImages,
+    postProgramImages,
+    patchProgramImage,
 };

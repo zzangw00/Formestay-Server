@@ -372,6 +372,7 @@ exports.addRoomPrice = async function (req, res) {
         return res.send(response(AdminBaseResponse.ROOMPRICE_POST_PRICE_EMPTY));
     }
     const postRoomPriceResponse = await adminService.addRoomPrice(programId, inRoom, price);
+    console.log(postRoomPriceResponse);
     return res.send(postRoomPriceResponse);
 };
 
@@ -519,4 +520,43 @@ exports.registReservation = async function (req, res) {
     const status = req.body.status;
     const registReservation = await adminService.registReservation(status, reservationId);
     return res.send(registReservation);
+};
+
+/** 프로그램 이미지 조회 API
+ * [GET] /admin/reservations/:reservationId
+ *
+ * params : programId
+ */
+exports.getProgramImages = async function (req, res) {
+    const programId = req.params.programId;
+    const getProgramImagesResponse = await adminProvider.getProgramImages(programId);
+    return res.send(response(AdminBaseResponse.SUCCESS, getProgramImagesResponse));
+};
+
+/** 프로그램 가격 추가 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId
+ *
+ * body : images
+ * params : programId
+ */
+exports.addProgramImages = async function (req, res) {
+    const { images } = req.body;
+    const programId = req.params.programId;
+    const response = [];
+    for (let i = 0; i < images.length; i++) {
+        const addProgramImagesResponse = await adminService.addProgramImages(programId, images[i]);
+        response.push(addProgramImagesResponse);
+    }
+    return res.send(response[0]);
+};
+
+/** 가격정보 삭제 API
+ * [PATCH] /admin/program/programRoomPrice/:programRoomPriceId/status
+ * params : programRoomPriceId
+ * body : status
+ */
+exports.patchProgramImages = async function (req, res) {
+    const programImageId = req.params.programImageId;
+    const programImageStatus = await adminService.patchProgramImageStatus(programImageId);
+    return res.send(programImageStatus);
 };

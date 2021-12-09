@@ -200,3 +200,11 @@ exports.getReservation = async function (reservationId) {
     connection.release();
     return reservationResult;
 };
+
+// 프로그램 이미지 조회
+exports.getProgramImages = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const programImagesResult = await adminDao.getProgramImages(connection, programId);
+    connection.release();
+    return programImagesResult;
+};
