@@ -16,7 +16,7 @@ function returnTagList(list) {
             tagList = tag.split('|');
             list[i]['tag'] = tagList;
         } else {
-            list[i]['tag'] = null;
+            list[i]['tag'] = [];
         }
     }
     return list;
@@ -39,7 +39,7 @@ function returnOneTagList(object) {
         tagList = tag.split('|');
         object['tag'] = tagList;
     } else {
-        object['tag'] = null;
+        object['tag'] = [];
     }
 
     return object;
