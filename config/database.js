@@ -3,10 +3,10 @@ const {logger} = require('./winston');
 
 const pool = mysql.createPool({
     host: 'database-1.ctxgakdf0muo.ap-northeast-2.rds.amazonaws.com',
-    user: 'project_da',
+    user: 'admin',
     port: '3306',
-    password: 'da20211025',
-    database: 'testDB'
+    password: 'formestay1025!',
+    database: 'productionDB'
 });
 
 module.exports = {
