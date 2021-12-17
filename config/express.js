@@ -18,21 +18,11 @@ module.exports = function () {
     app.use(methodOverride());
 
     app.use(cors());
-    // app.use(express.static(process.cwd() + '/public'));
 
-    /* App (Android, iOS) */
-    //require('../src/app/routes/indexRoute')(app);
-    //require('../src/app/indexRoute')(app);
     require('../src/app/User/userRoute')(app);
     require('../src/app/WebAdmin/adminRoute')(app);
     require('../src/app/Enterprise/enterpriseRoute')(app);
-    require('../src/app/Test/testRoute')(app);
     require('../src/app/Program/programRoute')(app);
 
-    /* Web */
-    // require('../src/web/routes/indexRoute')(app);
-
-    /* Web Admin*/
-    // require('../src/web-admin/routes/indexRoute')(app);
     return app;
 };
