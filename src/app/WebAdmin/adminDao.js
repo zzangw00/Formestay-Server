@@ -36,14 +36,42 @@ async function checkAdminPhoneNumber(connection, phoneNumber) {
     return checkAdminPhoneNumberRows;
 }
 
+// admin 회원가입 enterprise 중복체크
+async function checkAdminEnterprise(connection, enterpriseId) {
+    const checkAdminEnterpriseQuery = `
+    select enterpriseId
+    from Admin
+    where enterpriseId = ?;
+    `;
+    const [checkAdminEnterpriseRows] = await connection.query(
+        checkAdminEnterpriseQuery,
+        enterpriseId,
+    );
+    return checkAdminEnterpriseRows;
+}
+
+// admin 회원가입 enterprise 존재 체크
+async function existAdminEnterprise(connection, enterpriseId) {
+    const existAdminEnterpriseQuery = `
+    SELECT enterpriseId
+    FROM Enterprise
+    WHERE enterpriseId = ?;
+    `;
+    const [existAdminEnterpriseRows] = await connection.query(
+        existAdminEnterpriseQuery,
+        enterpriseId,
+    );
+    return existAdminEnterpriseRows;
+}
+
 // admin 회원가입
 async function insertAdminInfo(connection, insertAdminInfoParams) {
     const query = `
     INSERT INTO Admin(email,
         password,
         nickname,
-        phoneNumber)
-      VALUES (?, ?, ?, ?);
+        phoneNumber, enterpriseId)
+      VALUES (?, ?, ?, ?, ?);
     `;
     const [insertRows] = await connection.query(query, insertAdminInfoParams);
     return insertRows;
@@ -599,4 +627,6 @@ module.exports = {
     getProgramImages,
     postProgramImages,
     patchProgramImage,
+    checkAdminEnterprise,
+    existAdminEnterprise,
 };

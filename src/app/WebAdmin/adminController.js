@@ -26,7 +26,7 @@ exports.getUsers = async function (req, res) {
  * body : email, password, nickname, phoneNumber
  */
 exports.postAdmin = async function (req, res) {
-    const { email, password, nickname, phoneNumber } = req.body;
+    const { email, password, nickname, phoneNumber, enterpriseId } = req.body;
     if (!regexEmail.test(email)) {
         return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_EMAIL_ERROR_TYPE));
     }
@@ -42,7 +42,16 @@ exports.postAdmin = async function (req, res) {
     if (!phoneNumber) {
         return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_PHONENUMBER_EMPTY));
     }
-    const signUpResponse = await adminService.createAdmin(email, password, nickname, phoneNumber);
+    if (!enterpriseId) {
+        return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_ENTERPRISEID_EMPTY));
+    }
+    const signUpResponse = await adminService.createAdmin(
+        email,
+        password,
+        nickname,
+        phoneNumber,
+        enterpriseId,
+    );
 
     return res.send(signUpResponse);
 };
@@ -89,6 +98,7 @@ exports.autoLogin = async function (req, res) {
  */
 exports.getUser = async function (req, res) {
     const userId = req.params.userId;
+    console.log(req.verifiedToken);
     const userResult = await adminProvider.userInfo(userId);
     return res.send(response(AdminBaseResponse.SUCCESS, userResult));
 };
@@ -289,6 +299,7 @@ exports.addEnterprise = async function (req, res) {
  */
 exports.getProgram = async function (req, res) {
     const programId = req.params.programId;
+    console.log(1);
     const programInfo = await adminProvider.retrieveProgram(programId);
     const programRoomInfo = await adminProvider.retrieveProgramRoom(programId);
     const result = {

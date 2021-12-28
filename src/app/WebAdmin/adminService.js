@@ -12,7 +12,7 @@ const security = require('../../../utils/security');
 const crypto = require('crypto');
 
 // admin 회원가입
-exports.createAdmin = async function (email, password, nickname, phoneNumber) {
+exports.createAdmin = async function (email, password, nickname, phoneNumber, enterpriseId) {
     try {
         // email 중복 확인
         const emailRows = await adminProvider.emailCheck(email);
@@ -29,10 +29,20 @@ exports.createAdmin = async function (email, password, nickname, phoneNumber) {
         if (phoneNumberRows.length > 0)
             return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_PHONENUMBER);
 
+        // 업체 번호 중복 확인
+        const enterpriseRows = await adminProvider.enterpriseCheck(enterpriseId);
+        if (enterpriseRows.length > 0)
+            return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_ENTERPRISEID);
+
+        // 업체가 존재하는지 확인
+        const enterpriseExist = await adminProvider.enterpriseExist(enterpriseId);
+        if (enterpriseExist.length < 1)
+            return errResponse(AdminBaseResponse.ADMIN_SIGNUP_REDUNDANT_ENTERPRISE);
+
         // 비밀번호 암호화
         const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
 
-        const insertAdminInfoParams = [email, hashedPassword, nickname, phoneNumber];
+        const insertAdminInfoParams = [email, hashedPassword, nickname, phoneNumber, enterpriseId];
         const connection = await pool.getConnection(async (conn) => conn);
         const createAdmin = await adminDao.insertAdminInfo(connection, insertAdminInfoParams);
         connection.release();

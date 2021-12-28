@@ -30,6 +30,27 @@ exports.phoneNumberCheck = async function (phoneNumber) {
     return adminPhoneNumberResult;
 };
 
+// admin 회원가입 enterpriseId 중복체크
+exports.enterpriseCheck = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminEnterpriseResult = await adminDao.checkAdminEnterprise(connection, enterpriseId);
+    connection.release();
+
+    return adminEnterpriseResult;
+};
+
+// admin 회원가입 enterprise 존재 여부 체크
+exports.enterpriseExist = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminEnterpriseExistResult = await adminDao.existAdminEnterprise(
+        connection,
+        enterpriseId,
+    );
+    connection.release();
+
+    return adminEnterpriseExistResult;
+};
+
 // admin 로그인 email존재여부 체크
 exports.emailCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);

@@ -180,6 +180,11 @@ module.exports = {
         code: 2536,
         message: '이미지를 입력해주세요',
     },
+    ADMIN_SIGNUP_ENTERPRISEID_EMPTY: {
+        isSuccess: false,
+        code: 2537,
+        message: '업체 고유번호를 입력 해주세요.',
+    },
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
@@ -217,6 +222,16 @@ module.exports = {
         isSuccess: false,
         code: 3509,
         message: '중복된 영어 이름입니다.',
+    },
+    ADMIN_SIGNUP_REDUNDANT_ENTERPRISEID: {
+        isSuccess: false,
+        code: 3510,
+        message: '해당 업체에 이미 관계자가 존재합니다.',
+    },
+    ADMIN_SIGNUP_REDUNDANT_ENTERPRISE: {
+        isSuccess: false,
+        code: 3510,
+        message: '해당 업체가 존재하지 않습니다.',
     },
     //Connection, Transaction 등의 서버 오류
     DB_ERROR: { isSuccess: false, code: 4000, message: '데이터 베이스 에러' },
