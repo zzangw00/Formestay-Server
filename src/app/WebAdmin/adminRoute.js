@@ -3,7 +3,7 @@ module.exports = function (app) {
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
     // 관리자 회원가입 API
-    app.post('/admin', admin.postAdmin);
+    app.post('/admin', jwtMiddleware, admin.postAdmin);
 
     // 관리자 로그인 API
     app.post('/admin/login', admin.loginAdmin);

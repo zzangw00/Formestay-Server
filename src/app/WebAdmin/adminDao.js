@@ -103,7 +103,7 @@ async function selectAdminPassword(connection, selectAdminPasswordParams) {
 // admin 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectAdminAccount(connection, email) {
     const selectAdminAccountQuery = `
-        SELECT adminId, nickname
+        SELECT adminId, nickname, status, enterpriseId
         FROM Admin 
         WHERE email = ?;`;
     const selectAdminAccountRow = await connection.query(selectAdminAccountQuery, email);

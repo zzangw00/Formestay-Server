@@ -26,6 +26,7 @@ exports.getUsers = async function (req, res) {
  * body : email, password, nickname, phoneNumber
  */
 exports.postAdmin = async function (req, res) {
+    const status = req.verifiedToken.status;
     const { email, password, nickname, phoneNumber, enterpriseId } = req.body;
     if (!regexEmail.test(email)) {
         return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_EMAIL_ERROR_TYPE));
@@ -45,6 +46,10 @@ exports.postAdmin = async function (req, res) {
     if (!enterpriseId) {
         return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_ENTERPRISEID_EMPTY));
     }
+    if (status != 0) {
+        return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_STATUS));
+    }
+
     const signUpResponse = await adminService.createAdmin(
         email,
         password,

@@ -75,6 +75,8 @@ exports.postSignIn = async function (email, password) {
         let token = await jwt.sign(
             {
                 adminId: adminInfoRows[0].adminId,
+                status: adminInfoRows[0].status,
+                enterpriseId: adminInfoRows[0].enterpriseId,
             }, // 토큰의 내용(payload)
             secret_config.jwtsecret, // 비밀키
             {
@@ -82,7 +84,7 @@ exports.postSignIn = async function (email, password) {
                 subject: 'adminInfo',
             }, // 유효 기간 365일
         );
-
+        console.log(token);
         return response(AdminBaseResponse.SUCCESS, {
             adminId: adminInfoRows[0].adminId,
             jwt: token,

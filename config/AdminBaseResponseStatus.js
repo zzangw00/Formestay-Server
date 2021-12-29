@@ -185,6 +185,11 @@ module.exports = {
         code: 2537,
         message: '업체 고유번호를 입력 해주세요.',
     },
+    ADMIN_SIGNUP_STATUS: {
+        isSuccess: false,
+        code: 2538,
+        message: '관리자만 관계자를 추가할 수 있습니다.',
+    },
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
