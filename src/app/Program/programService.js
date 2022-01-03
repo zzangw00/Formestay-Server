@@ -12,6 +12,7 @@ const {connect} = require("http2");
 const security = require("../../../utils/security");
 const common = require("../../../config/common");
 const axios = require('axios');
+const secret = require('../../../config/secret')
 
 // Service Create, Update, Delete 의 로직 처리
 
@@ -73,8 +74,8 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
             url: "https://api.bootpay.co.kr/request/token",
             headers: {'Content-Type': 'application/json'},
             data: {
-                "application_id":"619bd13be38c300022d2bc04",
-                "private_key":"HI5T8vn2x/fN4NnDdqZIKRZ+VX/D2HgHGZfoku+Km98="
+                "application_id": secret.bootpay_application_id,
+                "private_key": secret.bootpay_private_key
             }
         });
 

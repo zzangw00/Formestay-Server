@@ -2,4 +2,6 @@
 // TODO: .gitignore에 추가하는거 앚지 마세요!
 module.exports = {
     'jwtsecret' :  'softsquared_jwt_secret_key_07040014087',
+    'bootpay_application_id' : '619bd13be38c300022d2bc04',
+    'bootpay_private_key' : 'HI5T8vn2x/fN4NnDdqZIKRZ+VX/D2HgHGZfoku+Km98='
 };
