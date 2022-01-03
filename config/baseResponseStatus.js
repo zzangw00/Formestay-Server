@@ -44,7 +44,7 @@ module.exports = {
     RESERVATION_TOTAL_PERSON_EMPTY : { "isSuccess": false, "code": 2040, "message":"총 인원수가 없습니다." },
     RESERVATION_START_DATE_EMPTY : { "isSuccess": false, "code": 2041, "message":"시작일이 없습니다." },
     RESERVATION_END_DATE_EMPTY : { "isSuccess": false, "code": 2042, "message":"종료일이 없습니다." },
-    RESERVATION_PAYMENT_WAY_EMPTY : { "isSuccess": false, "code": 2043, "message":"결제수단이 없습니다." },
+    RESERVATION_RECEIPT_ID_EMPTY : { "isSuccess": false, "code": 2043, "message":"영수증 인덱스가 없습니다." },
     RESERVATION_ID_EMPTY : { "isSuccess": false, "code": 2044, "message":"예약 아이디가 없습니다." },
     PROFILE_IMAGE_EMPTY : { "isSuccess": false, "code": 2045, "message":"프로필 이미지가 없습니다." },
     NOT_RESERVATION_USER : { "isSuccess": false, "code": 2046, "message":"예약한 프로그램이 아닙니다." },
@@ -64,6 +64,7 @@ module.exports = {
     FIND_NO_EXIST_EMAIL : { "isSuccess": false, "code": 2028, "message":"이메일이 존재하지 않습니다." },
     FIND_NO_EXIST_USER : { "isSuccess": false, "code": 2030, "message":"존재하지 않는 회원입니다." },
     FIND_SNS_EXIST_USER : { "isSuccess": false, "code": 2050, "message":"SNS 회원입니다." },
+    CANCEL_PAYMENT : { "isSuccess": false, "code": 2051, "message":"결제를 취소했습니다." },
 
 
  

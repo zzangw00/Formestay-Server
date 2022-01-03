@@ -14,7 +14,4 @@ module.exports = function (app) {
 
     // 예약 상세 조회
     app.get('/app/reservations/:reservationId', jwtMiddleware, program.getReservationsDetail);
-
-    // 결제하기
-    app.route('/app/payments').post(jwtMiddleware, program.postPayments);
 };

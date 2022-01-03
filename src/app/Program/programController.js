@@ -28,7 +28,7 @@ exports.getProgramsById = async function (req, res) {
  */
 exports.postReservations = async function (req, res) {
     const userIdResult = req.verifiedToken.userInfo;
-    const {programId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, price} = req.body;
+    const {programId, programRoomPriceId, name, phoneNumber, startDate, endDate, receiptId, price} = req.body;
 
     if (!programId)
         return res.send(response(baseResponse.PROGRAM_ID_EMPTY));
@@ -44,12 +44,12 @@ exports.postReservations = async function (req, res) {
         return res.send(response(baseResponse.RESERVATION_START_DATE_EMPTY));
     if (!endDate)
         return res.send(response(baseResponse.RESERVATION_END_DATE_EMPTY));
-    if (!paymentWay)
-        return res.send(response(baseResponse.RESERVATION_PAYMENT_WAY_EMPTY));
+    if (!receiptId)
+        return res.send(response(baseResponse.RESERVATION_RECEIPT_ID_EMPTY));
     if (!price)
         return res.send(response(baseResponse.RESERVATION_PRICE_EMPTY));
 
-    const resultStatus = await programService.createReservations(userIdResult, programId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, price);
+    const resultStatus = await programService.createReservations(userIdResult, programId, programRoomPriceId, name, phoneNumber, startDate, endDate, receiptId, price);
     return res.send(resultStatus);
 };
 

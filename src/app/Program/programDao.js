@@ -61,15 +61,28 @@ async function isExistRoomByProgramId(connection, programId, programRoomPriceId)
 
 
 
-// 찜하기 삽입
-async function insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price) {
+// 예약하기 삽입
+async function insertReservation(connection, programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, reservationNumber, price) {
     const insertReservationQuery = `
-        INSERT INTO Reservation(programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Reservation(programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, reservationNumber, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const insertReservationRows = await connection.query(
         insertReservationQuery,
-        [programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, paymentWay, reservationNumber, price]
+        [programId, userId, programRoomPriceId, name, phoneNumber, startDate, endDate, reservationNumber, price]
+    );
+    return insertReservationRows[0].insertId
+}
+
+// 결제기록 삽입
+async function insertPaymentHistory(connection, userId, reservationId, receiptId) {
+    const insertPaymentHistoryQuery = `
+        INSERT INTO PaymentHistory(userId, reservationId, receiptId)
+        VALUES (?, ?, ?);
+    `;
+    const insertPaymentHistoryRows = await connection.query(
+        insertPaymentHistoryQuery,
+        [userId, reservationId, receiptId]
     );
 }
 
@@ -285,6 +298,7 @@ module.exports = {
     isExistProgramByProgramId,
     isExistRoomByProgramId,
     insertReservation,
+    insertPaymentHistory,
     selectReservationsByUserId,
     selectReservationsDetailById
 };
