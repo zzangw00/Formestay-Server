@@ -79,6 +79,7 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
         });
 
         let accessToken = accessTokenResponse.data.token
+        console.log(`token = ${accessToken}`)
 
         let paymentConfirmResponse = await axios.request({
             method: 'GET',
