@@ -68,7 +68,7 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
     //     return errResponse(baseResponse.NON_EXIST_ROOM);
     // }
     try {
-        let responseAccessToken = await axios.request({
+        let accessTokenResponse = await axios.request({
             method: 'POST',
             url: "https://api.bootpay.co.kr/request/token",
             headers: {'Content-Type': 'application/json'},
@@ -78,9 +78,19 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
             }
         });
 
-        console.log(responseAccessToken)
+        let accessToken = accessTokenResponse.data.token
 
-        return response(baseResponse.SUCCESS, responseAccessToken);
+        let paymentConfirmResponse = await axios.request({
+            method: 'GET',
+            url: `https://api.bootpay.co.kr/receipt/${receiptId}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken
+            }
+        });
+        console.log(paymentConfirmResponse)
+
+        return response(baseResponse.SUCCESS, paymentConfirmResponse.status);
     } catch (err) {
         logger.error(`App - createPayments Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
