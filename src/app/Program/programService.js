@@ -92,7 +92,7 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
         });
         console.log(paymentConfirmResponse)
 
-        return response(baseResponse.SUCCESS, paymentConfirmResponse.status);
+        return response(baseResponse.SUCCESS, paymentConfirmResponse.data.data.status_ko);
     } catch (err) {
         logger.error(`App - createPayments Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
