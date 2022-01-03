@@ -80,7 +80,7 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
         });
 
         let accessToken = accessTokenResponse.data.data.token
-        console.log(`token = ${accessToken}`)
+        // console.log(`token = ${accessToken}`)
 
         let paymentConfirmResponse = await axios.request({
             method: 'GET',
@@ -90,7 +90,23 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
                 'Authorization': accessToken
             }
         });
-        console.log(paymentConfirmResponse)
+
+        let cancelPaymentResponse = await axios.request({
+            method: 'POST',
+            url: `https://api.bootpay.co.kr/cancel`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': accessToken
+            },
+            data: {
+                "receipt_id":receiptId,
+                "name":"프로그램2",
+                "reason":"싫어서"
+            }
+        });
+
+        console.log(cancelPaymentResponse)
+        // console.log(paymentConfirmResponse)
 
         return response(baseResponse.SUCCESS, paymentConfirmResponse.data.data.status_ko);
     } catch (err) {
