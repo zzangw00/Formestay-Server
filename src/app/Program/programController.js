@@ -78,3 +78,14 @@ exports.getReservationsDetail = async function (req, res) {
 
     return res.send(resultStatus);
 };
+
+/** 프로그램 예약하기 API
+ * [POST] app/payments
+ */
+exports.postPayments = async function (req, res) {
+    const userIdResult = req.verifiedToken.userInfo;
+    const { receiptId } = req.body;
+
+    const resultStatus = await programService.createPaymentsHistory(userIdResult, receiptId);
+    return res.send(resultStatus);
+};
