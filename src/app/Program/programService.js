@@ -92,16 +92,21 @@ exports.createPaymentsHistory = async function (userId, receiptId) {
 
         let accessToken = accessTokenResponse.data.data.token
 
-        let paymentConfirmResponse = await axios.request({
+        let paymentCancelResponse = await axios.request({
             method: 'GET',
-            url: `https://api.bootpay.co.kr/receipt/${receiptId}`,
+            url: `https://api.bootpay.co.kr/cancel`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': accessToken
+            },
+            data: {
+                'receipt_id': receiptId,
+                'name': "결제취소",
+                'reason': "취소이유"
             }
         });
 
-        return response(baseResponse.SUCCESS, paymentConfirmResponse.data.data.status_ko);
+        return response(baseResponse.SUCCESS);
     } catch (err) {
         logger.error(`App - createPayments Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
