@@ -179,7 +179,8 @@ async function selectReservationsByUserId(connection, userId) {
                                    on Reservation.programRoomPriceId = ProgramRoomPrice.programRoomPriceId
                          left join UserInfo
                                    on Reservation.userId = UserInfo.userId
-        where Reservation.userId = ? and UserInfo.status = "ACTIVE";
+        where Reservation.userId = ? and UserInfo.status = "ACTIVE"
+        order by Reservation.createdAt desc;
     `;
     const [selectReservationsByUserIdRows] = await connection.query(selectReservationsByUserIdQuery, userId);
     return selectReservationsByUserIdRows;
