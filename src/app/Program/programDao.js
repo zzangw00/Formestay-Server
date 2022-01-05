@@ -272,11 +272,7 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
                Reservation.price,
                Reservation.name as userName,
                Reservation.phoneNumber as userPhoneNumber,
-               case
-                   when paymentWay = 1
-                       then '신용카드'
-                   else '기타'
-                   end as paymentWay
+               '신용카드' as paymentWay
 
         from Reservation left join (select Program.programId, name, category, Program.tag, checkIn, checkOut, Program.thumbnailURL, Enterprise.phoneNumber
                                     from Program left join Enterprise
