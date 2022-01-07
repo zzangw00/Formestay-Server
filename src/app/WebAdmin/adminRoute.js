@@ -111,4 +111,26 @@ module.exports = function (app) {
         jwtMiddleware,
         admin.patchProgramImages,
     );
+
+    // 프로그램 정보 조회 API
+    app.get('/admin/program/:programId/programInfo', jwtMiddleware, admin.getProgramInfo);
+
+    // 프로그램 정보 수정 API
+    app.patch(
+        '/admin/programInfo/:programInfoId/programInfo',
+        jwtMiddleware,
+        admin.patchProgramInfo,
+    );
+
+    // 프로그램 정보 추가 API
+    app.post('/admin/program/:programId/programInfo', jwtMiddleware, admin.postProgramInfo);
+
+    // 식단 정보 조회 API
+    app.get('/admin/program/:programId/mealInfo', jwtMiddleware, admin.getMealInfo);
+
+    // 프로그램 정보 수정 API
+    app.patch('/admin/mealInfo/:mealInfoId/mealInfo', jwtMiddleware, admin.patchMealInfo);
+
+    // 식단 정보 추가 API
+    app.post('/admin/program/:programId/mealInfo', jwtMiddleware, admin.postMealInfo);
 };

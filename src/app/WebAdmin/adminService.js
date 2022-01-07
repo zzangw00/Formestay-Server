@@ -525,3 +525,64 @@ exports.patchProgramImageStatus = async function (programImageId) {
         return errResponse(AdminBaseResponse.DB_ERROR);
     }
 };
+
+// 프로그램 정보 수정
+exports.patchProgramInfo = async function (content, programInfoId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const patchProgramInfo = await adminDao.changeProgramInfo(
+            connection,
+            content,
+            programInfoId,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchProgramInfo Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 프로그램 정보 추가
+exports.postProgramInfo = async function (programId, content, date) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const postProgramInfo = await adminDao.postProgramInfo(
+            connection,
+            programId,
+            content,
+            date,
+        );
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postProgramInfo Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 식단 정보 수정
+exports.patchMealInfo = async function (content, mealInfoId) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const patchMealInfo = await adminDao.patchMealInfo(connection, content, mealInfoId);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - patchMealInfo Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
+// 식단 정보 추가
+exports.postMealInfo = async function (programId, content, date) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+        const postMealInfo = await adminDao.postMealInfo(connection, programId, content, date);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS);
+    } catch (err) {
+        logger.error(`App - postMealInfo Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};

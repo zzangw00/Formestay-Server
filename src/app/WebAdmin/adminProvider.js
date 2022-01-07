@@ -258,3 +258,19 @@ exports.getProgramImages = async function (programId) {
     connection.release();
     return programImagesResult;
 };
+
+// 프로그램 정보 조회
+exports.getProgramInfo = async function (programId, date) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const infoResult = await adminDao.getProgramInfo(connection, programId, date);
+    connection.release();
+    return infoResult;
+};
+
+// 식단 정보 조회
+exports.getMealInfo = async function (programId, date) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const infoResult = await adminDao.getMealInfo(connection, programId, date);
+    connection.release();
+    return infoResult;
+};

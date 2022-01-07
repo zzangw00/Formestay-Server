@@ -619,6 +619,75 @@ async function patchProgramImage(connection, programImageId) {
     const [patchProgramImageRows] = await connection.query(patchProgramImageQuery, programImageId);
     return patchProgramImageRows;
 }
+
+// 프로그램 정보 조회 API
+async function getProgramInfo(connection, programId, date) {
+    const getPrgramInfoQuery = `
+    select programInfoId, content
+    from ProgramInfo
+    where programId = ? and date = ?;`;
+    const [getPrgramInfoRows] = await connection.query(getPrgramInfoQuery, [programId, date]);
+    return getPrgramInfoRows;
+}
+
+// 프로그램 정보 수정 API
+async function changeProgramInfo(connection, content, programInfoId) {
+    const changeProgramInfoQuery = `
+    update ProgramInfo
+    set content = ?
+    where programInfoId = ?;`;
+    const [changeProgramInfoRows] = await connection.query(changeProgramInfoQuery, [
+        content,
+        programInfoId,
+    ]);
+    return changeProgramInfoRows;
+}
+
+// 프로그램 정보 추가 API
+async function postProgramInfo(connection, programId, content, date) {
+    const postProgramInfoQuery = `
+        insert into ProgramInfo(programId, content, date)
+        values (?, ?, ?);`;
+    const [postProgramInfoRows] = await connection.query(postProgramInfoQuery, [
+        programId,
+        content,
+        date,
+    ]);
+    return postProgramInfoRows;
+}
+
+// 식단 정보 조회 API
+async function getMealInfo(connection, programId, date) {
+    const getMealInfoQuery = `
+    select mealInfoId, content
+    from MealInfo
+    where programId = ? and date = ?;`;
+    const [getMealInfoRows] = await connection.query(getMealInfoQuery, [programId, date]);
+    return getMealInfoRows;
+}
+
+// 식단 정보 수정 API
+async function patchMealInfo(connection, content, mealInfoId) {
+    const patchMealInfoQuery = `
+    update MealInfo
+    set content = ?
+    where mealInfoId = ?;`;
+    const [patchMealInfoRows] = await connection.query(patchMealInfoQuery, [content, mealInfoId]);
+    return patchMealInfoRows;
+}
+
+// 식단 정보 추가 API
+async function postMealInfo(connection, programId, content, date) {
+    const postMealInfoQuery = `
+        insert into MealInfo(programId, content, date)
+        values (?, ?, ?);`;
+    const [postMealInfoRows] = await connection.query(postMealInfoQuery, [
+        programId,
+        content,
+        date,
+    ]);
+    return postMealInfoRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -665,4 +734,10 @@ module.exports = {
     retrieveAdminList,
     retrieveAdminEnterpriseList,
     checkProgram,
+    getProgramInfo,
+    changeProgramInfo,
+    postProgramInfo,
+    getMealInfo,
+    patchMealInfo,
+    postMealInfo,
 };

@@ -651,3 +651,93 @@ exports.patchProgramImages = async function (req, res) {
     const programImageStatus = await adminService.patchProgramImageStatus(programImageId);
     return res.send(programImageStatus);
 };
+
+/** 프로그램 정보 조회 API
+ * [GET] /admin/program/:programId/programInfo
+ *
+ * params : programId
+ * body : date
+ */
+exports.getProgramInfo = async function (req, res) {
+    const programId = req.params.programId;
+    const { date } = req.query;
+    const getProgramInfoResponse = await adminProvider.getProgramInfo(programId, date);
+    return res.send(response(AdminBaseResponse.SUCCESS, getProgramInfoResponse[0]));
+};
+
+/** 프로그램 정보 수정 API
+ * [PATCH] /admin/programInfo/:programInfoId/programInfo
+ *
+ * params : programInfoId
+ * body : content
+ */
+exports.patchProgramInfo = async function (req, res) {
+    const programInfoId = req.params.programInfoId;
+    const { content } = req.body;
+    if (!content) {
+        return res.send(response(AdminBaseResponse.PROGRAMINFO_PATCH_PROGRAMINFO_EMPTY));
+    }
+    const patchProgramInfoResponse = await adminService.patchProgramInfo(content, programInfoId);
+    return res.send(patchProgramInfoResponse);
+};
+
+/** 프로그램 정보 추가 API
+ * [POST] /admin/program/:programId/programInfo
+ *
+ * params : programId
+ * body : programId, content
+ */
+exports.postProgramInfo = async function (req, res) {
+    const programId = req.params.programId;
+    const { content, date } = req.body;
+    if (!content) {
+        return res.send(response(AdminBaseResponse.PROGRAMINFO_PATCH_PROGRAMINFO_EMPTY));
+    }
+    const postProgramInfoResponse = await adminService.postProgramInfo(programId, content, date);
+    return res.send(postProgramInfoResponse);
+};
+
+/** 식단 정보 조회 API
+ * [GET] /admin/program/:programId/mealInfo
+ *
+ * params : programId
+ * body : date
+ */
+exports.getMealInfo = async function (req, res) {
+    const programId = req.params.programId;
+    const { date } = req.query;
+    const getMealInfoResponse = await adminProvider.getMealInfo(programId, date);
+    return res.send(response(AdminBaseResponse.SUCCESS, getMealInfoResponse[0]));
+};
+
+/** 식단 정보 수정 API
+ * [PATCH] /admin/mealInfo/:mealInfoId/mealInfo
+ *
+ * params : mealInfoId
+ * body : content
+ */
+exports.patchMealInfo = async function (req, res) {
+    const mealInfoId = req.params.mealInfoId;
+    const { content } = req.body;
+    if (!content) {
+        return res.send(response(AdminBaseResponse.PROGRAMINFO_PATCH_MEALINFO_EMPTY));
+    }
+    const patchMealInfoResponse = await adminService.patchMealInfo(content, mealInfoId);
+    return res.send(patchMealInfoResponse);
+};
+
+/** 식단 정보 추가 API
+ * [POST] /admin/program/:programId/mealInfo
+ *
+ * params : programId
+ * body : programId, content
+ */
+exports.postMealInfo = async function (req, res) {
+    const programId = req.params.programId;
+    const { content, date } = req.body;
+    if (!content) {
+        return res.send(response(AdminBaseResponse.PROGRAMINFO_PATCH_MEALINFO_EMPTY));
+    }
+    const postMealInfoResponse = await adminService.postMealInfo(programId, content, date);
+    return res.send(postMealInfoResponse);
+};

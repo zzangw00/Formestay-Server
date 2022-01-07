@@ -210,6 +210,16 @@ module.exports = {
         code: 2542,
         message: '가격 정보를 입력해주세요.',
     },
+    PROGRAMINFO_PATCH_PROGRAMINFO_EMPTY: {
+        isSuccess: false,
+        code: 2543,
+        message: '프로그램 정보를 입력해주세요.',
+    },
+    PROGRAMINFO_PATCH_MEALINFO_EMPTY: {
+        isSuccess: false,
+        code: 2544,
+        message: '식단 정보를 입력해주세요.',
+    },
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
