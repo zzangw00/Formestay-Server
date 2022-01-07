@@ -99,6 +99,15 @@ exports.retrieveUserList = async function (adminIdFromJWT) {
     return userListResult;
 };
 
+// 관계자 정보 가져오기
+exports.retrieveAdminList = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminListResult = await adminDao.retrieveAdminList(connection);
+    connection.release();
+
+    return adminListResult;
+};
+
 // 유저 상세정보 가져오기
 exports.userInfo = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -112,6 +121,18 @@ exports.userInfo = async function (userId) {
 exports.retrieveEnterpriseList = async function () {
     const connection = await pool.getConnection(async (conn) => conn);
     const enterprisesListResult = await adminDao.retrieveEnterpriseList(connection);
+    connection.release();
+
+    return enterprisesListResult;
+};
+
+// 업체 정보 가져오기(관계자)
+exports.retrieveAdminEnterpriseList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterprisesListResult = await adminDao.retrieveAdminEnterpriseList(
+        connection,
+        enterpriseId,
+    );
     connection.release();
 
     return enterprisesListResult;
@@ -180,6 +201,14 @@ exports.overlapEngName = async function (engName) {
     const overlapResult = await adminDao.engNameOverlap(connection, engName);
     connection.release();
     return overlapResult;
+};
+
+// 프로그램의 업체 식별자 확인
+exports.checkProgram = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const checkResult = await adminDao.checkProgram(connection, programId);
+    connection.release();
+    return checkResult;
 };
 
 // 프로그램 상세 정보 조회

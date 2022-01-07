@@ -84,7 +84,6 @@ exports.postSignIn = async function (email, password) {
                 subject: 'adminInfo',
             }, // 유효 기간 365일
         );
-        console.log(token);
         return response(AdminBaseResponse.SUCCESS, {
             adminId: adminInfoRows[0].adminId,
             jwt: token,
@@ -434,24 +433,41 @@ exports.addProgram = async function (
     checkOut,
     programInfo,
     mealInfo,
+    roomPrice,
 ) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
-
-        const postProgram = await adminDao.postProgram(
-            connection,
-            enterpriseId,
-            name,
-            description,
-            tag,
-            thumbnailURL,
-            checkIn,
-            checkOut,
-            programInfo,
-            mealInfo,
-        );
-        connection.release();
-        return response(AdminBaseResponse.SUCCESS);
+        try {
+            connection.beginTransaction(); // 트랜잭션 적용 시작
+            const num = 1;
+            const a = await adminDao.postProgram(
+                connection,
+                enterpriseId,
+                name,
+                description,
+                tag,
+                thumbnailURL,
+                checkIn,
+                checkOut,
+                programInfo,
+                mealInfo,
+            );
+            for (let i = 0; i < roomPrice.length; i++) {
+                const b = await adminDao.postRoomPrice(
+                    connection,
+                    a.insertId,
+                    roomPrice[i].inRoom,
+                    roomPrice[i].price,
+                );
+            }
+            await connection.commit(); // 커밋
+            connection.release(); // conn 회수
+            return response(AdminBaseResponse.SUCCESS);
+        } catch (err) {
+            await connection.rollback(); // 롤백
+            connection.release(); // conn 회수
+            return errResponse(AdminBaseResponse.DB_ERROR);
+        }
     } catch (err) {
         logger.error(`App - postProgram Service error\n: ${err.message}`);
         return errResponse(AdminBaseResponse.DB_ERROR);

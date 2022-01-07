@@ -130,6 +130,16 @@ async function retrieveUserList(connection, adminIdFromJWT) {
     return retrieveUserListRows;
 }
 
+// 관계자 정보 가져오기
+async function retrieveAdminList(connection) {
+    const retrieveAdminListQuery = `
+    select adminId, email, nickname, phoneNumber, enterpriseId
+    from Admin
+    where status = 1;`;
+    const [retrieveAdminListRows] = await connection.query(retrieveAdminListQuery);
+    return retrieveAdminListRows;
+}
+
 // 유저 상세정보 가져오기
 async function userInfo(connection, userId) {
     const UserInfoQuery = `
@@ -157,6 +167,19 @@ async function retrieveEnterpriseList(connection) {
         from Enterprise
         order by createdAt desc;`;
     const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
+    return retrieveEnterpriseListRows;
+}
+
+// 업체 정보 가져오기(관계자)
+async function retrieveAdminEnterpriseList(connection, enterpriseId) {
+    const retrieveEnterpriseListQuery = `
+        select enterpriseId, korName, engName, primeLocation, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [retrieveEnterpriseListRows] = await connection.query(
+        retrieveEnterpriseListQuery,
+        enterpriseId,
+    );
     return retrieveEnterpriseListRows;
 }
 
@@ -345,6 +368,16 @@ async function postEnterprise(
     return postEnterpriseRows;
 }
 
+// 프로그램의 업체 고유번호 조회
+async function checkProgram(connection, programId) {
+    const checkProgramQuery = `
+    select enterpriseId
+    from Program
+    where programId = ?;`;
+    const [checkProgramRows] = await connection.query(checkProgramQuery, programId);
+    return checkProgramRows;
+}
+
 // 프로그램 상세 조회
 async function getProgram(connection, programId) {
     const getProgramQuery = `
@@ -522,7 +555,7 @@ async function getReservations(connection, enterpriseId) {
 // 예약 상세 조회
 async function getReservation(connection, reservationId) {
     const getReservationQuery = `
-        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.paymentWay, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
+        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
         from Reservation r join Program p on r.programId = p.programId
         where reservationId = ?;`;
     const [getReservationRows] = await connection.query(getReservationQuery, reservationId);
@@ -629,4 +662,7 @@ module.exports = {
     patchProgramImage,
     checkAdminEnterprise,
     existAdminEnterprise,
+    retrieveAdminList,
+    retrieveAdminEnterpriseList,
+    checkProgram,
 };

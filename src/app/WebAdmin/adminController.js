@@ -21,6 +21,27 @@ exports.getUsers = async function (req, res) {
     return res.send(response(AdminBaseResponse.SUCCESS, userListResult));
 };
 
+/** 업체 관계자 조회 API
+ * [GET] /admin/admins
+ */
+exports.getAdmins = async function (req, res) {
+    const adminListResult = await adminProvider.retrieveAdminList();
+    return res.send(response(AdminBaseResponse.SUCCESS, adminListResult));
+};
+
+/** 관리자인지 조회 API
+ * [GET] /admin
+ */
+exports.getAdmin = async function (req, res) {
+    const status = req.verifiedToken.status;
+    const enterpriseId = req.verifiedToken.enterpriseId;
+    const result = {
+        status: status,
+        enterpriseId: enterpriseId,
+    };
+    return res.send(response(AdminBaseResponse.SUCCESS, result));
+};
+
 /** 관리자 회원가입 API
  * [POST] /admin
  * body : email, password, nickname, phoneNumber
@@ -103,7 +124,6 @@ exports.autoLogin = async function (req, res) {
  */
 exports.getUser = async function (req, res) {
     const userId = req.params.userId;
-    console.log(req.verifiedToken);
     const userResult = await adminProvider.userInfo(userId);
     return res.send(response(AdminBaseResponse.SUCCESS, userResult));
 };
@@ -126,7 +146,15 @@ exports.deleteUser = async function (req, res) {
  *
  */
 exports.getEnterprises = async function (req, res) {
-    const enterpriseListResult = await adminProvider.retrieveEnterpriseList();
+    const jwtStatus = req.verifiedToken.status;
+    const jwtEnterpriseId = req.verifiedToken.enterpriseId;
+    let enterpriseListResult = 0;
+    if (jwtStatus == 0) {
+        enterpriseListResult = await adminProvider.retrieveEnterpriseList();
+    } else {
+        enterpriseListResult = await adminProvider.retrieveAdminEnterpriseList(jwtEnterpriseId);
+    }
+
     return res.send(response(AdminBaseResponse.SUCCESS, enterpriseListResult));
 };
 
@@ -137,7 +165,14 @@ exports.getEnterprises = async function (req, res) {
  */
 exports.getEnterprise = async function (req, res) {
     const enterpriseId = req.params.enterpriseId;
-    const enterpriseResult = await adminProvider.enterpriseInfo(enterpriseId);
+    const jwtEnterpriseId = req.verifiedToken.enterpriseId;
+    const status = req.verifiedToken.status;
+    let enterpriseResult = 0;
+    if (enterpriseId != jwtEnterpriseId && status == 1) {
+        return res.send(errResponse(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
+    } else {
+        enterpriseResult = await adminProvider.enterpriseInfo(enterpriseId);
+    }
     return res.send(response(AdminBaseResponse.SUCCESS, enterpriseResult));
 };
 
@@ -148,7 +183,9 @@ exports.getEnterprise = async function (req, res) {
  */
 exports.getPrograms = async function (req, res) {
     const enterpriseId = req.params.enterpriseId;
+
     const programListResult = await adminProvider.retrieveProgramList(enterpriseId);
+
     return res.send(response(AdminBaseResponse.SUCCESS, programListResult));
 };
 
@@ -173,6 +210,8 @@ exports.patchUser = async function (req, res) {
  * body : korName, engName, category, phoneNumber, primeLocation, location, tag, description
  */
 exports.patchEnterprise = async function (req, res) {
+    const jwtEnterpriseId = req.verifiedToken.enterpriseId;
+    const status = req.verifiedToken.status;
     const enterpriseId = req.params.enterpriseId;
     let {
         korName,
@@ -209,7 +248,9 @@ exports.patchEnterprise = async function (req, res) {
     if (!description) {
         return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
     }
-
+    if (enterpriseId != jwtEnterpriseId && status == 1) {
+        return res.send(errResponse(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
+    }
     const patchEnterpriseResponse = await adminService.patchEnterprise(
         korName,
         engName,
@@ -231,8 +272,12 @@ exports.patchEnterprise = async function (req, res) {
  * body : status
  */
 exports.deleteEnterprise = async function (req, res) {
+    const jwtStatus = req.verifiedToken.status;
     const enterpriseId = req.params.enterpriseId;
     const status = req.body.status;
+    if (jwtStatus != 0) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_DELETE_STATUS));
+    }
     const enterpriseStatus = await adminService.patchEnterpriseStatus(status, enterpriseId);
     return res.send(enterpriseStatus);
 };
@@ -243,6 +288,7 @@ exports.deleteEnterprise = async function (req, res) {
  * body : korName, engName, category, primeLocation, location, tag, description, phoneNumber, thumbnailURL
  */
 exports.addEnterprise = async function (req, res) {
+    const status = req.verifiedToken.status;
     const {
         korName,
         engName,
@@ -281,6 +327,9 @@ exports.addEnterprise = async function (req, res) {
     if (!thumbnailURL) {
         return res.send(response(AdminBaseResponse.ENTERPRISE_POST_IMAGE_EMPTY));
     }
+    if (status != 0) {
+        return res.send(response(AdminBaseResponse.ENTERPRISE_POST_STATUS));
+    }
 
     const patchEnterpriseResponse = await adminService.addEnterprise(
         korName,
@@ -303,8 +352,13 @@ exports.addEnterprise = async function (req, res) {
  *
  */
 exports.getProgram = async function (req, res) {
+    const enterpriseId = req.verifiedToken.enterpriseId;
+    const status = req.verifiedToken.status;
     const programId = req.params.programId;
-    console.log(1);
+    const checkProgram = await adminProvider.checkProgram(programId);
+    if (enterpriseId != checkProgram[0].enterpriseId && status == 1) {
+        return res.send(response(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
+    }
     const programInfo = await adminProvider.retrieveProgram(programId);
     const programRoomInfo = await adminProvider.retrieveProgramRoom(programId);
     const result = {
@@ -320,8 +374,14 @@ exports.getProgram = async function (req, res) {
  * body : status
  */
 exports.deleteProgram = async function (req, res) {
+    const enterpriseId = req.verifiedToken.enterpriseId;
+    const jwtStatus = req.verifiedToken.status;
     const programId = req.params.programId;
     const status = req.body.status;
+    const checkProgram = await adminProvider.checkProgram(programId);
+    if (enterpriseId != checkProgram[0].enterpriseId && jwtStatus == 1) {
+        return res.send(response(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
+    }
     const programStatus = await adminService.patchProgramStatus(status, programId);
     return res.send(programStatus);
 };
@@ -332,6 +392,8 @@ exports.deleteProgram = async function (req, res) {
  * body : name, description, tag, checkIn, checkOut, programInfo, mealInfo, thumbnailURL
  */
 exports.patchProgram = async function (req, res) {
+    const enterpriseId = req.verifiedToken.enterpriseId;
+    const jwtStatus = req.verifiedToken.status;
     const programId = req.params.programId;
     let { name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo } =
         req.body;
@@ -358,6 +420,10 @@ exports.patchProgram = async function (req, res) {
     }
     if (!thumbnailURL) {
         return res.send(response(AdminBaseResponse.ENTERPRISE_PATCH_DESCRIPTION_EMPTY));
+    }
+    const checkProgram = await adminProvider.checkProgram(programId);
+    if (enterpriseId != checkProgram[0].enterpriseId && jwtStatus == 1) {
+        return res.send(response(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
     }
 
     const patchProgramResponse = await adminService.patchProgram(
@@ -451,8 +517,13 @@ exports.addProgram = async function (req, res) {
         checkOut,
         programInfo,
         mealInfo,
+        roomPrice,
     } = req.body;
-
+    const jwtStatus = req.verifiedToken.status;
+    const jwtEnterpriseId = req.params.enterpriseId;
+    if (enterpriseId != jwtEnterpriseId && jwtStatus == 1) {
+        return res.send(response(AdminBaseResponse.NOT_MATCH_ENTERPRISEID));
+    }
     if (!name) {
         return res.send(response(AdminBaseResponse.PROGRAM_POST_NAME_EMPTY));
     }
@@ -477,6 +548,9 @@ exports.addProgram = async function (req, res) {
     if (!thumbnailURL) {
         return res.send(response(AdminBaseResponse.PROGRAM_POST_THUMBNAILURL_EMPTY));
     }
+    if (!roomPrice) {
+        return res.send(response(AdminBaseResponse.PROGRAM_POST_ROOMPRICE_EMPTY));
+    }
 
     const postProgramResponse = await adminService.addProgram(
         enterpriseId,
@@ -488,6 +562,7 @@ exports.addProgram = async function (req, res) {
         checkOut,
         programInfo,
         mealInfo,
+        roomPrice,
     );
     return res.send(postProgramResponse);
 };

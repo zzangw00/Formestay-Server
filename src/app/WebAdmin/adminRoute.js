@@ -8,6 +8,12 @@ module.exports = function (app) {
     // 관리자 로그인 API
     app.post('/admin/login', admin.loginAdmin);
 
+    // 업체 관계자 조회 API
+    app.get('/admin/admins', jwtMiddleware, admin.getAdmins);
+
+    // 관리자인지 확인 API
+    app.get('/admin', jwtMiddleware, admin.getAdmin);
+
     // 자동 로그인 API
     app.get('/admin/auto-login', jwtMiddleware, admin.autoLogin);
 

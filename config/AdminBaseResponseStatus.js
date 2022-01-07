@@ -190,6 +190,26 @@ module.exports = {
         code: 2538,
         message: '관리자만 관계자를 추가할 수 있습니다.',
     },
+    ENTERPRISE_POST_STATUS: {
+        isSuccess: false,
+        code: 2539,
+        message: '관리자만 업체를 추가할 수 있습니다.',
+    },
+    NOT_MATCH_ENTERPRISEID: {
+        isSuccess: false,
+        code: 2540,
+        message: '해당 업체 관계자가 아닙니다.',
+    },
+    ENTERPRISE_DELETE_STATUS: {
+        isSuccess: false,
+        code: 2541,
+        message: '관리자만 업체를 삭제할 수 있습니다.',
+    },
+    PROGRAM_POST_ROOMPRICE_EMPTY: {
+        isSuccess: false,
+        code: 2542,
+        message: '가격 정보를 입력해주세요.',
+    },
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
@@ -235,7 +255,7 @@ module.exports = {
     },
     ADMIN_SIGNUP_REDUNDANT_ENTERPRISE: {
         isSuccess: false,
-        code: 3510,
+        code: 3511,
         message: '해당 업체가 존재하지 않습니다.',
     },
     //Connection, Transaction 등의 서버 오류
