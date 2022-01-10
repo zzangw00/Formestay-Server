@@ -431,8 +431,6 @@ exports.addProgram = async function (
     thumbnailURL,
     checkIn,
     checkOut,
-    programInfo,
-    mealInfo,
     roomPrice,
 ) {
     try {
@@ -449,8 +447,6 @@ exports.addProgram = async function (
                 thumbnailURL,
                 checkIn,
                 checkOut,
-                programInfo,
-                mealInfo,
             );
             for (let i = 0; i < roomPrice.length; i++) {
                 const b = await adminDao.postRoomPrice(

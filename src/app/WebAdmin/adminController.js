@@ -507,18 +507,8 @@ exports.deleteRoomPrice = async function (req, res) {
  * body : enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, programInfo, mealInfo
  */
 exports.addProgram = async function (req, res) {
-    const {
-        enterpriseId,
-        name,
-        description,
-        tag,
-        thumbnailURL,
-        checkIn,
-        checkOut,
-        programInfo,
-        mealInfo,
-        roomPrice,
-    } = req.body;
+    const { enterpriseId, name, description, tag, thumbnailURL, checkIn, checkOut, roomPrice } =
+        req.body;
     const jwtStatus = req.verifiedToken.status;
     const jwtEnterpriseId = req.params.enterpriseId;
     if (enterpriseId != jwtEnterpriseId && jwtStatus == 1) {
@@ -532,12 +522,6 @@ exports.addProgram = async function (req, res) {
     }
     if (!checkOut) {
         return res.send(response(AdminBaseResponse.PROGRAM_POST_CHECKOUT_EMPTY));
-    }
-    if (!programInfo) {
-        return res.send(response(AdminBaseResponse.PROGRAM_POST_PROGRAMINFO_EMPTY));
-    }
-    if (!mealInfo) {
-        return res.send(response(AdminBaseResponse.PROGRAM_POST_MEALINFO_EMPTY));
     }
     if (!tag) {
         return res.send(response(AdminBaseResponse.PROGRAM_POST_TAG_EMPTY));
@@ -560,8 +544,6 @@ exports.addProgram = async function (req, res) {
         thumbnailURL,
         checkIn,
         checkOut,
-        programInfo,
-        mealInfo,
         roomPrice,
     );
     return res.send(postProgramResponse);
@@ -740,4 +722,21 @@ exports.postMealInfo = async function (req, res) {
     }
     const postMealInfoResponse = await adminService.postMealInfo(programId, content, date);
     return res.send(postMealInfoResponse);
+};
+
+/** 결제 이력 조회 API
+ * [GET] /admin/program/payments
+ *
+ *
+ */
+exports.getPayments = async function (req, res) {
+    const jwtStatus = req.verifiedToken.status;
+    const jwtEnterpriseId = req.verifiedToken.enterpriseId;
+    let paymentListResult = 0;
+    if (jwtStatus == 0) {
+        paymentListResult = await adminProvider.retrievePaymentList();
+    } else {
+        paymentListResult = await adminProvider.retrieveAdminPaymentList(jwtEnterpriseId);
+    }
+    return res.send(response(AdminBaseResponse.SUCCESS, paymentListResult));
 };

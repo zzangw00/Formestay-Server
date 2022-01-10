@@ -133,4 +133,7 @@ module.exports = function (app) {
 
     // 식단 정보 추가 API
     app.post('/admin/program/:programId/mealInfo', jwtMiddleware, admin.postMealInfo);
+
+    // 결제 이력 조회 API
+    app.get('/admin/payments', jwtMiddleware, admin.getPayments);
 };

@@ -514,8 +514,6 @@ async function postProgram(
     thumbnailURL,
     checkIn,
     checkOut,
-    programInfo,
-    mealInfo,
 ) {
     const postProgramQuery = `
     insert into Program(enterpriseId,
@@ -524,10 +522,8 @@ async function postProgram(
         tag,
         thumbnailURL,
         checkIn,
-        checkOut,
-        programInfo,
-        mealInfo)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        checkOut)
+        values (?, ?, ?, ?, ?, ?, ?)`;
     const [postProgramRows] = await connection.query(postProgramQuery, [
         enterpriseId,
         name,
@@ -536,8 +532,6 @@ async function postProgram(
         thumbnailURL,
         checkIn,
         checkOut,
-        programInfo,
-        mealInfo,
     ]);
     return postProgramRows;
 }
@@ -688,6 +682,41 @@ async function postMealInfo(connection, programId, content, date) {
     ]);
     return postMealInfoRows;
 }
+
+// 결제 이력 조회 API(관리자)
+async function getPayment(connection) {
+    const getPaymentQuery = `
+    select h.paymentHistoryId,
+    p.name                               as programName,
+    r.name,
+    r.phoneNumber,
+    date_format(r.startDate, '%Y-%m-%d') as startDate,
+    date_format(r.endDate, '%Y-%m-%d')   as endDate,
+    price
+from Reservation r
+      join PaymentHistory h on r.reservationId = h.reservationId
+      join Program p on r.programId = p.programId;`;
+    const [getPaymentRows] = await connection.query(getPaymentQuery);
+    return getPaymentRows;
+}
+
+// 결제 이력 조회 API(관계자)
+async function getPaymentAdmin(connection, enterpriseId) {
+    const getPaymentQuery = `
+    select h.paymentHistoryId,
+    p.name                               as programName,
+    r.name,
+    r.phoneNumber,
+    date_format(r.startDate, '%Y-%m-%d') as startDate,
+    date_format(r.endDate, '%Y-%m-%d')   as endDate,
+    price
+from Reservation r
+      join PaymentHistory h on r.reservationId = h.reservationId
+      join Program p on r.programId = p.programId
+where p.enterpriseId = ?;`;
+    const [getPaymentRows] = await connection.query(getPaymentQuery, enterpriseId);
+    return getPaymentRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -740,4 +769,6 @@ module.exports = {
     getMealInfo,
     patchMealInfo,
     postMealInfo,
+    getPayment,
+    getPaymentAdmin,
 };

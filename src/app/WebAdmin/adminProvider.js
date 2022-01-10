@@ -274,3 +274,19 @@ exports.getMealInfo = async function (programId, date) {
     connection.release();
     return infoResult;
 };
+
+// 결제 정보 조회(관리자)
+exports.retrievePaymentList = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const paymentResult = await adminDao.getPayment(connection);
+    connection.release();
+    return paymentResult;
+};
+
+// 결제 정보 조회(관계자)
+exports.retrieveAdminPaymentList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const paymentResult = await adminDao.getPaymentAdmin(connection, enterpriseId);
+    connection.release();
+    return paymentResult;
+};
