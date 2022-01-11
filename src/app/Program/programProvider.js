@@ -36,6 +36,32 @@ exports.retrieveProgramsByProgramId = async function (programId) {
     return response(baseResponse.SUCCESS, data);
 };
 
+exports.retrieveProgramsInfoByProgramId = async function (programId, startDate, endDate) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    let programInfo = await programDao.selectProgramsInfoById(connection, programId, startDate, endDate);
+    let mealInfo = await programDao.selectMealInfoById(connection, programId, startDate, endDate);
+
+    connection.release();
+
+    let programList = [];
+    let mealList = [];
+
+    for (var info of programInfo) {
+        programList.push(info.content)
+    }
+
+    for (var info of mealInfo) {
+        mealList.push(info.content)
+    }
+
+    const data = {
+        programInfo: programList,
+        mealInfo: mealList
+    }
+
+    return response(baseResponse.SUCCESS, data);
+};
+
 exports.retrieveReservations = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userExist = await userDao.SelectUserByUserId(connection, userId);

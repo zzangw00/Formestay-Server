@@ -3,6 +3,9 @@ module.exports = function (app) {
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
 
+    // 프로그램 및 식단 정보 조회
+    app.get('/app/programs/info', program.getProgramsInfoById);
+
     // 프로그램 상세 조회
     app.get('/app/programs/:programId', program.getProgramsById);
 

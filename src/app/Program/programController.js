@@ -23,6 +23,22 @@ exports.getProgramsById = async function (req, res) {
     return res.send(resultStatus);
 };
 
+/** 프로그램 맟 식단 정보 조회 API
+ * [GET] app/programs/info
+ */
+exports.getProgramsInfoById = async function (req, res) {
+    const programId = req.query.programId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    if (!programId)
+        return res.send(response(baseResponse.PROGRAM_ID_EMPTY));
+
+    const resultStatus = await programProvider.retrieveProgramsInfoByProgramId(programId, startDate, endDate);
+
+    return res.send(resultStatus);
+};
+
 /** 프로그램 예약하기 API
  * [POST] app/reservations
  */

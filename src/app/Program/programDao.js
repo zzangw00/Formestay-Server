@@ -3,7 +3,7 @@ const {pool} = require("../../../config/database");
 // 프로그램 상세 조회
 async function selectProgramsById(connection, programId) {
     const selectProgramsByIdQuery = `
-        select programId, name, location, phoneNumber, programInfo, mealInfo, thumbnailURL as imageList, tag
+        select programId, name, location, phoneNumber, thumbnailURL as imageList, tag
         from Program left join (select enterpriseId, location, phoneNumber
                                 from Enterprise
                                 where status = "ACTIVE") as ENINFO on Program.enterpriseId = ENINFO.enterpriseId
@@ -11,6 +11,27 @@ async function selectProgramsById(connection, programId) {
     `;
     const [selectProgramsByIdRows] = await connection.query(selectProgramsByIdQuery, programId);
     return selectProgramsByIdRows[0];
+}
+
+// 프로그램 정보 및 식단 정보 조회
+async function selectProgramsInfoById(connection, programId, startDate, endDate) {
+    const selectProgramsInfoByIdQuery = `
+        select content
+        from ProgramInfo
+        where programId = ? and date between ? and ? and status = "ACTIVE";
+    `;
+    const [selectProgramsInfoByIdRows] = await connection.query(selectProgramsInfoByIdQuery, [programId, startDate, endDate]);
+    return selectProgramsInfoByIdRows;
+}
+
+async function selectMealInfoById(connection, programId, startDate, endDate) {
+    const selectMealInfoByIdQuery = `
+        select content
+        from MealInfo
+        where programId = ? and date between ? and ? and status = "ACTIVE";
+    `;
+    const [selectMealInfoByIdRows] = await connection.query(selectMealInfoByIdQuery, [programId, startDate, endDate]);
+    return selectMealInfoByIdRows;
 }
 
 // 프로그램 이미지 리스트 조회
@@ -290,6 +311,8 @@ async function selectReservationsDetailById(connection, userId, reservationId) {
 
 module.exports = {
     selectProgramsById,
+    selectProgramsInfoById,
+    selectMealInfoById,
     selectProgramImagesById,
     selectProgramRoomListById,
     isExistProgramByProgramId,
