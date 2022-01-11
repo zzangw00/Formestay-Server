@@ -30,6 +30,27 @@ exports.phoneNumberCheck = async function (phoneNumber) {
     return adminPhoneNumberResult;
 };
 
+// admin 회원가입 enterpriseId 중복체크
+exports.enterpriseCheck = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminEnterpriseResult = await adminDao.checkAdminEnterprise(connection, enterpriseId);
+    connection.release();
+
+    return adminEnterpriseResult;
+};
+
+// admin 회원가입 enterprise 존재 여부 체크
+exports.enterpriseExist = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminEnterpriseExistResult = await adminDao.existAdminEnterprise(
+        connection,
+        enterpriseId,
+    );
+    connection.release();
+
+    return adminEnterpriseExistResult;
+};
+
 // admin 로그인 email존재여부 체크
 exports.emailCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -78,6 +99,15 @@ exports.retrieveUserList = async function (adminIdFromJWT) {
     return userListResult;
 };
 
+// 관계자 정보 가져오기
+exports.retrieveAdminList = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const adminListResult = await adminDao.retrieveAdminList(connection);
+    connection.release();
+
+    return adminListResult;
+};
+
 // 유저 상세정보 가져오기
 exports.userInfo = async function (userId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -91,6 +121,18 @@ exports.userInfo = async function (userId) {
 exports.retrieveEnterpriseList = async function () {
     const connection = await pool.getConnection(async (conn) => conn);
     const enterprisesListResult = await adminDao.retrieveEnterpriseList(connection);
+    connection.release();
+
+    return enterprisesListResult;
+};
+
+// 업체 정보 가져오기(관계자)
+exports.retrieveAdminEnterpriseList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const enterprisesListResult = await adminDao.retrieveAdminEnterpriseList(
+        connection,
+        enterpriseId,
+    );
     connection.release();
 
     return enterprisesListResult;
@@ -161,6 +203,14 @@ exports.overlapEngName = async function (engName) {
     return overlapResult;
 };
 
+// 프로그램의 업체 식별자 확인
+exports.checkProgram = async function (programId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const checkResult = await adminDao.checkProgram(connection, programId);
+    connection.release();
+    return checkResult;
+};
+
 // 프로그램 상세 정보 조회
 exports.retrieveProgram = async function (programId) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -207,4 +257,36 @@ exports.getProgramImages = async function (programId) {
     const programImagesResult = await adminDao.getProgramImages(connection, programId);
     connection.release();
     return programImagesResult;
+};
+
+// 프로그램 정보 조회
+exports.getProgramInfo = async function (programId, date) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const infoResult = await adminDao.getProgramInfo(connection, programId, date);
+    connection.release();
+    return infoResult;
+};
+
+// 식단 정보 조회
+exports.getMealInfo = async function (programId, date) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const infoResult = await adminDao.getMealInfo(connection, programId, date);
+    connection.release();
+    return infoResult;
+};
+
+// 결제 정보 조회(관리자)
+exports.retrievePaymentList = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const paymentResult = await adminDao.getPayment(connection);
+    connection.release();
+    return paymentResult;
+};
+
+// 결제 정보 조회(관계자)
+exports.retrieveAdminPaymentList = async function (enterpriseId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const paymentResult = await adminDao.getPaymentAdmin(connection, enterpriseId);
+    connection.release();
+    return paymentResult;
 };

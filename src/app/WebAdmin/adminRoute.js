@@ -3,10 +3,16 @@ module.exports = function (app) {
     const jwtMiddleware = require('../../../config/jwtMiddleware');
 
     // 관리자 회원가입 API
-    app.post('/admin', admin.postAdmin);
+    app.post('/admin', jwtMiddleware, admin.postAdmin);
 
     // 관리자 로그인 API
     app.post('/admin/login', admin.loginAdmin);
+
+    // 업체 관계자 조회 API
+    app.get('/admin/admins', jwtMiddleware, admin.getAdmins);
+
+    // 관리자인지 확인 API
+    app.get('/admin', jwtMiddleware, admin.getAdmin);
 
     // 자동 로그인 API
     app.get('/admin/auto-login', jwtMiddleware, admin.autoLogin);
@@ -105,4 +111,29 @@ module.exports = function (app) {
         jwtMiddleware,
         admin.patchProgramImages,
     );
+
+    // 프로그램 정보 조회 API
+    app.get('/admin/program/:programId/programInfo', jwtMiddleware, admin.getProgramInfo);
+
+    // 프로그램 정보 수정 API
+    app.patch(
+        '/admin/programInfo/:programInfoId/programInfo',
+        jwtMiddleware,
+        admin.patchProgramInfo,
+    );
+
+    // 프로그램 정보 추가 API
+    app.post('/admin/program/:programId/programInfo', jwtMiddleware, admin.postProgramInfo);
+
+    // 식단 정보 조회 API
+    app.get('/admin/program/:programId/mealInfo', jwtMiddleware, admin.getMealInfo);
+
+    // 프로그램 정보 수정 API
+    app.patch('/admin/mealInfo/:mealInfoId/mealInfo', jwtMiddleware, admin.patchMealInfo);
+
+    // 식단 정보 추가 API
+    app.post('/admin/program/:programId/mealInfo', jwtMiddleware, admin.postMealInfo);
+
+    // 결제 이력 조회 API
+    app.get('/admin/payments', jwtMiddleware, admin.getPayments);
 };

@@ -36,14 +36,42 @@ async function checkAdminPhoneNumber(connection, phoneNumber) {
     return checkAdminPhoneNumberRows;
 }
 
+// admin 회원가입 enterprise 중복체크
+async function checkAdminEnterprise(connection, enterpriseId) {
+    const checkAdminEnterpriseQuery = `
+    select enterpriseId
+    from Admin
+    where enterpriseId = ?;
+    `;
+    const [checkAdminEnterpriseRows] = await connection.query(
+        checkAdminEnterpriseQuery,
+        enterpriseId,
+    );
+    return checkAdminEnterpriseRows;
+}
+
+// admin 회원가입 enterprise 존재 체크
+async function existAdminEnterprise(connection, enterpriseId) {
+    const existAdminEnterpriseQuery = `
+    SELECT enterpriseId
+    FROM Enterprise
+    WHERE enterpriseId = ?;
+    `;
+    const [existAdminEnterpriseRows] = await connection.query(
+        existAdminEnterpriseQuery,
+        enterpriseId,
+    );
+    return existAdminEnterpriseRows;
+}
+
 // admin 회원가입
 async function insertAdminInfo(connection, insertAdminInfoParams) {
     const query = `
     INSERT INTO Admin(email,
         password,
         nickname,
-        phoneNumber)
-      VALUES (?, ?, ?, ?);
+        phoneNumber, enterpriseId)
+      VALUES (?, ?, ?, ?, ?);
     `;
     const [insertRows] = await connection.query(query, insertAdminInfoParams);
     return insertRows;
@@ -75,7 +103,7 @@ async function selectAdminPassword(connection, selectAdminPasswordParams) {
 // admin 계정 상태 체크 (jwt 생성 위해 id 값도 가져온다.)
 async function selectAdminAccount(connection, email) {
     const selectAdminAccountQuery = `
-        SELECT adminId, nickname
+        SELECT adminId, nickname, status, enterpriseId
         FROM Admin 
         WHERE email = ?;`;
     const selectAdminAccountRow = await connection.query(selectAdminAccountQuery, email);
@@ -100,6 +128,16 @@ async function retrieveUserList(connection, adminIdFromJWT) {
         order by createdAt desc`;
     const [retrieveUserListRows] = await connection.query(retrieveUserListQuery, adminIdFromJWT);
     return retrieveUserListRows;
+}
+
+// 관계자 정보 가져오기
+async function retrieveAdminList(connection) {
+    const retrieveAdminListQuery = `
+    select adminId, email, nickname, phoneNumber, enterpriseId
+    from Admin
+    where status = 1;`;
+    const [retrieveAdminListRows] = await connection.query(retrieveAdminListQuery);
+    return retrieveAdminListRows;
 }
 
 // 유저 상세정보 가져오기
@@ -129,6 +167,19 @@ async function retrieveEnterpriseList(connection) {
         from Enterprise
         order by createdAt desc;`;
     const [retrieveEnterpriseListRows] = await connection.query(retrieveEnterpriseListQuery);
+    return retrieveEnterpriseListRows;
+}
+
+// 업체 정보 가져오기(관계자)
+async function retrieveAdminEnterpriseList(connection, enterpriseId) {
+    const retrieveEnterpriseListQuery = `
+        select enterpriseId, korName, engName, primeLocation, date_format(createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, status
+        from Enterprise
+        where enterpriseId = ?;`;
+    const [retrieveEnterpriseListRows] = await connection.query(
+        retrieveEnterpriseListQuery,
+        enterpriseId,
+    );
     return retrieveEnterpriseListRows;
 }
 
@@ -317,6 +368,16 @@ async function postEnterprise(
     return postEnterpriseRows;
 }
 
+// 프로그램의 업체 고유번호 조회
+async function checkProgram(connection, programId) {
+    const checkProgramQuery = `
+    select enterpriseId
+    from Program
+    where programId = ?;`;
+    const [checkProgramRows] = await connection.query(checkProgramQuery, programId);
+    return checkProgramRows;
+}
+
 // 프로그램 상세 조회
 async function getProgram(connection, programId) {
     const getProgramQuery = `
@@ -453,8 +514,6 @@ async function postProgram(
     thumbnailURL,
     checkIn,
     checkOut,
-    programInfo,
-    mealInfo,
 ) {
     const postProgramQuery = `
     insert into Program(enterpriseId,
@@ -463,10 +522,8 @@ async function postProgram(
         tag,
         thumbnailURL,
         checkIn,
-        checkOut,
-        programInfo,
-        mealInfo)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        checkOut)
+        values (?, ?, ?, ?, ?, ?, ?)`;
     const [postProgramRows] = await connection.query(postProgramQuery, [
         enterpriseId,
         name,
@@ -475,8 +532,6 @@ async function postProgram(
         thumbnailURL,
         checkIn,
         checkOut,
-        programInfo,
-        mealInfo,
     ]);
     return postProgramRows;
 }
@@ -494,7 +549,7 @@ async function getReservations(connection, enterpriseId) {
 // 예약 상세 조회
 async function getReservation(connection, reservationId) {
     const getReservationQuery = `
-        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.paymentWay, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
+        select p.name as programName, r.userId, r.programId, r.name, r.phoneNumber, date_format(r.startDate, '%Y-%m-%d') as startDate, date_format(r.endDate, '%Y-%m-%d') as endDate, r.price, r.reservationNumber, date_format(r.createdAt, '%Y-%m-%d %H:%i:%S') as createdAt, r.status
         from Reservation r join Program p on r.programId = p.programId
         where reservationId = ?;`;
     const [getReservationRows] = await connection.query(getReservationQuery, reservationId);
@@ -558,6 +613,110 @@ async function patchProgramImage(connection, programImageId) {
     const [patchProgramImageRows] = await connection.query(patchProgramImageQuery, programImageId);
     return patchProgramImageRows;
 }
+
+// 프로그램 정보 조회 API
+async function getProgramInfo(connection, programId, date) {
+    const getPrgramInfoQuery = `
+    select programInfoId, content
+    from ProgramInfo
+    where programId = ? and date = ?;`;
+    const [getPrgramInfoRows] = await connection.query(getPrgramInfoQuery, [programId, date]);
+    return getPrgramInfoRows;
+}
+
+// 프로그램 정보 수정 API
+async function changeProgramInfo(connection, content, programInfoId) {
+    const changeProgramInfoQuery = `
+    update ProgramInfo
+    set content = ?
+    where programInfoId = ?;`;
+    const [changeProgramInfoRows] = await connection.query(changeProgramInfoQuery, [
+        content,
+        programInfoId,
+    ]);
+    return changeProgramInfoRows;
+}
+
+// 프로그램 정보 추가 API
+async function postProgramInfo(connection, programId, content, date) {
+    const postProgramInfoQuery = `
+        insert into ProgramInfo(programId, content, date)
+        values (?, ?, ?);`;
+    const [postProgramInfoRows] = await connection.query(postProgramInfoQuery, [
+        programId,
+        content,
+        date,
+    ]);
+    return postProgramInfoRows;
+}
+
+// 식단 정보 조회 API
+async function getMealInfo(connection, programId, date) {
+    const getMealInfoQuery = `
+    select mealInfoId, content
+    from MealInfo
+    where programId = ? and date = ?;`;
+    const [getMealInfoRows] = await connection.query(getMealInfoQuery, [programId, date]);
+    return getMealInfoRows;
+}
+
+// 식단 정보 수정 API
+async function patchMealInfo(connection, content, mealInfoId) {
+    const patchMealInfoQuery = `
+    update MealInfo
+    set content = ?
+    where mealInfoId = ?;`;
+    const [patchMealInfoRows] = await connection.query(patchMealInfoQuery, [content, mealInfoId]);
+    return patchMealInfoRows;
+}
+
+// 식단 정보 추가 API
+async function postMealInfo(connection, programId, content, date) {
+    const postMealInfoQuery = `
+        insert into MealInfo(programId, content, date)
+        values (?, ?, ?);`;
+    const [postMealInfoRows] = await connection.query(postMealInfoQuery, [
+        programId,
+        content,
+        date,
+    ]);
+    return postMealInfoRows;
+}
+
+// 결제 이력 조회 API(관리자)
+async function getPayment(connection) {
+    const getPaymentQuery = `
+    select h.paymentHistoryId,
+    p.name                               as programName,
+    r.name,
+    r.phoneNumber,
+    date_format(r.startDate, '%Y-%m-%d') as startDate,
+    date_format(r.endDate, '%Y-%m-%d')   as endDate,
+    price
+from Reservation r
+      join PaymentHistory h on r.reservationId = h.reservationId
+      join Program p on r.programId = p.programId;`;
+    const [getPaymentRows] = await connection.query(getPaymentQuery);
+    return getPaymentRows;
+}
+
+// 결제 이력 조회 API(관계자)
+async function getPaymentAdmin(connection, enterpriseId) {
+    const getPaymentQuery = `
+    select h.paymentHistoryId,
+    p.name                               as programName,
+    r.name,
+    r.phoneNumber,
+    date_format(r.startDate, '%Y-%m-%d') as startDate,
+    date_format(r.endDate, '%Y-%m-%d')   as endDate,
+    price
+from Reservation r
+      join PaymentHistory h on r.reservationId = h.reservationId
+      join Program p on r.programId = p.programId
+where p.enterpriseId = ?;`;
+    const [getPaymentRows] = await connection.query(getPaymentQuery, enterpriseId);
+    return getPaymentRows;
+}
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -599,4 +758,17 @@ module.exports = {
     getProgramImages,
     postProgramImages,
     patchProgramImage,
+    checkAdminEnterprise,
+    existAdminEnterprise,
+    retrieveAdminList,
+    retrieveAdminEnterpriseList,
+    checkProgram,
+    getProgramInfo,
+    changeProgramInfo,
+    postProgramInfo,
+    getMealInfo,
+    patchMealInfo,
+    postMealInfo,
+    getPayment,
+    getPaymentAdmin,
 };
