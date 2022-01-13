@@ -692,10 +692,15 @@ async function getPayment(connection) {
     r.phoneNumber,
     date_format(r.startDate, '%Y-%m-%d') as startDate,
     date_format(r.endDate, '%Y-%m-%d')   as endDate,
-    price
+    price,
+    date_format(h.createdAt, '%Y-%m-%d') as createdAt,
+    z.korName
 from Reservation r
       join PaymentHistory h on r.reservationId = h.reservationId
-      join Program p on r.programId = p.programId;`;
+      join Program p on r.programId = p.programId
+      join(select p.name, p.programId, e.enterpriseId, e.korName
+        from Program p
+                 join Enterprise e on p.enterpriseId = e.enterpriseId) as z on r.programId = z.programId;`;
     const [getPaymentRows] = await connection.query(getPaymentQuery);
     return getPaymentRows;
 }
@@ -709,10 +714,15 @@ async function getPaymentAdmin(connection, enterpriseId) {
     r.phoneNumber,
     date_format(r.startDate, '%Y-%m-%d') as startDate,
     date_format(r.endDate, '%Y-%m-%d')   as endDate,
-    price
+    price,
+    date_format(h.createdAt, '%Y-%m-%d') as createdAt,
+    z.korName
 from Reservation r
       join PaymentHistory h on r.reservationId = h.reservationId
       join Program p on r.programId = p.programId
+      join(select p.name, p.programId, e.enterpriseId, e.korName
+           from Program p
+                    join Enterprise e on p.enterpriseId = e.enterpriseId) as z on r.programId = z.programId
 where p.enterpriseId = ?;`;
     const [getPaymentRows] = await connection.query(getPaymentQuery, enterpriseId);
     return getPaymentRows;
