@@ -220,6 +220,32 @@ module.exports = {
         code: 2544,
         message: '식단 정보를 입력해주세요.',
     },
+    ADMIN_NEW_PASSWORD_EMPTY: {
+        isSuccess: false,
+        code: 2545,
+        message: '새로운 비밀번호를 입력 해주세요.',
+    },
+    ADMIN_CONFIRM_PASSWORD_EMPTY: {
+        isSuccess: false,
+        code: 2546,
+        message: '확인 비밀번호를 입력 해주세요.',
+    },
+    ADMIN_NOT_MATCH_PASSWORD: {
+        isSuccess: false,
+        code: 2547,
+        message: '비밀번호가 일치하지 않습니다.',
+    },
+    ADMIN_NOT_EXIST: {
+        isSuccess: false,
+        code: 2548,
+        message: '존재하지 않는 관리자입니다.',
+    },
+    ADMIN_NOT_MATCH_ORIGINAL_PASSWORD: {
+        isSuccess: false,
+        code: 2549,
+        message: '기존 비밀번호와 일치하지 않습니다.',
+    },
+
     // Admin Response error
     ADMIN_SIGNUP_REDUNDANT_EMAIL: { isSuccess: false, code: 3501, message: '중복된 이메일입니다.' },
     ADMIN_SIGNUP_REDUNDANT_NICKNAME: {
