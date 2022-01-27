@@ -54,6 +54,32 @@ exports.createAdmin = async function (email, password, nickname, phoneNumber, en
     }
 };
 
+// 관리자 및 관계자 비밀번호 변경 API
+exports.changePassword = async function (adminId, password, newPassword) {
+    try {
+        const adminInfo = await adminProvider.retrieveAdminTotalInfoByAdminId(adminId);
+        if (adminInfo == undefined) {
+            return errResponse(AdminBaseResponse.ADMIN_NOT_EXIST);
+        }
+
+        // 비밀번호 암호화
+        const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex');
+        if (adminInfo.password !== hashedPassword) {
+            return errResponse(AdminBaseResponse.ADMIN_NOT_MATCH_ORIGINAL_PASSWORD);
+        }
+
+        const newHashedPassword = await crypto.createHash('sha512').update(newPassword).digest('hex');
+        const updateAdminPasswordParams = [newHashedPassword, adminId];
+        const connection = await pool.getConnection(async (conn) => conn);
+        const updateAdminPasswordResponse = await adminDao.updateAdminPassword(connection, updateAdminPasswordParams);
+        connection.release();
+        return response(AdminBaseResponse.SUCCESS, updateAdminPasswordResponse);
+    } catch (err) {
+        logger.error(`App - createUser Service error\n: ${err.message}`);
+        return errResponse(AdminBaseResponse.DB_ERROR);
+    }
+};
+
 // admin 로그인
 exports.postSignIn = async function (email, password) {
     try {

@@ -8,6 +8,9 @@ module.exports = function (app) {
     // 관리자 로그인 API
     app.post('/admin/login', admin.loginAdmin);
 
+    // 관리자 및 관계자 비밀번호 변경 API
+    app.patch('/admin/password', jwtMiddleware, admin.patchAdminPassword);
+
     // 업체 관계자 조회 API
     app.get('/admin/admins', jwtMiddleware, admin.getAdmins);
 

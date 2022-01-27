@@ -120,6 +120,16 @@ async function selectAdminByAdminId(connection, adminId) {
     return selectAdminByAdminIdRows;
 }
 
+// admin 전체 정보 가져오기
+async function selectAdminTotalInfoByAdminId(connection, adminId) {
+    const selectAdminTotalInfoByAdminIdQuery = `
+        SELECT *
+        FROM Admin
+        WHERE adminId = ?;`;
+    const [selectAdminTotalInfoByAdminIdRows] = await connection.query(selectAdminTotalInfoByAdminIdQuery, adminId);
+    return selectAdminTotalInfoByAdminIdRows;
+}
+
 // 유저 정보 가져오기
 async function retrieveUserList(connection, adminIdFromJWT) {
     const retrieveUserListQuery = `
@@ -727,6 +737,17 @@ where p.enterpriseId = ?;`;
     const [getPaymentRows] = await connection.query(getPaymentQuery, enterpriseId);
     return getPaymentRows;
 }
+
+// 관리자 및 관계자 비밀번호 변경 API
+async function updateAdminPassword(connection, updateAdminPasswordParams) {
+    const updateAdminPasswordQuery = `
+        UPDATE Admin
+        SET password = ?
+        WHERE adminId = ?;`;
+    const updateAdminPasswordRows = await connection.query(updateAdminPasswordQuery, updateAdminPasswordParams);
+    return updateAdminPasswordRows[0];
+}
+
 module.exports = {
     emailCheck,
     checkAdminNickname,
@@ -735,6 +756,7 @@ module.exports = {
     selectAdminPassword,
     selectAdminAccount,
     selectAdminByAdminId,
+    selectAdminTotalInfoByAdminId,
     retrieveUserList,
     userInfo,
     changeUserStatus,
@@ -781,4 +803,5 @@ module.exports = {
     postMealInfo,
     getPayment,
     getPaymentAdmin,
+    updateAdminPassword
 };

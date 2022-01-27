@@ -82,6 +82,36 @@ exports.postAdmin = async function (req, res) {
     return res.send(signUpResponse);
 };
 
+/** 관리자 및 관계자 비밀번호 변경 API
+ * [POST] /admin/change-password
+ * body : password, newPassword, confirmPassword
+ */
+exports.patchAdminPassword = async function (req, res) {
+    const adminId = req.verifiedToken.adminId;
+    const { password, newPassword, confirmPassword } = req.body;
+
+    if (!password) {
+        return res.send(response(AdminBaseResponse.ADMIN_SIGNUP_PASSWORD_EMPTY));
+    }
+    if (!newPassword) {
+        return res.send(response(AdminBaseResponse.ADMIN_NEW_PASSWORD_EMPTY));
+    }
+    if (!confirmPassword) {
+        return res.send(response(AdminBaseResponse.ADMIN_CONFIRM_PASSWORD_EMPTY));
+    }
+    if (newPassword !== confirmPassword) {
+        return res.send(response(AdminBaseResponse.ADMIN_NOT_MATCH_PASSWORD));
+    }
+
+    const changePasswordResponse = await adminService.changePassword(
+        adminId,
+        password,
+        newPassword
+    );
+
+    return res.send(changePasswordResponse);
+};
+
 /** 관리자 로그인 API
  * [POST] /admin/login
  * body : email, password

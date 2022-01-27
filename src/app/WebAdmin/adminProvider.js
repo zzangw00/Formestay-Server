@@ -90,6 +90,16 @@ exports.retrieveAdminInfoByAdminId = async function (adminId) {
     return result[0];
 };
 
+// admin 전체 정보 가져오기
+exports.retrieveAdminTotalInfoByAdminId = async function (adminId) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const result = await adminDao.selectAdminTotalInfoByAdminId(connection, adminId);
+
+    connection.release();
+
+    return result[0];
+};
+
 // 유저 정보 가져오기
 exports.retrieveUserList = async function (adminIdFromJWT) {
     const connection = await pool.getConnection(async (conn) => conn);
