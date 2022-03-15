@@ -307,3 +307,4 @@ $RECYCLE.BIN/
 config/database.js
 config/secret.js
 *.utils
+.prettierrc
