@@ -1,50 +1,6 @@
 ## 프로젝트 명
 * 포미스테이
 
-## 사용언어
-	* Node.js
-
-## 내용
-
-	* 템플릿 구조
-	* 폴더 구조
-	* 실행 명령어
-
-
-## 템플릿 구조
-
-	* 각 도메인별로 Route / Controller / Service / Provider / Dao 파일이
-	* 존재하며 파일명 규칙은 '도메인명 + Route / Controller / Service /
-	* Provider / Dao' 입니다.
-	* Ex. User 도메인(폴더)안에는 userRoute / userController / userService /
-	* userProvider / userDao 파일이 존재합니다.
-
-
-	1. Route 
-	   * 외부에서 요청이 들어오면 해당 요청을 받아서 그에 맞게 적절한 로직을
-	   * 가진, 해당 URI와 매핑된 컨트롤러로 요청을 연결해주는 역할을 합니다.
-
-
-	   2. Controller
-	      * Route로부터 받은 요청속의 데이터(path-variable, query-string,
-				  * body 등)를 받은 뒤, Service / Provider에게 해당 데이터를
-		  * 넘겨주고 비즈니스 로직을 수행하도록 합니다.
-		     * 형식적 유효성 검사를 진행합니다(빈 값(또는 null)이
-					 * 입력되었는지 등등...).
-
-
-			 3. Service / Provider
-			    * 실제 어플리케이션의 핵심적인 비즈니스로직이 수행되는
-				* 영역이다. 그리고 여기서는 트랜잭션, 논리적 유효성 검사를
-				* 진행합니다. (Service: 생성, 수정, 삭제, Provider:조회)
-
-
-	4. Dao
-	   * 각각 데이터베이스의 테이블과 1 대 1로 매칭되며, 해당 테이블에 관한
-	   * 쿼리가 작성되어 있고, 해당 쿼리들을 실행하는 역할을 합니다. 즉,
-	   * 데이터베이스와 실질적으로 연결되어 있는 객체입니다.
-
-
 ## 폴더 구조
 
 	   ```
@@ -103,20 +59,3 @@
 	   ├── package.json                        # 프로그램 이름, 버전, 필요한 모듈 등 노드 프로그램의 정보를 기술
        └── README.md                           # 사용법 파일
 	```
-
-## 실행 명령어
-
-	```
-	Nodemon (로컬 작업)
-	시작 명령어: nodemon index.js
-
-
-	PM2 (개발 서버, 실 서버)
-	시작 명령어: pm2 start app.js --name "formestay"
-	재시작 명령어: pm2 restart "formestay"
-	종료 명령어: pm2 stop "formestay"
-
-    CI/CD
-    깃작업을 완료한 뒤, main branch에서 push하면 자동 서버 배포 완료
-	```
-
