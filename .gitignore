@@ -307,6 +307,6 @@ $RECYCLE.BIN/
 config/database.js
 config/secret.js
 config/swagger.js
-*utils
-*swagger
+utils/
+swagger/
 .prettierrc
