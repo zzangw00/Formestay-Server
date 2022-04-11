@@ -306,5 +306,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,jetbrains+all,node
 config/database.js
 config/secret.js
-*.utils
+config/swagger.js
+*utils
+*swagger
 .prettierrc
